@@ -6,13 +6,39 @@
  * @param {Object} modelData - Objeto contendo {positionBuffer, indexBuffer, count}
  * @param {Array} color - Array [r, g, b] opcional para cor sólida
  */
-function drawGenericMesh(gl, program, modelMatrix, meshData, color) {
+function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null) {
     // 1. Uniformes de Matriz e Cor
     const uModel = gl.getUniformLocation(program, 'uModelMatrix');
     const uColorLoc = gl.getUniformLocation(program, 'uColor');
+    const uUseTexture = gl.getUniformLocation(program, 'uUseTexture'); // Flag
+    const uSampler = gl.getUniformLocation(program, 'uSampler');
 
     gl.uniformMatrix4fv(uModel, false, modelMatrix);
     gl.uniform3fv(uColorLoc, color); // Cor RGB [r, g, b]
+
+    // Lógica da Textura
+    if (texture && meshData.texCoordBuffer) {
+        gl.uniform1i(uUseTexture, true); // Ativa modo textura no shader
+
+        // Bind Texture
+        gl.activeTexture(gl.TEXTURE0); // Ativa unidade 0
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(uSampler, 0); // Diz ao shader que a textura está na unidade 0
+
+        // Bind Atributo de Coordenada UV
+        const texLoc = gl.getAttribLocation(program, 'texCoord');
+        if (texLoc !== -1) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, meshData.texCoordBuffer);
+            gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(texLoc);
+        }
+    } else {
+        gl.uniform1i(uUseTexture, false); // Desativa modo textura (apenas cor)
+
+        // É bom desabilitar o array se não for usar, para evitar warnings
+        const texLoc = gl.getAttribLocation(program, 'texCoord');
+        if (texLoc !== -1) gl.disableVertexAttribArray(texLoc);
+    }
 
     // 2. Atributo de Posição
     const posLoc = gl.getAttribLocation(program, 'position');
@@ -38,8 +64,9 @@ export function drawCube(game) {
     mat4.rotateX(game.modelMatrix, game.modelMatrix, game.cubeRotation);
     mat4.rotateY(game.modelMatrix, game.modelMatrix, game.cubeRotation);
 
-    // Agora o cubo usa a mesma lógica que o resto!
-    drawGenericMesh(game.gl, game.program, game.modelMatrix, game.cubeMesh, [0.0, 0.5, 1.0]);
+    // Passamos 'game.boxTexture' como último argumento
+    // Cor branca [1,1,1] para não alterar a cor original da imagem
+    drawGenericMesh(game.gl, game.program, game.modelMatrix, game.cubeMesh, [1.0, 1.0, 1.0]);
 }
 
 export function drawUFO(game) {
@@ -62,5 +89,12 @@ export function drawCrushedCan(game) {
     mat4.rotateZ(game.modelMatrix, game.modelMatrix, Math.PI / 2);
     mat4.rotateY(game.modelMatrix, game.modelMatrix, game.canRotation);
 
-    drawGenericMesh(game.gl, game.program, game.modelMatrix, game.canMesh, [1.0, 0.5, 0.5]);
+    drawGenericMesh(
+        game.gl,
+        game.program,
+        game.modelMatrix,
+        game.canMesh,
+        [1.0, 1.0, 1.0],
+        game.crushedCanTexture,
+    );
 }

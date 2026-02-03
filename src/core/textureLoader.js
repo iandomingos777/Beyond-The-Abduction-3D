@@ -1,0 +1,53 @@
+export function loadTexture(gl, url) {
+    return new Promise((resolve, reject) => {
+        const texture = gl.createTexture();
+        // Placeholder azul para debug (se ficar azul, imagem não carregou)
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            1,
+            1,
+            0,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            new Uint8Array([0, 0, 255, 255]),
+        );
+
+        const image = new Image();
+        image.src = url;
+
+        image.onload = () => {
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+
+            // Inverte Y se não tiver colocado no main.js (redundância segura)
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+            // Verifica se é potência de 2 (2048x2048 é POT)
+            if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+                gl.generateMipmap(gl.TEXTURE_2D);
+                // Filtro trilinear (melhor qualidade)
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            } else {
+                // Configuração fallback para imagens que não são quadrado perfeito
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            }
+
+            resolve(texture);
+        };
+
+        image.onerror = (err) => {
+            console.error('Erro ao carregar textura:', url);
+            reject(err);
+        };
+    });
+}
+
+function isPowerOf2(value) {
+    return (value & (value - 1)) == 0;
+}

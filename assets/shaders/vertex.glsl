@@ -1,10 +1,13 @@
 attribute vec3 position;
+attribute vec2 texCoord; // Coordenada UV vinda do buffer
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uProjectionMatrix;
 
+varying vec2 vTexCoord;
+
 void main() {
-    // Apenas converte a posição do mundo 3D para a tela 2D
+    vTexCoord = texCoord; 
     gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(position, 1.0);
 }

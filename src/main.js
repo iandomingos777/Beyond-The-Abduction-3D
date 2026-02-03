@@ -3,6 +3,7 @@ import { createShader, createProgram } from './core/shaderUtils.js';
 import { createCubeMesh } from './geometries/cube.js';
 import { loadOBJModel } from './core/objLoader.js';
 import { drawCrushedCan, drawCube, drawUFO } from './core/draw.js';
+import { loadTexture } from './core/textureLoader.js';
 
 class Game {
     constructor(canvasId) {
@@ -22,6 +23,9 @@ class Game {
         this.ufoMesh = {};
         this.canMesh = {};
 
+        // Texturas
+        this.crushedCanTexture = null;
+
         // Matrizes
         this.modelMatrix = mat4.create();
         this.viewMatrix = mat4.create();
@@ -35,6 +39,7 @@ class Game {
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         this.gl.clearColor(0.1, 0.1, 0.15, 1.0);
         this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.enable(this.gl.BLEND);
         return true;
     }
 
@@ -56,8 +61,14 @@ class Game {
         );
         this.gl.useProgram(this.program);
 
-        // 2. Criar Geometrias
-        // Agora o Cubo é criado igual aos outros: gerando dados
+        // Carregar assets
+
+        // Carrega a textura em paralelo com os modelos
+        this.crushedCanTexture = await loadTexture(
+            this.gl,
+            '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
+        );
+
         this.cubeMesh = createCubeMesh(this.gl);
 
         // Carregar OBJs

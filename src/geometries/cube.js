@@ -17,6 +17,23 @@ export function createCubeMesh(gl) {
         -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5,
     ]);
 
+    // Coordenadas de Textura (UV)
+    // Cada face tem 4 vértices: (0,0), (1,0), (1,1), (0,1)
+    const texCoords = new Float32Array([
+        // Frente
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+        // Trás
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+        // Topo
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+        // Base
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+        // Direita
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+        // Esquerda
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+    ]);
+
     // 2. Índices (Como conectar os pontos para formar triângulos)
     const indices = new Uint16Array([
         // Frente
@@ -38,6 +55,11 @@ export function createCubeMesh(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
+    // Criar Buffer Textura
+    const texCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
+
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
@@ -45,6 +67,7 @@ export function createCubeMesh(gl) {
     // Retorna o mesmo formato que o OBJLoader
     return {
         positionBuffer: positionBuffer,
+        texCoordBuffer: texCoordBuffer,
         indexBuffer: indexBuffer,
         count: indices.length,
     };
