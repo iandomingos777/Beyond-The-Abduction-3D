@@ -5,6 +5,7 @@
  * @param {Float32Array} modelMatrix - Matriz de transformação do objeto atual
  * @param {Object} modelData - Objeto contendo {positionBuffer, indexBuffer, count}
  * @param {Array} color - Array [r, g, b] opcional para cor sólida
+ * @param {WebGLTexture} texture - Textura opcional para aplicar ao modelo
  */
 function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null) {
     // 1. Uniformes de Matriz e Cor
