@@ -110,3 +110,39 @@ export class OBJLoader {
         return index;
     }
 }
+
+export async function loadOBJModel(game, path) {
+    const loader = new OBJLoader();
+    const modelData = await loader.load(path);
+
+    const gl = game.gl;
+    // Objeto que conterá todos os buffers desta malha 3D
+    const mesh = {
+        positionBuffer: null,
+        normalBuffer: null, // Adicionado para Iluminação (Phong)
+        texCoordBuffer: null, // Adicionado para Texturas
+        indexBuffer: null,
+        count: 0,
+    };
+
+    // Buffer de Posições (Vértices)
+    mesh.positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, modelData.vertices, gl.STATIC_DRAW);
+
+    // Buffer de Textura (UVs)
+    if (modelData.texCoords && modelData.texCoords.length > 0) {
+        mesh.texCoordBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, modelData.texCoords, gl.STATIC_DRAW);
+    }
+
+    // Buffer de Índices
+    mesh.indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, modelData.indices, gl.STATIC_DRAW);
+
+    mesh.count = modelData.indices.length;
+
+    return mesh; // Retorna o objeto pronto para uso
+}
