@@ -18,6 +18,7 @@ function drawGenericOBJ(gl, program, modelMatrix, modelData, color = [1.0, 1.0, 
     gl.uniform3fv(uColorLoc, color); // Envia [r, g, b]
 
     // Posição da Luz (uLightPos) - Vamos fixar uma luz no topo/frente por enquanto
+    // NOTE: TEMPORÁRIO
     const uLightLoc = gl.getUniformLocation(program, 'uLightPos');
     gl.uniform3f(uLightLoc, 10.0, 10.0, 10.0); // Luz na posição (10, 10, 10)
 
@@ -64,6 +65,7 @@ export function drawCube(game) {
     gl.uniformMatrix4fv(uModel, false, game.modelMatrix);
     const uColorLoc = gl.getUniformLocation(game.program, 'uColor');
     gl.uniform3f(uColorLoc, 0.0, 0.5, 1.0); // Cubo Azul
+    // NOTE: TEMPORÁRIO
     const uLightLoc = gl.getUniformLocation(game.program, 'uLightPos');
     gl.uniform3f(uLightLoc, 10.0, 10.0, 10.0);
 
