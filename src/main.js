@@ -1,6 +1,6 @@
 import { getGL } from './core/glContext.js';
 import { createShader, createProgram } from './core/shaderUtils.js';
-import { createCubeMesh } from './geometries/Cube.js';
+import { createCubeMesh } from './geometries/cube.js';
 import { loadOBJModel } from './core/objLoader.js';
 import { drawCrushedCan, drawCube, drawUFO } from './core/draw.js';
 
