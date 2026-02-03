@@ -13,13 +13,16 @@
 
 ### Renderização
 
-* [ ] Cena desenhada exclusivamente com OpenGL (≥ 4.0) ou WebGL puro
-* [ ] Nenhuma função gráfica de alto nível utilizada
-* [ ] Contexto gráfico apenas para inicialização (Canvas, SDL, PyGame, GTK)
+- [x] Cena desenhada exclusivamente com OpenGL (≥ 4.0) ou WebGL puro
+  - Implementado com WebGL via `src/core/glContext.js` e `src/main.js`.
+- [x] Nenhuma função gráfica de alto nível utilizada
+  - Não foram encontradas bibliotecas como `three.js` no repositório.
+- [x] Contexto gráfico apenas para inicialização (Canvas, SDL, PyGame, GTK)
+  - Contexto obtido a partir do `canvas` em `src/core/glContext.js`.
 
 ### Câmera e Projeção
 
-* [ ] Câmera com **projeção perspectiva**
+* [X] Câmera com **projeção perspectiva**
 * [ ] Movimentação da câmera pelo ambiente
 * [ ] Controle via teclado (WASD ou setas)
 * [ ] Controle via mouse (opcional)
@@ -32,16 +35,19 @@
   * [ ] Componente difusa
   * [ ] Componente especular
 * [ ] Pelo menos **uma fonte de luz móvel**
+  - Observação: o `OBJLoader` já processa normais/UVs, mas os shaders atuais (assets/shaders/*.glsl) só aplicam `uColor` — Phong ainda não implementado.
 
 ### Objetos e Animações
 
-* [ ] Pelo menos um objeto 3D animado por transformações geométricas
-* [ ] Uso de matrizes homogêneas 4×4
+* [x] Pelo menos um objeto 3D animado por transformações geométricas
+  - Rotação/transformações em `src/main.js` (`update`) e `src/core/draw.js`.
+* [x] Uso de matrizes homogêneas 4×4
+  - Uso de `mat4` em `src/main.js` e `src/core/draw.js`.
 
 ### Materiais
 
 * [ ] Pelo menos um objeto com **textura**
-* [ ] Pelo menos um objeto com **cor sólida**
+* [X] Pelo menos um objeto com **cor sólida**
 
 ### Interação
 
@@ -91,8 +97,10 @@
 ## Itens Obrigatórios para Entrega
 
 * [ ] Repositório público no GitHub
-* [ ] Código-fonte completo e executável
-* [ ] README do projeto
-* [ ] Tutorial de compilação e execução
+* [X] README do projeto
+* [X] Tutorial de compilação e execução
 * [ ] Link para slides da apresentação
 * [ ] Link para vídeo demonstrativo
+  - Código presente em `src/` e assets; execução via servidor local (ex.: `python3 -m http.server`).
+* [x] README do projeto
+
