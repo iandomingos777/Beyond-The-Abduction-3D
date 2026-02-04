@@ -7,6 +7,9 @@
  * @param {Array} color - Array [r, g, b] opcional para cor sólida
  * @param {WebGLTexture} texture - Textura opcional para aplicar ao modelo
  */
+
+import * as mat4 from '../math/mat4.js';
+
 function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null) {
     // 1. Uniformes de Matriz e Cor
     const uModel = gl.getUniformLocation(program, 'uModelMatrix');
@@ -59,43 +62,55 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
 export function drawCube(game) {
     if (!game.cubeMesh) return;
 
-    mat4.identity(game.modelMatrix);
-    mat4.translate(game.modelMatrix, game.modelMatrix, [-3.5, 2.0, 0.0]);
-    mat4.scale(game.modelMatrix, game.modelMatrix, [0.5, 0.5, 0.5]);
-    mat4.rotateX(game.modelMatrix, game.modelMatrix, game.cubeRotation);
-    mat4.rotateY(game.modelMatrix, game.modelMatrix, game.cubeRotation);
+    // Começa com identidade
+    let model = mat4.identity();
 
-    // Passamos 'game.boxTexture' como último argumento
-    // Cor branca [1,1,1] para não alterar a cor original da imagem
-    drawGenericMesh(game.gl, game.program, game.modelMatrix, game.cubeMesh, [1.0, 1.0, 1.0]);
+    // Translação para posição no mundo
+    model = mat4.translate(model, -3.5, 2.0, 0.0);
+
+    // Escala
+    model = mat4.scale(model, 0.5, 0.5, 0.5);
+
+    // Rotação no próprio eixo do cubo (passando o centro como ponto de rotação)
+    const cx = -3.5, cy = 2.0, cz = 0.0;
+    model = mat4.rotateX(model, game.cubeRotation, cx, cy, cz);
+    model = mat4.rotateY(model, game.cubeRotation, cx, cy, cz);
+
+    drawGenericMesh(game.gl, game.program, model, game.cubeMesh, [1.0, 1.0, 1.0]);
 }
-
 export function drawUFO(game) {
     if (!game.ufoMesh.positionBuffer) return;
 
-    mat4.identity(game.modelMatrix);
-    mat4.translate(game.modelMatrix, game.modelMatrix, [0.0, -2.0, 0.0]);
-    mat4.scale(game.modelMatrix, game.modelMatrix, [0.05, 0.05, 0.05]);
-    mat4.rotateY(game.modelMatrix, game.modelMatrix, game.ufoRotation);
+    let model = mat4.identity();
 
-    drawGenericMesh(game.gl, game.program, game.modelMatrix, game.ufoMesh, [0.6, 1.0, 0.6]);
+    // Translação
+    model = mat4.translate(model, 0.0, -2.0, 0.0);
+
+    // Escala
+    model = mat4.scale(model, 0.05, 0.05, 0.05);
+
+    // Rotação no próprio eixo do UFO
+    const cx = 0.0, cy = -2.0, cz = 0.0;
+    model = mat4.rotateY(model, game.ufoRotation, cx, cy, cz);
+
+    drawGenericMesh(game.gl, game.program, model, game.ufoMesh, [0.6, 1.0, 0.6]);
 }
 
 export function drawCrushedCan(game) {
     if (!game.canMesh.positionBuffer) return;
 
-    mat4.identity(game.modelMatrix);
-    mat4.translate(game.modelMatrix, game.modelMatrix, [3, 2, 0.0]);
-    mat4.scale(game.modelMatrix, game.modelMatrix, [0.05, 0.05, 0.05]);
-    mat4.rotateZ(game.modelMatrix, game.modelMatrix, Math.PI / 2);
-    mat4.rotateY(game.modelMatrix, game.modelMatrix, game.canRotation);
+    let model = mat4.identity();
 
-    drawGenericMesh(
-        game.gl,
-        game.program,
-        game.modelMatrix,
-        game.canMesh,
-        [1.0, 1.0, 1.0],
-        game.crushedCanTexture,
-    );
+    // Translação
+    model = mat4.translate(model, 3.0, 2.0, 0.0);
+
+    // Escala
+    model = mat4.scale(model, 0.05, 0.05, 0.05);
+
+    // Rotação em torno do próprio eixo
+    const cx = 3.0, cy = 2.0, cz = 0.0;
+    model = mat4.rotateZ(model, Math.PI / 2, cx, cy, cz);
+    model = mat4.rotateY(model, game.canRotation, cx, cy, cz);
+
+    drawGenericMesh(game.gl, game.program, model, game.canMesh, [1.0, 1.0, 1.0], game.crushedCanTexture);
 }
