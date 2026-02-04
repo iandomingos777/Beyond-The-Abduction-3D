@@ -34,7 +34,7 @@ export function createCubeMesh(gl) {
         0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
     ]);
 
-    // 2. Índices (Como conectar os pontos para formar triângulos)
+    // Índices (Como conectar os pontos para formar triângulos)
     const indices = new Uint16Array([
         // Frente
         0, 1, 2, 0, 2, 3,
@@ -48,6 +48,23 @@ export function createCubeMesh(gl) {
         16, 17, 18, 16, 18, 19,
         // Esquerda
         20, 21, 22, 20, 22, 23,
+    ]);
+
+    // Normais
+    // Cada linha abaixo corresponde aos 4 vértices de uma face
+    const normals = new Float32Array([
+        // Frente (Normal aponta para Z+)
+        0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+        // Trás (Normal aponta para Z-)
+        0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,
+        // Topo (Normal aponta para Y+)
+        0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+        // Base (Normal aponta para Y-)
+        0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+        // Direita (Normal aponta para X+)
+        1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+        // Esquerda (Normal aponta para X-)
+        -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,
     ]);
 
     // Criar Buffers
@@ -64,10 +81,15 @@ export function createCubeMesh(gl) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
-    // Retorna o mesmo formato que o OBJLoader
+    // Buffer de Normais
+    const normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+
     return {
         positionBuffer: positionBuffer,
         texCoordBuffer: texCoordBuffer,
+        normalBuffer: normalBuffer,
         indexBuffer: indexBuffer,
         count: indices.length,
     };

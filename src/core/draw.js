@@ -17,6 +17,19 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
     gl.uniformMatrix4fv(uModel, false, modelMatrix);
     gl.uniform3fv(uColorLoc, color); // Cor RGB [r, g, b]
 
+    // Lógica da Normal
+    // Se o mesh tem normais, mandamos. Se não (ex: debug lines), desativamos.
+    const normLoc = gl.getAttribLocation(program, 'normal');
+    if (normLoc !== -1 && meshData.normalBuffer) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, meshData.normalBuffer);
+        gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(normLoc);
+    } else if (normLoc !== -1) {
+        // Se não tiver buffer de normal, desabilita ou alimenta um valor padrão
+        gl.disableVertexAttribArray(normLoc);
+        gl.vertexAttrib3f(normLoc, 0.0, 1.0, 0.0); // Normal genérica para cima
+    }
+
     // Lógica da Textura
     if (texture && meshData.texCoordBuffer) {
         gl.uniform1i(uUseTexture, true); // Ativa modo textura no shader
