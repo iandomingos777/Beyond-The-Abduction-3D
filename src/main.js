@@ -4,6 +4,9 @@ import { createCubeMesh } from './geometries/cube.js';
 import { loadOBJModel } from './core/objLoader.js';
 import { drawCrushedCan, drawCube, drawUFO } from './core/draw.js';
 import { loadTexture } from './core/textureLoader.js';
+import { Camera } from './systems/camera.js';
+import * as mat4 from './math/mat4.js';
+import { InputManager } from './systems/input.js';
 
 class Game {
     constructor(canvasId) {
@@ -27,9 +30,12 @@ class Game {
         this.crushedCanTexture = null;
 
         // Matrizes
-        this.modelMatrix = mat4.create();
-        this.viewMatrix = mat4.create();
-        this.projectionMatrix = mat4.create();
+        this.modelMatrix = mat4.identityMatrix();
+        this.viewMatrix = mat4.identityMatrix();
+        
+        this.Camera = new Camera();
+        
+        this.InputManager = new InputManager(this.canvas);
     }
 
     // ... (Mantenha initGL e loadShader iguais) ...
@@ -75,23 +81,34 @@ class Game {
         this.ufoMesh = await loadOBJModel(this, '../assets/models/Low_poly_UFO.obj');
         this.canMesh = await loadOBJModel(this, '../assets/models/can_crushed_lowpoly.obj');
 
+        this.setupProjection();
         this.setupMatrices();
+
         requestAnimationFrame((t) => this.loop(t));
+        }
+
+    setupProjection() {
+        const fov = 45; // em graus
+        const aspect = this.canvas.width / this.canvas.height;
+        this.projectionMatrix = mat4.createPerspective(fov, aspect, 0.1, 100.0);
     }
 
     setupMatrices() {
-        const fov = (45 * Math.PI) / 180;
-        const aspect = this.canvas.width / this.canvas.height;
-        mat4.perspective(this.projectionMatrix, fov, aspect, 0.1, 100.0);
-
-        // Câmera
-        mat4.lookAt(this.viewMatrix, [0, 0, 8], [0, 0, 0], [0, 1, 0]);
-    }
+    this.viewMatrix = this.Camera.getViewMatrix();
+}
 
     update(dt) {
         this.cubeRotation += dt * 1.5;
         this.ufoRotation += dt * 0.5;
         this.canRotation += dt * 0.8;
+        
+        const { forward, right } = this.InputManager.getAxis();
+        this.Camera.move(forward, right, dt);
+
+        const mouse = this.InputManager.getMouseDelta();
+        this.Camera.look(mouse.x, -mouse.y);
+
+         this.viewMatrix = this.Camera.getViewMatrix();
     }
 
     draw() {
@@ -101,7 +118,8 @@ class Game {
         const uView = gl.getUniformLocation(this.program, 'uViewMatrix');
         const uProj = gl.getUniformLocation(this.program, 'uProjectionMatrix');
 
-        gl.uniformMatrix4fv(uView, false, this.viewMatrix);
+        const view = this.Camera.getViewMatrix();
+        gl.uniformMatrix4fv(uView, false, view);
         gl.uniformMatrix4fv(uProj, false, this.projectionMatrix);
 
         drawUFO(this);
