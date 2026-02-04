@@ -4,6 +4,7 @@ import { createCubeMesh } from './geometries/cube.js';
 import { loadOBJModel } from './core/objLoader.js';
 import { drawCrushedCan, drawCube, drawUFO } from './core/draw.js';
 import { loadTexture } from './core/textureLoader.js';
+import { Light } from './core/light.js';
 
 class Game {
     constructor(canvasId) {
@@ -25,6 +26,12 @@ class Game {
 
         // Texturas
         this.crushedCanTexture = null;
+
+        // Iluminação
+        this.light = null;
+
+        // Câmera (movido para o constructor para poder acessar no draw)
+        this.cameraPos = [0, 0, 8];
 
         // Matrizes
         this.modelMatrix = mat4.create();
@@ -60,6 +67,13 @@ class Game {
             createShader(this.gl, this.gl.FRAGMENT_SHADER, fShaderSrc),
         );
         this.gl.useProgram(this.program);
+
+        // Inicializar Luz
+        this.light = new Light(this.gl);
+        // Exemplo: Mudar a cor da luz para levemente amarelada
+        // Pode ser removido no futuro
+        this.light.color = [1.0, 0.95, 0.8];
+        this.light.position = [5.0, 5.0, 5.0];
 
         // Carregar assets
 
@@ -100,6 +114,13 @@ class Game {
 
         const uView = gl.getUniformLocation(this.program, 'uViewMatrix');
         const uProj = gl.getUniformLocation(this.program, 'uProjectionMatrix');
+
+        // Enviar posição da câmera para o Specular
+        const uViewPos = gl.getUniformLocation(this.program, 'uViewPos');
+        gl.uniform3fv(uViewPos, this.cameraPos);
+
+        // Atualizar uniforms da luz
+        this.light.updateUniforms(gl, this.program);
 
         gl.uniformMatrix4fv(uView, false, this.viewMatrix);
         gl.uniformMatrix4fv(uProj, false, this.projectionMatrix);
