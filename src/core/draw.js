@@ -120,12 +120,12 @@ export function drawUFO(game) {
     let model = mat4.identityMatrix();
 
     // Translação
-    model = mat4.translate(model, 0.0, -2.0, 0.0);
+    model = mat4.translate(model, 0.0, 0.0, 0.0);
     // Escala
     model = mat4.scale(model, 0.05, 0.05, 0.05);
     // Rotação no próprio eixo do UFO
     const cx = 0.0,
-        cy = -2.0,
+        cy = 0.0,
         cz = 0.0;
     model = mat4.rotateY(model, game.ufoRotation, cx, cy, cz);
 
@@ -152,13 +152,13 @@ export function drawCrushedCan(game) {
     let model = mat4.identityMatrix();
 
     // Translação
-    model = mat4.translate(model, 3.0, 2.0, 0.0);
+    model = mat4.translate(model, 5, 0.0, 0.0);
     // Escala
     model = mat4.scale(model, 0.1, 0.1, 0.1);
 
     // Rotação em torno do próprio eixo
-    const cx = 3.0,
-        cy = 2.0,
+    const cx = 5,
+        cy = 0.0,
         cz = 0.0;
     model = mat4.rotateZ(model, Math.PI / 2, cx, cy, cz);
     model = mat4.rotateY(model, game.canRotation, cx, cy, cz);
@@ -211,14 +211,14 @@ function drawBox(game, position, scale, color) {
         model,
         game.cubeMesh,
         color,
-        null, // Sem textura por enquanto (ou passe game.envTexture se quiser)
+        game.wallTexture, // Sem textura por enquanto (ou passe game.envTexture se quiser)
         material,
     );
 }
 
 export function drawEnvironment(game) {
     // Cores (RGB)
-    const corChao = [0.4, 0.4, 0.9]; // Cinza azulado
+    const corChao = [0.4, 0.4, 0.9]; // Azul
     const corParede = [0.7, 0.7, 0.7]; // Cinza claro
     const corTeto = [0.2, 0.2, 0.2]; // Escuro (opcional)
 
@@ -228,22 +228,22 @@ export function drawEnvironment(game) {
 
     // 1. Chão da Sala (Centro em 0,0,0)
     // Posição: y = -2.0 (para ficar abaixo dos objetos)
-    drawBox(game, [0, -2.0, 0], [10.0, 0.1, 10.0], corChao);
+    drawBox(game, [0, -2.0, 0], [20.0, 0.1, 20.0], corChao);
     // 2. Parede Fundos
-    drawBox(game, [0, 0, -10.0], [10.0, 2.0, 0.5], corParede);
+    drawBox(game, [0, 2, -10.0], [20.0, 12.0, 0.5], corParede);
     // 3. Parede Esquerda
-    drawBox(game, [-10.0, 0, 0], [0.5, 2.0, 10.0], corParede);
+    drawBox(game, [-10.0, 2, 0], [0.5, 12.0, 20.0], corParede);
     // 4. Parede Direita
-    drawBox(game, [10.0, 0, 0], [0.5, 2.0, 10.0], corParede);
+    drawBox(game, [10.0, 2, 0], [0.5, 12.0, 20.0], corParede);
 
     // --- CORREDOR (Saindo da frente da sala) ---
     // Vamos fazer um corredor no eixo Z positivo
 
     // 1. Chão do Corredor (Mais estreito, largura 4)
     // Começa no Z=10 (borda da sala) e vai até Z=30
-    drawBox(game, [0, -2.0, 20.0], [4.0, 0.1, 10.0], corChao);
+    drawBox(game, [0, -2.0, 20.0], [8.0, 0.1, 20.0], corChao);
     // 2. Parede Esquerda do Corredor
-    drawBox(game, [-4.0, 0, 20.0], [0.5, 2.0, 10.0], corParede);
+    drawBox(game, [-4.0, 0, 20.0], [0.5, 2.0, 20.0], corParede);
     // 3. Parede Direita do Corredor
-    drawBox(game, [4.0, 0, 20.0], [0.5, 2.0, 10.0], corParede);
+    drawBox(game, [4.0, 0, 20.0], [0.5, 2.0, 20.0], corParede);
 }

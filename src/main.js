@@ -30,6 +30,7 @@ class Game {
         // Texturas
         this.crushedCanTexture = null;
         this.ufoTexture = null;
+        this.wallTexture = null;
 
         // Iluminação
         this.light = null;
@@ -91,6 +92,7 @@ class Game {
             '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
         );
         this.ufoTexture = await loadTexture(this.gl, '../assets/textures/ufo_diffuse.png');
+        this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
 
         this.cubeMesh = createCubeMesh(this.gl);
 
