@@ -6,6 +6,9 @@ import { drawCrushedCan, drawCube, drawUFO } from './core/draw.js';
 import { loadTexture } from './core/textureLoader.js';
 import { Light } from './core/light.js';
 
+import * as mat4 from './math/mat4.js';
+
+
 class Game {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -34,9 +37,9 @@ class Game {
         this.cameraPos = [0, 0, 8];
 
         // Matrizes
-        this.modelMatrix = mat4.create();
-        this.viewMatrix = mat4.create();
-        this.projectionMatrix = mat4.create();
+        this.modelMatrix = mat4.identityMatrix();
+        this.viewMatrix = mat4.identityMatrix();
+        this.projectionMatrix = mat4.identityMatrix();
     }
 
     // ... (Mantenha initGL e loadShader iguais) ...
@@ -94,12 +97,21 @@ class Game {
     }
 
     setupMatrices() {
-        const fov = (45 * Math.PI) / 180;
+        const fov = 45; // em graus (teu createPerspective espera graus)
         const aspect = this.canvas.width / this.canvas.height;
-        mat4.perspective(this.projectionMatrix, fov, aspect, 0.1, 100.0);
 
-        // Câmera
-        mat4.lookAt(this.viewMatrix, [0, 0, 8], [0, 0, 0], [0, 1, 0]);
+        this.projectionMatrix = mat4.createPerspective(
+            fov,
+            aspect,
+            0.1,
+            100.0
+        );
+
+        this.viewMatrix = mat4.createCamera(
+            [0, 0, 8],   // posição da câmera
+            [0, 0, 0],   // target
+            [0, 1, 0]    // up
+        );
     }
 
     update(dt) {

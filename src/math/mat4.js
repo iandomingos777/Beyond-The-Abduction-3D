@@ -1,3 +1,4 @@
+
 export function createPerspective(fovy, aspect, near, far) {
     const f = 1.0 / Math.tan((fovy * Math.PI / 180) / 2);
     const nf = 1 / (near - far);
@@ -11,34 +12,39 @@ export function createPerspective(fovy, aspect, near, far) {
 }
 
 
-export function createCamera(pos, target, up)
-{  
-  var zc = math.subtract(pos, target);
-  zc = math.divide(zc, math.norm(zc));
-  
-  var yt = math.subtract(up, pos);
-  yt = math.divide(yt, math.norm(yt));
-  
-  var xc = math.cross(yt, zc);
-  xc = math.divide(xc, math.norm(xc));
-  
-  var yc = math.cross(zc, xc);
-  yc = math.divide(yc,math.norm(yc));
-  
-  var mt = math.inv(math.transpose(new Float32Array([xc,yc,zc])));
-  
-  mt = math.resize(mt, [4,4], 0);
-  mt._data[3][3] = 1;
-  
-  var mov = new Float32Array([[1, 0, 0, -pos[0]], 
-                         [0, 1, 0, -pos[1]],
-                         [0, 0, 1, -pos[2]],
-                         [0, 0, 0, 1]]);
-  
-  var cam = math.multiply(mt, mov);
-  
-  return cam;
-}     
+export function createCamera(eye, center, up) {
+    const z = normalize(subtract(eye, center)); // Forward
+    const x = normalize(cross(up, z));         // Right
+    const y = cross(z, x);                      // Up
+
+    return new Float32Array([
+        x[0], y[0], z[0], 0,
+        x[1], y[1], z[1], 0,
+        x[2], y[2], z[2], 0,
+        -dot(x, eye), -dot(y, eye), -dot(z, eye), 1
+    ]);
+}
+
+function subtract(a, b) {
+    return [a[0]-b[0], a[1]-b[1], a[2]-b[2]];
+}
+
+function cross(a, b) {
+    return [
+        a[1]*b[2] - a[2]*b[1],
+        a[2]*b[0] - a[0]*b[2],
+        a[0]*b[1] - a[1]*b[0]
+    ];
+}
+
+function dot(a, b) {
+    return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+}
+
+function normalize(v) {
+    const len = Math.hypot(v[0], v[1], v[2]);
+    return [v[0]/len, v[1]/len, v[2]/len];
+}
 
 export function identityMatrix() {
     return new Float32Array([
@@ -49,50 +55,20 @@ export function identityMatrix() {
     ]);
 }
 
-/**
- * Multiplica duas matrizes
- */
-export function multiplyMatrices(a, b) {
-    const out = new Float32Array(16);
-
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            out[j * 4 + i] =
-                a[i]      * b[j * 4] +
-                a[i + 4]  * b[j * 4 + 1] +
-                a[i + 8]  * b[j * 4 + 2] +
-                a[i + 12] * b[j * 4 + 3];
-        }
-    }
-    return out;
-}
 
 export function identity(mat) {
     return multiplyMatrices(mat, identityMatrix());
 }
 
-/**
- * Retorna matriz de translação
- */
 export function translateMatrix(tx, ty, tz) {
-    return new Float32Array([
-        [1,0,0,tx],
-        [0,1,0,ty],
-        [0,0,1,tz],
-        [0,0,0,1]
+     return new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        tx, ty, tz, 1
     ]);
 }
 
-/**
- * Multiplica matriz atual por translação
- */
-export function translate(mat, tx, ty, tz) {
-    return multiplyMatrices(mat, translateMatrix(tx, ty, tz));
-}
-
-/**
- * Multiplica matriz atual por escala
- */
 export function scaleMatrix(sx, sy, sz) {
     return new Float32Array([
         sx, 0,  0,  0,
@@ -102,14 +78,9 @@ export function scaleMatrix(sx, sy, sz) {
     ]);
 }
 
-export function scale(mat, sx, sy, sz) {
-    return multiplyMatrices(mat, scaleMatrix(sx, sy, sz));
-}
-
 export function rotateXMatrix(angle) {
     const c = Math.cos(angle);
     const s = Math.sin(angle);
-
     return new Float32Array([
         1, 0, 0, 0,
         0, c, s, 0,
@@ -121,25 +92,51 @@ export function rotateXMatrix(angle) {
 export function rotateYMatrix(angle) {
     const c = Math.cos(angle);
     const s = Math.sin(angle);
-
     return new Float32Array([
         c, 0, -s, 0,
-        0, 1,  0, 0,
-        s, 0,  c, 0,
-        0, 0,  0, 1
+        0, 1, 0, 0,
+        s, 0, c, 0,
+        0, 0, 0, 1
     ]);
 }
 
 export function rotateZMatrix(angle) {
     const c = Math.cos(angle);
     const s = Math.sin(angle);
-
     return new Float32Array([
         c, s, 0, 0,
-       -s, c, 0, 0,
+        -s, c, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1
     ]);
+}
+
+/**
+ * Multiplies two matrices (Standard Column-Major Multiplication)
+ */
+export function multiplyMatrices(a, b) {
+    const out = new Float32Array(16);
+    for (let col = 0; col < 4; col++) {
+        for (let row = 0; row < 4; row++) {
+            let sum = 0;
+            for (let i = 0; i < 4; i++) {
+                sum += a[i * 4 + row] * b[col * 4 + i];
+            }
+            out[col * 4 + row] = sum;
+        }
+    }
+    return out;
+}
+
+/**
+ * Multiplica matriz atual por translação
+ */
+export function translate(mat, tx, ty, tz) {
+    return multiplyMatrices(mat, translateMatrix(tx, ty, tz));
+}
+
+export function scale(mat, sx, sy, sz) {
+    return multiplyMatrices(mat, scaleMatrix(sx, sy, sz));
 }
 
 // =======================

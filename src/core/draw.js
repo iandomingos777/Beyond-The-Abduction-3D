@@ -10,6 +10,7 @@
 
 import * as mat4 from '../math/mat4.js';
 
+
 function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null) {
     // 1. Uniformes de Matriz e Cor
     const uModel = gl.getUniformLocation(program, 'uModelMatrix');
@@ -75,26 +76,24 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
 export function drawCube(game) {
     if (!game.cubeMesh) return;
 
-    // Começa com identidade
-    let model = mat4.identity();
+    let model = mat4.identityMatrix();
 
-    // Translação para posição no mundo
+    // 1. POSIÇÃO: Move para onde o objeto deve estar no mundo
     model = mat4.translate(model, -3.5, 2.0, 0.0);
 
-    // Escala
-    model = mat4.scale(model, 0.5, 0.5, 0.5);
+    // 2. ROTAÇÃO: Gira no próprio eixo (sem cx, cy, cz!)
+    model = mat4.rotateX(model, game.cubeRotation);
+    model = mat4.rotateY(model, game.cubeRotation);
 
-    // Rotação no próprio eixo do cubo (passando o centro como ponto de rotação)
-    const cx = -3.5, cy = 2.0, cz = 0.0;
-    model = mat4.rotateX(model, game.cubeRotation, cx, cy, cz);
-    model = mat4.rotateY(model, game.cubeRotation, cx, cy, cz);
+    // 3. TAMANHO: Escala por último
+    model = mat4.scale(model, 0.5, 0.5, 0.5);
 
     drawGenericMesh(game.gl, game.program, model, game.cubeMesh, [1.0, 1.0, 1.0]);
 }
 export function drawUFO(game) {
     if (!game.ufoMesh.positionBuffer) return;
 
-    let model = mat4.identity();
+    let model = mat4.identityMatrix();
 
     // Translação
     model = mat4.translate(model, 0.0, -2.0, 0.0);
@@ -112,7 +111,7 @@ export function drawUFO(game) {
 export function drawCrushedCan(game) {
     if (!game.canMesh.positionBuffer) return;
 
-    let model = mat4.identity();
+    let model = mat4.identityMatrix();
 
     // Translação
     model = mat4.translate(model, 3.0, 2.0, 0.0);
