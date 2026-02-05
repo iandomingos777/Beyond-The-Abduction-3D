@@ -130,6 +130,13 @@ export async function loadOBJModel(game, path) {
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, modelData.vertices, gl.STATIC_DRAW);
 
+    // Enviar as normais para a GPU
+    if (modelData.normals && modelData.normals.length > 0) {
+        mesh.normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, modelData.normals, gl.STATIC_DRAW);
+    }
+
     // Buffer de Textura (UVs)
     if (modelData.texCoords && modelData.texCoords.length > 0) {
         mesh.texCoordBuffer = gl.createBuffer();
