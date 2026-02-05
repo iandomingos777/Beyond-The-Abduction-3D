@@ -130,10 +130,10 @@ export function drawUFO(game) {
     model = mat4.rotateY(model, game.ufoRotation, cx, cy, cz);
 
     const material = {
-        ka: 0.2, // Metal reflete pouco ambiente difuso
-        kd: 0.4, // Difusa média
-        ks: [0.4, 0.4, 0.4], // Especular médio e cinza
-        shininess: 300.0, // Brilho muito concentrado (polido)
+        ka: 0.25, // Pouco ambiente
+        kd: 0.6, // Difusa média
+        ks: [0.1, 0.1, 0.1], // Especular médio e cinza
+        shininess: 10.0, // Brilho muito concentrado (polido)
     };
 
     drawGenericMesh(
