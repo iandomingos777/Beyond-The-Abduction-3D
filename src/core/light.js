@@ -11,11 +11,11 @@ export class Light {
         const uLightPos = gl.getUniformLocation(program, 'uLightPos');
         const uLightColor = gl.getUniformLocation(program, 'uLightColor');
         const uAmbientColor = gl.getUniformLocation(program, 'uAmbientColor');
-        const uShininess = gl.getUniformLocation(program, 'uShininess');
+        // const uShininess = gl.getUniformLocation(program, 'uShininess');
 
         gl.uniform3fv(uLightPos, this.position);
         gl.uniform3fv(uLightColor, this.color);
         gl.uniform3fv(uAmbientColor, this.ambient);
-        gl.uniform1f(uShininess, this.shininess);
+        // gl.uniform1f(uShininess, this.shininess);
     }
 }

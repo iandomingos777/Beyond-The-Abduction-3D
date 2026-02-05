@@ -6,21 +6,42 @@
  * @param {Object} modelData - Objeto contendo {positionBuffer, indexBuffer, count}
  * @param {Array} color - Array [r, g, b] opcional para cor sólida
  * @param {WebGLTexture} texture - Textura opcional para aplicar ao modelo
+ * * @param {Object} material - Configuração { ka, kd, ks, shininess }
  */
 
 import * as mat4 from '../math/mat4.js';
 
-function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null) {
+function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null, material = {}) {
     // 1. Uniformes de Matriz e Cor
     const uModel = gl.getUniformLocation(program, 'uModelMatrix');
     const uColorLoc = gl.getUniformLocation(program, 'uColor');
     const uUseTexture = gl.getUniformLocation(program, 'uUseTexture'); // Flag
     const uSampler = gl.getUniformLocation(program, 'uSampler');
 
+    // Valores padrão
+    const matDefaults = {
+        ka: 1.0, // Responde 100% à luz ambiente
+        kd: 1.0, // Responde 100% à luz difusa
+        ks: [1.0, 1.0, 1.0], // Brilho especular branco
+        shininess: 32.0, // Brilho padrão
+    };
+    const finalMat = { ...matDefaults, ...material };
+
     gl.uniformMatrix4fv(uModel, false, modelMatrix);
     gl.uniform3fv(uColorLoc, color); // Cor RGB [r, g, b]
 
-    // Lógica da Normal
+    // Envia uniforms de material
+    const uKa = gl.getUniformLocation(program, 'uKa');
+    const uKd = gl.getUniformLocation(program, 'uKd');
+    const uKs = gl.getUniformLocation(program, 'uKs');
+    const uShininess = gl.getUniformLocation(program, 'uShininess');
+
+    gl.uniform1f(uKa, finalMat.ka);
+    gl.uniform1f(uKd, finalMat.kd);
+    gl.uniform3fv(uKs, finalMat.ks);
+    gl.uniform1f(uShininess, finalMat.shininess);
+
+    // Lógica da normal
     // Se o mesh tem normais, mandamos. Se não (ex: debug lines), desativamos.
     const normLoc = gl.getAttribLocation(program, 'normal');
     if (normLoc !== -1 && meshData.normalBuffer) {
@@ -33,7 +54,7 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
         gl.vertexAttrib3f(normLoc, 0.0, 1.0, 0.0); // Normal genérica para cima
     }
 
-    // Lógica da Textura
+    // Lógica da textura
     if (texture && meshData.texCoordBuffer) {
         gl.uniform1i(uUseTexture, true); // Ativa modo textura no shader
 
@@ -74,51 +95,66 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
 
 export function drawCube(game) {
     if (!game.cubeMesh) return;
-
     let model = mat4.identityMatrix();
 
-    // 1. POSIÇÃO: Move para onde o objeto deve estar no mundo
+    // POSIÇÃO: Move para onde o objeto deve estar no mundo
     model = mat4.translate(model, -3.5, 2.0, 0.0);
-
-    // 2. ROTAÇÃO: Gira no próprio eixo (sem cx, cy, cz!)
+    // ROTAÇÃO: Gira no próprio eixo (sem cx, cy, cz!)
     model = mat4.rotateX(model, game.cubeRotation);
     model = mat4.rotateY(model, game.cubeRotation);
-
-    // 3. TAMANHO: Escala por último
+    // TAMANHO: Escala por último
     model = mat4.scale(model, 0.5, 0.5, 0.5);
 
-    drawGenericMesh(game.gl, game.program, model, game.cubeMesh, [1.0, 1.0, 1.0]);
+    // Definição do Material
+    const material = {
+        ka: 0.5, // Ambiente médio
+        kd: 0.8, // Difusa alta
+        ks: [0.3, 0.3, 0.3], // Especular cinza escuro (pouco brilho)
+        shininess: 30.0, // Brilho espalhado (plástico)
+    };
+
+    drawGenericMesh(game.gl, game.program, model, game.cubeMesh, [1.0, 1.0, 1.0], null, material);
 }
 export function drawUFO(game) {
     if (!game.ufoMesh.positionBuffer) return;
-
     let model = mat4.identityMatrix();
 
     // Translação
     model = mat4.translate(model, 0.0, -2.0, 0.0);
-
     // Escala
     model = mat4.scale(model, 0.05, 0.05, 0.05);
-
     // Rotação no próprio eixo do UFO
     const cx = 0.0,
         cy = -2.0,
         cz = 0.0;
     model = mat4.rotateY(model, game.ufoRotation, cx, cy, cz);
 
-    drawGenericMesh(game.gl, game.program, model, game.ufoMesh, [1.0, 1.0, 1.0], game.ufoTexture);
+    const material = {
+        ka: 0.2, // Metal reflete pouco ambiente difuso
+        kd: 0.4, // Difusa média
+        ks: [0.4, 0.4, 0.4], // Especular médio e cinza
+        shininess: 300.0, // Brilho muito concentrado (polido)
+    };
+
+    drawGenericMesh(
+        game.gl,
+        game.program,
+        model,
+        game.ufoMesh,
+        [1.0, 1.0, 1.0],
+        game.ufoTexture,
+        material,
+    );
 }
 
 export function drawCrushedCan(game) {
     if (!game.canMesh.positionBuffer) return;
-
     let model = mat4.identityMatrix();
 
     // Translação
     model = mat4.translate(model, 3.0, 2.0, 0.0);
-
     // Escala
-    model = mat4.scale(model, 0.05, 0.05, 0.05);
+    model = mat4.scale(model, 0.1, 0.1, 0.1);
 
     // Rotação em torno do próprio eixo
     const cx = 3.0,
@@ -126,6 +162,14 @@ export function drawCrushedCan(game) {
         cz = 0.0;
     model = mat4.rotateZ(model, Math.PI / 2, cx, cy, cz);
     model = mat4.rotateY(model, game.canRotation, cx, cy, cz);
+
+    // Material Metálico
+    const material = {
+        ka: 0.2, // Metal reflete pouco ambiente difuso
+        kd: 0.5, // Difusa média
+        ks: [1.0, 1.0, 1.0], // Especular muito forte e branco
+        shininess: 128.0, // Brilho muito concentrado (polido)
+    };
 
     drawGenericMesh(
         game.gl,
