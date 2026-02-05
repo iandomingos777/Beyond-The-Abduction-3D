@@ -2,20 +2,89 @@
 
 ## Overview
 
-Este projeto corresponde ao **Trabalho 2 (Segunda Avaliação Parcial – Peso 2)** da disciplina de **Computação Gráfica** e consiste no desenvolvimento de um **Jogo 3D ou Passeio Virtual 3D**, utilizando **exclusivamente WebGL puro** (sem bibliotecas gráficas de alto nível, como three.js).
+Este projeto corresponde ao **Trabalho 2 (Segunda Avaliação Parcial – Peso 2)** da disciplina de **Computação Gráfica** e consiste no desenvolvimento de um **Jogo 3D**, utilizando **exclusivamente WebGL puro** (sem bibliotecas gráficas de alto nível, como three.js).
 
-O projeto é uma **continuação narrativa direta** do jogo desenvolvido no Trabalho 1 (_Gabrielzito Abduction Arcade Game – 2D_). Nesta nova etapa, o personagem Gabrielzito é explorado em um **ambiente tridimensional**, representando o local para onde ele foi levado após a abdução.
+O projeto é uma **continuação narrativa direta** do jogo desenvolvido no Trabalho 1 (_Gabrielzito Abduction Arcade Game – 2D_). Nesta nova etapa, o personagem Gabrielzito se encontra **dentro da nave alienígena**, explorando o ambiente em busca de itens para escapar enquanto evita ser detectado pelas câmeras de vigilância dos aliens.
 
-> ⚠️ **Observação:** a definição final entre _Jogo 3D_ ou _Passeio Virtual 3D_ ainda está em aberto. O projeto foi estruturado para acomodar ambas as abordagens sem necessidade de grandes refatorações.
+## Gameplay
+
+**Gabrielzito: Beyond the Abduction** é um jogo 3D de stealth e exploração onde:
+
+- 🚀 **Cenário:** Gabrielzito está preso no espaço dos aliens, dentro de uma nave ou base espacial
+- 🎯 **Objetivo:** Procurar e coletar itens espalhados pelo ambiente 3D (em diferentes coordenadas x, y, z) para tentar escapar
+- 👁️ **Desafio:** Aliens vigiam o ambiente com câmeras de segurança - Gabrielzito não pode ser visto!
+
+### Controles
+
+- `W` - Avançar
+- `A` - Mover para esquerda
+- `S` - Recuar
+- `D` - Mover para direita
+- `Mouse` - Controlar direção do olhar (opcional)
+- `SPACE` - Interagir/Coletar item
+
+### Core Loop
+
+1. **Explorar** o ambiente 3D da nave alienígena
+2. **Localizar** itens espalhados em diferentes posições (x, y, z)
+3. **Aproximar-se** dos itens sem ser detectado pelas câmeras
+4. **Coletar** pressionando SPACE quando próximo
+5. **Escapar** após reunir todos os itens necessários
+
+### Mecânicas Principais
+
+**Sistema de Coleta:**
+- Objetos especiais espalhados pelo cenário da nave
+- Jogador precisa estar próximo do item (raio de ~2 unidades)
+- Pressionar SPACE para coletar
+- Feedback visual: item desaparece com animação
+- HUD atualiza contador de itens (ex: "3/5 itens coletados")
+
+**Sistema de Câmeras (Stealth):**
+- Câmeras posicionadas estrategicamente pelo ambiente
+- Animação de rotação/varredura com cone de visão
+- Sistema de line-of-sight para detecção
+- Tempo de detecção: ~2 segundos olhando diretamente
+- Consequência: teleporte ao início, sistema de strikes, ou game over
+- Estratégia: observar padrões, aguardar momento certo, explorar pontos cegos
+
+**Condição de Vitória:**
+- Coletar todos os itens necessários
+- Chegar à zona de escape (porta/saída)
+
+---
+
+## Cenário e Ambientação
+
+**Ambiente:**
+- Tema: Interior de nave alienígena / base espacial
+- Estética: Sci-fi, metálico, iluminação neon
+- Estrutura: Corredores, salas interconectadas, áreas abertas
+
+**Iluminação (Phong):**
+- Luz ambiente baixa, criando atmosfera sombria
+- Luzes pontuais: painéis iluminados, computadores alien
+- Luz móvel: hologram rotativo, laser varredura (requisito obrigatório)
+
+**Objetos:**
+- Paredes e estrutura da nave
+- Painéis de controle alien
+- Caixas/containers
+- Câmeras de vigilância
+- Itens coletáveis
+- Porta de escape
 
 ---
 
 ## Objetivos
 
+- Desenvolver um jogo 3D de stealth e exploração com mecânicas de coleta de itens
 - Aplicar conceitos fundamentais de **Computação Gráfica 3D**
 - Implementar manualmente partes essenciais do **pipeline gráfico**
 - Desenvolver uma cena 3D interativa com câmera em perspectiva
 - Implementar **iluminação realista** utilizando o modelo de Phong
+- Criar sistema de detecção de visibilidade (câmeras alienígenas)
+- Implementar mecânicas de coleta de objetos e interação com o ambiente
 - Manter uma arquitetura de código **modular, organizada e documentada**
 
 ---
@@ -24,14 +93,18 @@ O projeto é uma **continuação narrativa direta** do jogo desenvolvido no Trab
 
 Os requisitos acadêmicos completos estão descritos em `docs/professor_requirements.md`.
 
-De forma geral, o projeto contempla:
+De forma geral, o projeto contempla os **Requisitos Específicos para Jogo 3D**:
 
-- Câmera com **projeção perspectiva** e movimentação pelo ambiente
+- Câmera com **projeção perspectiva** (primeira ou terceira pessoa)
+- Movimentação do jogador pelo ambiente 3D
 - Iluminação baseada no **modelo de reflexão de Phong**
+- Objetos 3D carregados de arquivos **OBJ**
+- **Leitor próprio de arquivos OBJ** (implementação obrigatória)
 - Objetos 3D animados por transformações geométricas
 - Uso de **texturas** e **cores sólidas**
 - Renderização feita exclusivamente com **WebGL puro**
-- Interação via teclado (e mouse, quando aplicável)
+- Interação via teclado (WASD + SPACE)
+- Sistema de gameplay: coleta de itens, detecção por câmeras, mecânica de stealth
 
 ---
 
@@ -44,6 +117,9 @@ De forma geral, o projeto contempla:
 - Iluminação ambiente, difusa e especular (Phong)
 - Texturização e mapeamento UV
 - Shaders programáveis (GLSL)
+- Carregamento de modelos 3D (formato OBJ)
+- Detecção de colisões e interação com objetos
+- Sistema de visibilidade para mecânica de stealth
 
 ---
 
@@ -56,8 +132,9 @@ De forma geral, o projeto contempla:
 │
 ├── docs/
 │   ├── professor_requirements.md   # Checklist acadêmico
-│   ├── draft_implementation.md     # Planejamento técnico
-│   ├── technical_draft.md          # Draft técnico WebGL (hands-on)
+│   ├── technical_draft.md          # Planejamento técnico WebGL
+│   ├── game_design.md              # Game Design Document detalhado
+│   ├── trabalho2-CG.txt            # Requisitos originais do professor
 │   └── presentation.md             # Slides da apresentação (futuro)
 │
 ├── assets/
@@ -109,18 +186,64 @@ http://localhost:8000
 
 ---
 
+## Documentação Complementar
+
+O projeto possui documentação detalhada em `docs/`:
+
+- **[professor_requirements.md](docs/professor_requirements.md)** - Checklist completo dos requisitos acadêmicos com status de implementação
+- **[game_design.md](docs/game_design.md)** - Game Design Document com mecânicas detalhadas, gameplay loop e milestones
+- **[technical_draft.md](docs/technical_draft.md)** - Documentação técnica da estrutura WebGL e próximos passos de implementação
+- **trabalho2-CG.txt** - Requisitos originais fornecidos pelo professor
+
+---
+
 ## Metodologia de Desenvolvimento
 
-- Desenvolvimento incremental
+- Desenvolvimento incremental baseado em gameplay
 - Implementação progressiva dos requisitos técnicos
+- Foco em mecânicas de jogo (coleta de itens, sistema de detecção)
 - Organização modular do código
 - Uso de documentação complementar em `docs/`
 
 ---
 
-## Estado do Projeto
+## Milestones de Desenvolvimento
 
-O projeto encontra-se em fase de **definição e implementação incremental**, com foco inicial na consolidação da base gráfica (câmera, pipeline e iluminação), antes da definição final entre _Jogo 3D_ ou _Passeio Virtual 3D_.
+### Fase 1: Core Graphics ✅
+- ✅ Setup WebGL
+- ✅ Shaders básicos
+- ✅ Carregamento de OBJ
+- ✅ Renderização de objetos
+
+### Fase 2: Iluminação 🚧
+- 🚧 Implementar Phong nos shaders
+- 🚧 Adicionar fonte de luz móvel
+- ⏳ Ajustar materiais dos objetos
+
+### Fase 3: Gameplay Core 🎯
+- ⏳ Input e movimentação
+- ⏳ Sistema de coleta
+- ⏳ Posicionar itens no cenário
+- ⏳ HUD básico
+
+### Fase 4: Stealth Mechanics 👁️
+- ⏳ Criar câmeras de vigilância
+- ⏳ Implementar detecção
+- ⏳ Lógica de alerta/game over
+
+### Fase 5: Polish & Content 🎨
+- ⏳ Criar cenário completo da nave
+- ⏳ Adicionar mais modelos
+- ⏳ Menu e UI
+- ⏳ Sons e efeitos (opcional)
+- ⏳ Balanceamento
+
+### Fase 6: Entrega Final 📦
+- ⏳ Testes completos
+- ⏳ Gravar vídeo demonstrativo
+- ⏳ Preparar slides de apresentação
+- ⏳ Documentação final
+- ⏳ Deploy e entrega
 
 Decisões técnicas e evoluções de implementação são documentadas na pasta `docs/`.
 
