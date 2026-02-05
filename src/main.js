@@ -2,9 +2,10 @@ import { getGL } from './core/glContext.js';
 import { createShader, createProgram } from './core/shaderUtils.js';
 import { createCubeMesh } from './geometries/cube.js';
 import { loadOBJModel } from './core/objLoader.js';
-import { drawCrushedCan, drawCube, drawUFO } from './core/draw.js';
+import { drawCrushedCan, drawCube, drawUFO, drawEnvironment } from './core/draw.js';
 import { loadTexture } from './core/textureLoader.js';
 import { Light } from './core/light.js';
+import { Camera } from './core/camera.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -35,6 +36,7 @@ class Game {
 
         // Câmera (movido para o constructor para poder acessar no draw)
         this.cameraPos = [0, 0, 8];
+        this.fpsCamera = null;
 
         // Matrizes
         this.modelMatrix = mat4.identityMatrix();
@@ -50,6 +52,7 @@ class Game {
         this.gl.clearColor(0.1, 0.1, 0.15, 1.0);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.BLEND);
+        this.gl.enable(this.gl.CULL_FACE);
         return true;
     }
 
@@ -70,6 +73,8 @@ class Game {
             createShader(this.gl, this.gl.FRAGMENT_SHADER, fShaderSrc),
         );
         this.gl.useProgram(this.program);
+
+        this.fpsCamera = new Camera(this.canvas, [0, 2, 8]);
 
         // Inicializar Luz
         this.light = new Light(this.gl);
@@ -103,14 +108,17 @@ class Game {
 
         this.projectionMatrix = mat4.createPerspective(fov, aspect, 0.1, 100.0);
 
-        this.viewMatrix = mat4.createCamera(
-            [0, 0, 8], // posição da câmera
-            [0, 0, 0], // target
-            [0, 1, 0], // up
-        );
+        // this.viewMatrix = mat4.createCamera(
+        //     [0, 0, 8], // posição da câmera
+        //     [0, 0, 0], // target
+        //     [0, 1, 0], // up
+        // );
     }
 
     update(dt) {
+        if (this.fpsCamera) {
+            this.fpsCamera.update(dt);
+        }
         this.cubeRotation += dt * 1.5;
         this.ufoRotation += dt * 0.5;
         this.canRotation += dt * 0.8;
@@ -120,19 +128,23 @@ class Game {
         const gl = this.gl;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        // --- 1. Atualiza Câmera ---
+        // Pega a matriz de visão baseada no mouse/teclado
+        this.viewMatrix = this.fpsCamera.getViewMatrix();
+        // Envia a posição da câmera para o shader (brilho especular)
+        const uViewPos = gl.getUniformLocation(this.program, 'uViewPos');
+        gl.uniform3fv(uViewPos, this.fpsCamera.position);
+        // --- 2. Atualiza Luzes ---
+        this.light.updateUniforms(gl, this.program);
+        // --- 3. Envia Matrizes para a GPU ---
         const uView = gl.getUniformLocation(this.program, 'uViewMatrix');
         const uProj = gl.getUniformLocation(this.program, 'uProjectionMatrix');
-
-        // Enviar posição da câmera para o Specular
-        const uViewPos = gl.getUniformLocation(this.program, 'uViewPos');
-        gl.uniform3fv(uViewPos, this.cameraPos);
-
-        // Atualizar uniforms da luz
-        this.light.updateUniforms(gl, this.program);
 
         gl.uniformMatrix4fv(uView, false, this.viewMatrix);
         gl.uniformMatrix4fv(uProj, false, this.projectionMatrix);
 
+        // --- 4. Desenha os objetos ---
+        drawEnvironment(this);
         drawUFO(this);
         drawCube(this);
         drawCrushedCan(this);

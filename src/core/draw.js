@@ -180,3 +180,70 @@ export function drawCrushedCan(game) {
         game.crushedCanTexture,
     );
 }
+
+/**
+ * Desenha uma caixa (box) esticada a partir do mesh de cubo padrão.
+ * @param {Object} game - Objeto do jogo contendo contexto WebGL, programa e mesh do cubo
+ * @param {Array} position - Vetor [x, y, z] para posição da caixa
+ * @param {Array} scale - Vetor [sx, sy, sz] para escala da caixa
+ * @param {Array} color - Vetor [r, g, b] para cor sólida da caixa
+ */
+function drawBox(game, position, scale, color) {
+    if (!game.cubeMesh) return;
+    let model = mat4.identityMatrix();
+
+    // 1. Posição (x, y, z)
+    model = mat4.translate(model, position[0], position[1], position[2]);
+    // 2. Escala (largura, altura, profundidade)
+    model = mat4.scale(model, scale[0], scale[1], scale[2]);
+
+    // Material simples (fosco para paredes/chão)
+    const material = {
+        ka: 0.4,
+        kd: 0.6,
+        ks: [0.1, 0.1, 0.1],
+        shininess: 10.0,
+    };
+
+    drawGenericMesh(
+        game.gl,
+        game.program,
+        model,
+        game.cubeMesh,
+        color,
+        null, // Sem textura por enquanto (ou passe game.envTexture se quiser)
+        material,
+    );
+}
+
+export function drawEnvironment(game) {
+    // Cores (RGB)
+    const corChao = [0.4, 0.4, 0.9]; // Cinza azulado
+    const corParede = [0.7, 0.7, 0.7]; // Cinza claro
+    const corTeto = [0.2, 0.2, 0.2]; // Escuro (opcional)
+
+    // --- SALA PRINCIPAL (10x10) ---
+    // Nota: O cubeMesh padrão costuma ter tamanho 2 (-1 a 1).
+    // Então scale 5.0 gera tamanho 10.
+
+    // 1. Chão da Sala (Centro em 0,0,0)
+    // Posição: y = -2.0 (para ficar abaixo dos objetos)
+    drawBox(game, [0, -2.0, 0], [10.0, 0.1, 10.0], corChao);
+    // 2. Parede Fundos
+    drawBox(game, [0, 0, -10.0], [10.0, 2.0, 0.5], corParede);
+    // 3. Parede Esquerda
+    drawBox(game, [-10.0, 0, 0], [0.5, 2.0, 10.0], corParede);
+    // 4. Parede Direita
+    drawBox(game, [10.0, 0, 0], [0.5, 2.0, 10.0], corParede);
+
+    // --- CORREDOR (Saindo da frente da sala) ---
+    // Vamos fazer um corredor no eixo Z positivo
+
+    // 1. Chão do Corredor (Mais estreito, largura 4)
+    // Começa no Z=10 (borda da sala) e vai até Z=30
+    drawBox(game, [0, -2.0, 20.0], [4.0, 0.1, 10.0], corChao);
+    // 2. Parede Esquerda do Corredor
+    drawBox(game, [-4.0, 0, 20.0], [0.5, 2.0, 10.0], corParede);
+    // 3. Parede Direita do Corredor
+    drawBox(game, [4.0, 0, 20.0], [0.5, 2.0, 10.0], corParede);
+}
