@@ -8,7 +8,6 @@ import { Light } from './core/light.js';
 
 import * as mat4 from './math/mat4.js';
 
-
 class Game {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -29,6 +28,7 @@ class Game {
 
         // Texturas
         this.crushedCanTexture = null;
+        this.ufoTexture = null;
 
         // Iluminação
         this.light = null;
@@ -85,6 +85,7 @@ class Game {
             this.gl,
             '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
         );
+        this.ufoTexture = await loadTexture(this.gl, '../assets/textures/ufo_diffuse.png');
 
         this.cubeMesh = createCubeMesh(this.gl);
 
@@ -100,17 +101,12 @@ class Game {
         const fov = 45; // em graus (teu createPerspective espera graus)
         const aspect = this.canvas.width / this.canvas.height;
 
-        this.projectionMatrix = mat4.createPerspective(
-            fov,
-            aspect,
-            0.1,
-            100.0
-        );
+        this.projectionMatrix = mat4.createPerspective(fov, aspect, 0.1, 100.0);
 
         this.viewMatrix = mat4.createCamera(
-            [0, 0, 8],   // posição da câmera
-            [0, 0, 0],   // target
-            [0, 1, 0]    // up
+            [0, 0, 8], // posição da câmera
+            [0, 0, 0], // target
+            [0, 1, 0], // up
         );
     }
 

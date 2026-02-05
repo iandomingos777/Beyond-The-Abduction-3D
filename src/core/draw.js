@@ -10,7 +10,6 @@
 
 import * as mat4 from '../math/mat4.js';
 
-
 function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = null) {
     // 1. Uniformes de Matriz e Cor
     const uModel = gl.getUniformLocation(program, 'uModelMatrix');
@@ -102,10 +101,12 @@ export function drawUFO(game) {
     model = mat4.scale(model, 0.05, 0.05, 0.05);
 
     // Rotação no próprio eixo do UFO
-    const cx = 0.0, cy = -2.0, cz = 0.0;
+    const cx = 0.0,
+        cy = -2.0,
+        cz = 0.0;
     model = mat4.rotateY(model, game.ufoRotation, cx, cy, cz);
 
-    drawGenericMesh(game.gl, game.program, model, game.ufoMesh, [0.6, 1.0, 0.6]);
+    drawGenericMesh(game.gl, game.program, model, game.ufoMesh, [1.0, 1.0, 1.0], game.ufoTexture);
 }
 
 export function drawCrushedCan(game) {
@@ -120,9 +121,18 @@ export function drawCrushedCan(game) {
     model = mat4.scale(model, 0.05, 0.05, 0.05);
 
     // Rotação em torno do próprio eixo
-    const cx = 3.0, cy = 2.0, cz = 0.0;
+    const cx = 3.0,
+        cy = 2.0,
+        cz = 0.0;
     model = mat4.rotateZ(model, Math.PI / 2, cx, cy, cz);
     model = mat4.rotateY(model, game.canRotation, cx, cy, cz);
 
-    drawGenericMesh(game.gl, game.program, model, game.canMesh, [1.0, 1.0, 1.0], game.crushedCanTexture);
+    drawGenericMesh(
+        game.gl,
+        game.program,
+        model,
+        game.canMesh,
+        [1.0, 1.0, 1.0],
+        game.crushedCanTexture,
+    );
 }
