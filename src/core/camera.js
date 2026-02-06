@@ -15,7 +15,7 @@ export class Camera {
         this.pitch = 0;
 
         // Configurações
-        this.speed = 5.0; // Unidades por segundo
+        this.speed = 60.0; // Unidades por segundo
         this.sensitivity = 0.1; // Sensibilidade do mouse
         this.isEnabled = false; // Flag para ativar/desativar
 
@@ -144,7 +144,7 @@ export class Camera {
             newPosition = this.collisionSystem.resolveCollision(
                 oldPosition,
                 newPosition,
-                this.playerSize
+                this.playerSize,
             );
         }
 

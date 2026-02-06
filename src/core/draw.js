@@ -201,7 +201,7 @@ function drawBox(game, position, scale, color) {
 
     // Material simples (fosco para paredes/chão)
     const material = {
-        ka: 0.4,
+        ka: 2.0,
         kd: 0.6,
         ks: [0.1, 0.1, 0.1],
         shininess: 10.0,

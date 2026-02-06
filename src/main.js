@@ -70,7 +70,7 @@ class Game {
     async init() {
         if (!this.initGL()) return;
 
-        // 1. Shaders
+        // Shaders
         const vShaderSrc = await this.loadShader('./assets/shaders/vertex.glsl');
         const fShaderSrc = await this.loadShader('./assets/shaders/fragment.glsl');
         this.program = createProgram(
@@ -120,7 +120,7 @@ class Game {
         const fov = 45; // em graus (teu createPerspective espera graus)
         const aspect = this.canvas.width / this.canvas.height;
 
-        this.projectionMatrix = mat4.createPerspective(fov, aspect, 0.1, 100.0);
+        this.projectionMatrix = mat4.createPerspective(fov, aspect, 0.1, 200.0);
 
         // this.viewMatrix = mat4.createCamera(
         //     [0, 0, 8], // posição da câmera
