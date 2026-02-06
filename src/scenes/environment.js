@@ -37,21 +37,21 @@ export const SCENE_GEOMETRY = [
         isCollider: true, // Jogador anda sobre o chão
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES DE FUNDO
         position: [0, WALL_POS_Y, -10.0],
         size: [20.0, WALL_HEIGHT, WALL_THICKNESS],
         color: WALL_COLOR, // Cinza
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES PRINCIPAIS
         position: [-10.0, WALL_POS_Y, 0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 20.0],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES PRINCIPAIS
         position: [10.0, WALL_POS_Y, 0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 20.0],
         color: WALL_COLOR,
@@ -67,14 +67,14 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO LADO DO CORREDOR
         position: [-4.0, WALL_POS_Y, 20.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 20.0],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO LADO DO CORREDOR
         position: [4.0, WALL_POS_Y, 20.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 20.0],
         color: WALL_COLOR,
@@ -89,14 +89,14 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES PRINCIPAIS
         position: [-30.0, WALL_POS_Y, 60.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 60.0],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES PRINCIPAIS
         position: [30.0, WALL_POS_Y, 60.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 60.0],
         color: WALL_COLOR,
@@ -143,14 +143,14 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO LADO DO CORREDOR
         position: [-5.0, WALL_POS_Y, 110.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 40.0],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO LADO DO CORREDOR
         position: [5.0, WALL_POS_Y, 115.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 50.0],
         color: WALL_COLOR,
@@ -165,21 +165,21 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO LADO DO CORREDOR
         position: [-22.5, WALL_POS_Y, 130.0],
         size: [35.0, WALL_HEIGHT, WALL_THICKNESS],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO LADO DO CORREDOR
         position: [-12.5, WALL_POS_Y, 140.0],
         size: [35.0, WALL_HEIGHT, WALL_THICKNESS],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES AO FIM DO CORREDOR
         position: [-40.0, WALL_POS_Y, 135.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 10],
         color: WALL_COLOR,
@@ -194,14 +194,14 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES PRINCIPAIS
         position: [-67.5, WALL_POS_Y, 170.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 60.0],
         color: WALL_COLOR,
         isCollider: true,
     },
     {
-        type: 'wall',
+        type: 'wall', // PAREDES PRINCIPAIS
         position: [-7.5, WALL_POS_Y, 170.0],
         size: [WALL_THICKNESS, WALL_HEIGHT, 60.0],
         color: WALL_COLOR,
