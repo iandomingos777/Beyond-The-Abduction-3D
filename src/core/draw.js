@@ -1,3 +1,5 @@
+import { SCENE_GEOMETRY } from '../scenes/environment.js';
+
 /**
  * Função genérica para desenhar qualquer modelo OBJ carregado
  * @param {WebGLRenderingContext} gl - Contexto WebGL
@@ -217,33 +219,8 @@ function drawBox(game, position, scale, color) {
 }
 
 export function drawEnvironment(game) {
-    // Cores (RGB)
-    const corChao = [0.4, 0.4, 0.9]; // Azul
-    const corParede = [0.7, 0.7, 0.7]; // Cinza claro
-    const corTeto = [0.2, 0.2, 0.2]; // Escuro (opcional)
-
-    // --- SALA PRINCIPAL (10x10) ---
-    // Nota: O cubeMesh padrão costuma ter tamanho 2 (-1 a 1).
-    // Então scale 5.0 gera tamanho 10.
-
-    // 1. Chão da Sala (Centro em 0,0,0)
-    // Posição: y = -2.0 (para ficar abaixo dos objetos)
-    drawBox(game, [0, -2.0, 0], [20.0, 0.1, 20.0], corChao);
-    // 2. Parede Fundos
-    drawBox(game, [0, 2, -10.0], [20.0, 12.0, 0.5], corParede);
-    // 3. Parede Esquerda
-    drawBox(game, [-10.0, 2, 0], [0.5, 12.0, 20.0], corParede);
-    // 4. Parede Direita
-    drawBox(game, [10.0, 2, 0], [0.5, 12.0, 20.0], corParede);
-
-    // --- CORREDOR (Saindo da frente da sala) ---
-    // Vamos fazer um corredor no eixo Z positivo
-
-    // 1. Chão do Corredor (Mais estreito, largura 4)
-    // Começa no Z=10 (borda da sala) e vai até Z=30
-    drawBox(game, [0, -2.0, 20.0], [8.0, 0.1, 20.0], corChao);
-    // 2. Parede Esquerda do Corredor
-    drawBox(game, [-4.0, 0, 20.0], [0.5, 2.0, 20.0], corParede);
-    // 3. Parede Direita do Corredor
-    drawBox(game, [4.0, 0, 20.0], [0.5, 2.0, 20.0], corParede);
+    // Desenha todos os elementos definidos em SCENE_GEOMETRY
+    SCENE_GEOMETRY.forEach((elem) => {
+        drawBox(game, elem.position, elem.size, elem.color);
+    });
 }

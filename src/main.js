@@ -6,6 +6,8 @@ import { drawCrushedCan, drawCube, drawUFO, drawEnvironment } from './core/draw.
 import { loadTexture } from './core/textureLoader.js';
 import { Light } from './core/light.js';
 import { Camera } from './core/camera.js';
+import { CollisionSystem } from './systems/collision.js';
+import { setupSceneColliders } from './scenes/environment.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -38,6 +40,9 @@ class Game {
         // Câmera (movido para o constructor para poder acessar no draw)
         this.cameraPos = [0, 0, 8];
         this.fpsCamera = null;
+
+        // Sistema de Colisão
+        this.collisionSystem = null;
 
         // Matrizes
         this.modelMatrix = mat4.identityMatrix();
@@ -77,6 +82,10 @@ class Game {
 
         this.fpsCamera = new Camera(this.canvas, [0, 2, 8]);
 
+        // Inicializar Sistema de Colisão
+        this.collisionSystem = new CollisionSystem();
+        this.fpsCamera.setCollisionSystem(this.collisionSystem);
+
         // Inicializar Luz
         this.light = new Light(this.gl);
         // Exemplo: Mudar a cor da luz para levemente amarelada
@@ -99,6 +108,9 @@ class Game {
         // Carregar OBJs
         this.ufoMesh = await loadOBJModel(this, '../assets/models/Low_poly_UFO.obj');
         this.canMesh = await loadOBJModel(this, '../assets/models/can_crushed_lowpoly.obj');
+
+        // Configurar colisores do ambiente
+        setupSceneColliders(this.collisionSystem);
 
         this.setupMatrices();
         requestAnimationFrame((t) => this.loop(t));

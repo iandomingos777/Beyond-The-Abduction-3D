@@ -22,7 +22,18 @@ export class Camera {
         // Input
         this.keys = {};
 
+        // Colisão
+        this.collisionSystem = null; // Será definido externamente
+        this.playerSize = [0.5, 1.8, 0.5]; // [width, height, depth]
+
         this._initInput();
+    }
+
+    /**
+     * Define o sistema de colisão a ser usado
+     */
+    setCollisionSystem(collisionSystem) {
+        this.collisionSystem = collisionSystem;
     }
 
     // Liga/Desliga o controle
@@ -93,34 +104,52 @@ export class Camera {
     update(dt) {
         if (!this.isEnabled) return;
 
+        // Salva posição antiga para colisão
+        const oldPosition = [...this.position];
+
         const velocity = this.speed * dt;
+
+        // Calcula nova posição desejada (sem colisão ainda)
+        let newPosition = [...this.position];
 
         // W - Frente
         if (this.keys['KeyW']) {
-            this.position = this._add(this.position, this._scale(this.front, velocity));
+            newPosition = this._add(newPosition, this._scale(this.front, velocity));
         }
         // S - Trás
         if (this.keys['KeyS']) {
-            this.position = this._sub(this.position, this._scale(this.front, velocity));
+            newPosition = this._sub(newPosition, this._scale(this.front, velocity));
         }
         // A - Esquerda (Cross Product entre Front e WorldUp)
         if (this.keys['KeyA']) {
             const right = this._normalize(this._cross(this.front, this.worldUp));
-            this.position = this._sub(this.position, this._scale(right, velocity));
+            newPosition = this._sub(newPosition, this._scale(right, velocity));
         }
         // D - Direita
         if (this.keys['KeyD']) {
             const right = this._normalize(this._cross(this.front, this.worldUp));
-            this.position = this._add(this.position, this._scale(right, velocity));
+            newPosition = this._add(newPosition, this._scale(right, velocity));
         }
         // Q - Descer (Global)
         if (this.keys['KeyQ']) {
-            this.position = this._sub(this.position, this._scale(this.worldUp, velocity));
+            newPosition = this._sub(newPosition, this._scale(this.worldUp, velocity));
         }
         // E - Subir (Global)
         if (this.keys['KeyE']) {
-            this.position = this._add(this.position, this._scale(this.worldUp, velocity));
+            newPosition = this._add(newPosition, this._scale(this.worldUp, velocity));
         }
+
+        // Aplica sistema de colisão (se disponível)
+        if (this.collisionSystem) {
+            newPosition = this.collisionSystem.resolveCollision(
+                oldPosition,
+                newPosition,
+                this.playerSize
+            );
+        }
+
+        // Atualiza posição final
+        this.position = new Float32Array(newPosition);
     }
 
     // Retorna a ViewMatrix para o Shader
