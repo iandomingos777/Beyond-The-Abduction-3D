@@ -1,0 +1,188 @@
+/* ============================================
+   Menu Principal - Overlay sobre o Canvas
+   ============================================ */
+
+#menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(10, 10, 30, 0.92) 0%, rgba(0, 0, 0, 0.97) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    font-family: 'Segoe UI', 'Consolas', monospace;
+    color: #e0e0e0;
+    user-select: none;
+    overflow: hidden;
+}
+
+#menu-overlay.hidden {
+    display: none;
+}
+
+/* --- Partículas decorativas de fundo --- */
+#menu-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.15), transparent),
+        radial-gradient(1px 1px at 60% 45%, rgba(255,255,255,0.25), transparent),
+        radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.2), transparent);
+    pointer-events: none;
+    animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+    0%   { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}
+
+/* ---- Título ---- */
+.menu-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #7ec8e3;
+    text-shadow:
+        0 0 10px rgba(126, 200, 227, 0.5),
+        0 0 30px rgba(126, 200, 227, 0.2);
+    margin-bottom: 0.3rem;
+    z-index: 1;
+}
+
+.menu-subtitle {
+    font-size: 0.95rem;
+    color: #6a8fa7;
+    letter-spacing: 3px;
+    margin-bottom: 2.5rem;
+    z-index: 1;
+}
+
+/* ---- Lista de Opções ---- */
+.menu-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    z-index: 1;
+}
+
+.menu-option {
+    font-size: 1.35rem;
+    padding: 0.65rem 2.8rem;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    cursor: default;
+    letter-spacing: 2px;
+    color: #8899aa;
+}
+
+.menu-option.active {
+    color: #ffffff;
+    border-color: rgba(126, 200, 227, 0.6);
+    background: rgba(126, 200, 227, 0.1);
+    text-shadow: 0 0 8px rgba(126, 200, 227, 0.4);
+}
+
+.menu-option.active::before {
+    content: '▸ ';
+    color: #7ec8e3;
+}
+
+/* ---- Dica de navegação ---- */
+.menu-hint {
+    position: absolute;
+    bottom: 1.8rem;
+    font-size: 0.75rem;
+    color: #556677;
+    letter-spacing: 1.5px;
+    z-index: 1;
+}
+
+/* ============================================
+   Sub-tela: Lore / Tutorial (caixa de texto)
+   ============================================ */
+
+.menu-textbox {
+    z-index: 1;
+    max-width: 680px;
+    width: 85%;
+    text-align: center;
+}
+
+.menu-textbox-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #7ec8e3;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px rgba(126, 200, 227, 0.3);
+}
+
+.menu-textbox-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #c0cdd8;
+    margin-bottom: 2rem;
+    text-align: left;
+    padding: 0 1rem;
+}
+
+.menu-textbox-body p {
+    margin: 0 0 1rem 0;
+}
+
+.menu-textbox-body .key {
+    display: inline-block;
+    background: rgba(126, 200, 227, 0.15);
+    border: 1px solid rgba(126, 200, 227, 0.4);
+    border-radius: 3px;
+    padding: 0.1rem 0.5rem;
+    font-family: 'Consolas', monospace;
+    font-size: 0.95rem;
+    color: #7ec8e3;
+    margin: 0 0.15rem;
+}
+
+.menu-textbox-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+}
+
+.menu-textbox-body table td {
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.menu-textbox-body table td:first-child {
+    text-align: center;
+    width: 120px;
+}
+
+.menu-textbox-back {
+    font-size: 0.85rem;
+    color: #556677;
+    letter-spacing: 1.5px;
+}
+
+.menu-textbox-back span {
+    color: #7ec8e3;
+}

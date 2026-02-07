@@ -8,6 +8,7 @@ import { Light } from './core/light.js';
 import { Camera } from './core/camera.js';
 import { CollisionSystem } from './systems/collision.js';
 import { setupSceneColliders } from './scenes/environment.js';
+import { MainMenu } from './menu/mainMenu.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -113,7 +114,16 @@ class Game {
         setupSceneColliders(this.collisionSystem);
 
         this.setupMatrices();
-        requestAnimationFrame((t) => this.loop(t));
+
+        // Exibe o menu principal antes de iniciar o loop
+        const menuOverlay = document.getElementById('menu-overlay');
+        this.menu = new MainMenu(menuOverlay, {
+            onPlay: () => {
+                this.fpsCamera.allowActivation = true;
+                requestAnimationFrame((t) => this.loop(t));
+            }
+        });
+        this.menu.show();
     }
 
     setupMatrices() {

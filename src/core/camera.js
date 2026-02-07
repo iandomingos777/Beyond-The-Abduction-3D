@@ -18,6 +18,7 @@ export class Camera {
         this.speed = 60.0; // Unidades por segundo
         this.sensitivity = 0.1; // Sensibilidade do mouse
         this.isEnabled = false; // Flag para ativar/desativar
+        this.allowActivation = false; // Bloqueado até o menu liberar
 
         // Input
         this.keys = {};
@@ -72,9 +73,9 @@ export class Camera {
             this._updateVectors();
         });
 
-        // Clique no canvas para ativar (opcional, pode ser feito via botão na UI)
+        // Clique no canvas para ativar (bloqueado até allowActivation = true)
         this.canvas.addEventListener('click', () => {
-            if (!this.isEnabled) this.toggle(true);
+            if (this.allowActivation && !this.isEnabled) this.toggle(true);
         });
 
         // Detecta se o usuário apertou ESC para sair do lock

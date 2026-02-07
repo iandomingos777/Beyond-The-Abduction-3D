@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CG - Jogo 3D</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
+    <link rel="stylesheet" href="./src/menu/menuStyles.css">
     <style>
         body {
             margin: 0;
@@ -17,14 +18,22 @@
             background-color: #1a1a1a;
         }
 
+        #game-wrapper {
+            position: relative;
+        }
+
         canvas {
             border: 1px solid #333;
+            display: block;
         }
     </style>
 </head>
 
 <body>
-    <canvas id="glcanvas1" width="1280" height="720"></canvas>
+    <div id="game-wrapper">
+        <canvas id="glcanvas1" width="1280" height="720"></canvas>
+        <div id="menu-overlay"></div>
+    </div>
     <script type="module" src="./src/main.js"></script>
 </body>
 
