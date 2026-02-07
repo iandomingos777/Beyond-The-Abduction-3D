@@ -8,6 +8,8 @@ import { Light } from './core/light.js';
 import { Camera } from './core/camera.js';
 import { CollisionSystem } from './systems/collision.js';
 import { setupSceneColliders } from './scenes/environment.js';
+import { Player } from './models/player.js';
+import { InputHandler } from './core/input.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -43,6 +45,11 @@ class Game {
 
         // Sistema de Colisão
         this.collisionSystem = null;
+
+        // Player (representa o estado do jogador, como posição, rotação, etc.)
+        this.player = new Player();
+
+        this.input = new InputHandler();
 
         // Matrizes
         this.modelMatrix = mat4.identityMatrix();
@@ -84,7 +91,7 @@ class Game {
 
         // Inicializar Sistema de Colisão
         this.collisionSystem = new CollisionSystem();
-        this.fpsCamera.setCollisionSystem(this.collisionSystem);
+        
 
         // Inicializar Luz
         this.light = new Light(this.gl);
@@ -114,6 +121,11 @@ class Game {
 
         this.setupMatrices();
         requestAnimationFrame((t) => this.loop(t));
+
+        this.canvas.addEventListener('click', () => {
+        this.canvas.requestPointerLock();
+    });
+
     }
 
     setupMatrices() {
@@ -130,13 +142,19 @@ class Game {
     }
 
     update(dt) {
-        if (this.fpsCamera) {
-            this.fpsCamera.update(dt);
-        }
-        this.cubeRotation += dt * 1.5;
-        this.ufoRotation += dt * 0.5;
-        this.canRotation += dt * 0.8;
-    }
+    // 1. Captura inputs do mouse
+    const mouse = this.input.consumeMouseDelta();
+    
+    // 2. Rotaciona e move o player
+    this.player.applyRotation(mouse.x, mouse.y);
+    this.player.update(dt, this.input, this.collisionSystem);
+
+    // 3. A câmera apenas "segue" o player
+    this.fpsCamera.position = this.player.getEyePosition();
+    this.fpsCamera.yaw = this.player.yaw;
+    this.fpsCamera.pitch = this.player.pitch;
+    this.fpsCamera._updateVectors(); 
+}
 
     draw() {
         const gl = this.gl;
