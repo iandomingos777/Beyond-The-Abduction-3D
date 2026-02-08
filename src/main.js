@@ -358,13 +358,10 @@ class Game {
 
         // Configura colisoes e matrizes
         setupSceneColliders(this.collisionSystem);
-<<<<<<< HEAD
-=======
 
         // Toggle building mode com tecla 'B'
         this.input.onBuildingModeToggle = () => this.player.toggleBuildingMode();
 
->>>>>>> 2037c204d5fccaf10d7abb52cff57b64e478cc2c
         this.setupMatrices();
 
         // Pointer lock ao clicar no canvas (só ativa durante gameplay)
@@ -443,7 +440,6 @@ class Game {
         // 1. Captura inputs do mouse
         const mouse = this.input.consumeMouseDelta();
 
-<<<<<<< HEAD
         // 2. Rotaciona e move o player
         this.player.applyRotation(mouse.x, mouse.y);
         this.player.update(dt, this.input, this.collisionSystem);
@@ -453,27 +449,22 @@ class Game {
         this.fpsCamera.yaw = this.player.yaw;
         this.fpsCamera.pitch = this.player.pitch;
         this.fpsCamera._updateVectors();
-    }
-=======
-    // 3. A câmera apenas "segue" o player
-    this.fpsCamera.position = this.player.getEyePosition();
-    this.fpsCamera.yaw = this.player.yaw;
-    this.fpsCamera.pitch = this.player.pitch;
-    this.fpsCamera._updateVectors();
 
-    // 4. Zona da sala de fuga → luz verde alienígena
-    const pos = this.player.position;
-    const inEscape = pos[0] >= ESCAPE_ROOM.minX && pos[0] <= ESCAPE_ROOM.maxX
-                  && pos[2] >= ESCAPE_ROOM.minZ && pos[2] <= ESCAPE_ROOM.maxZ;
-    if (inEscape) {
-        this.light.color = [0.15, 1.0, 0.25];
-        this.light.position = [ESCAPE_ROOM.center[0], 10.0, ESCAPE_ROOM.center[2]];
-    } else {
-        this.light.color = [1.0, 0.95, 0.8];
-        this.light.position = [pos[0], 10.0, pos[2] + 5.0];
+        // 4. Zona da sala de fuga → luz verde alienígena
+        const pos = this.player.position;
+        const inEscape =
+            pos[0] >= ESCAPE_ROOM.minX &&
+            pos[0] <= ESCAPE_ROOM.maxX &&
+            pos[2] >= ESCAPE_ROOM.minZ &&
+            pos[2] <= ESCAPE_ROOM.maxZ;
+        if (inEscape) {
+            this.light.color = [0.15, 1.0, 0.25];
+            this.light.position = [ESCAPE_ROOM.center[0], 10.0, ESCAPE_ROOM.center[2]];
+        } else {
+            this.light.color = [1.0, 0.95, 0.8];
+            this.light.position = [pos[0], 10.0, pos[2] + 5.0];
+        }
     }
-}
->>>>>>> 2037c204d5fccaf10d7abb52cff57b64e478cc2c
 
     draw() {
         const gl = this.gl;
