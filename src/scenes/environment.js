@@ -391,7 +391,22 @@ export const SCENE_GEOMETRY = [
         color: ESCAPE_FLOOR_COLOR,
         isCollider: true,
     },
+    // Piso entre entrada e plataforma (preenchendo gap)
+    {
+        type: 'floor',
+        position: [-37.5, FLOOR_POS_Y, 225.0],
+        size: [13.0, 0.1, 6.0],
+        color: ESCAPE_FLOOR_COLOR,
+        isCollider: true,
+    },
     // O BURACO DE FUGA (sem piso no centro! ~6×6 em -37.5, 225)
+    {
+        type: 'floor',
+        position: [-37.5, FLOOR_POS_Y - 5.0, 225.0],
+        size: [13.0, 0.1, 13.0],
+        color: [0.05, 0.05, 0.05],
+        isCollider: false,
+    },
     // TETO DA ESCAPE ROOM
     {
         type: 'ceiling',
@@ -429,28 +444,21 @@ export const SCENE_GEOMETRY = [
     // --- Plataforma elevada (no centro-fundo, ao lado do buraco) ---
     {
         type: 'platform',
-        position: [-37.5, FLOOR_POS_Y + 1.5, 230.0],
-        size: [6.0, 3.0, 4.0],
-        color: PLATFORM_COLOR,
+        position: [-37.5, FLOOR_POS_Y + 1.0, 230.0],
+        size: [6.0, 2.0, 4.0],
+        color: [0.3, 0.9, 0.4],
         isCollider: true,
-        material: { ka: 0.4, kd: 0.7, ks: [0.3, 0.3, 0.3], shininess: 40.0 },
+        material: { ka: 0.6, kd: 0.8, ks: [0.8, 1.0, 0.8], shininess: 80.0 },
     },
-    // --- Degraus da escada (3 degraus subindo até a plataforma) ---
+    
+    // --- Quadro decorativo grande na parede norte (frente da plataforma) ---
     {
-        type: 'step',
-        position: [-37.5, FLOOR_POS_Y + 0.5, 227.0],
-        size: [4.0, 1.0, 2.0],
-        color: STEP_COLOR,
-        isCollider: true,
-        material: { ka: 0.4, kd: 0.7, ks: [0.2, 0.2, 0.2], shininess: 30.0 },
-    },
-    {
-        type: 'step',
-        position: [-37.5, FLOOR_POS_Y + 1.0, 228.5],
-        size: [4.0, 2.0, 1.0],
-        color: STEP_COLOR,
-        isCollider: true,
-        material: { ka: 0.4, kd: 0.7, ks: [0.2, 0.2, 0.2], shininess: 30.0 },
+        type: 'frame',
+        position: [-37.5, WALL_POS_Y + 4.0, 235.0 - 0.3],
+        size: [12.0, 8.0, 0.05],
+        color: [0.95, 0.95, 0.95],
+        isCollider: false,
+        material: { ka: 0.9, kd: 0.95, ks: [0.6, 0.6, 0.6], shininess: 70.0 },
     },
 ];
 
