@@ -391,6 +391,14 @@ export const SCENE_GEOMETRY = [
         color: ESCAPE_FLOOR_COLOR,
         isCollider: true,
     },
+    // Piso entre entrada e plataforma (preenchendo gap)
+    {
+        type: 'floor',
+        position: [-37.5, FLOOR_POS_Y, 225.0],
+        size: [13.0, 0.1, 6.0],
+        color: ESCAPE_FLOOR_COLOR,
+        isCollider: true,
+    },
     // O BURACO DE FUGA (sem piso no centro! ~6×6 em -37.5, 225)
     {
         type: 'floor',
