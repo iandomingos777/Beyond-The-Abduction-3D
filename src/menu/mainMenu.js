@@ -2,26 +2,20 @@
  * mainMenu.js
  * Menu principal do jogo — navegação por Arrow Keys + Enter
  * Sub-telas: Lore (história) e Tutorial (comandos)
- *
- * Uso:
- *   const menu = new MainMenu(containerEl, { onPlay: () => {...} });
- *   menu.show();          // exibe o menu
- *   menu.hide();          // esconde (chamado internamente ao clicar "Jogar")
+ * ESC durante gameplay volta ao menu via callback onPause
  */
 
 // ─── Conteúdo das sub-telas ────────────────────────────────
 
 const LORE_HTML = `
     <div class="menu-textbox">
-        <div class="menu-textbox-title">Lore</div>
+        <div class="menu-textbox-title">Fuga de Gabrielzito?</div>
         <div class="menu-textbox-body">
-            <p>No universo do jogo 2D, <strong>Gabrielzito</strong> vivia sua vida
-            pacata até ser capturado por forças alienígenas misteriosas.</p>
-            <p>Agora preso em uma nave espacial à deriva no espaço profundo,
-            ele precisa explorar os corredores sombrios da estação,
-            encontrar pistas sobre o que aconteceu e descobrir uma rota de fuga
-            antes que seja tarde demais.</p>
-            <p>A nave parece abandonada… mas algo ainda se move entre as paredes.</p>
+            <p><strong>Gabrielzito</strong> vivia sua vida tranquila na Bahia até que os
+            homenzinhos verdes o capturaram.</p>
+            <p>Preso a bordo de uma nave alienígena, ele agora tenta encontrar uma forma
+            de escapar dos corredores frios e das salas de controle antes que seja tarde.</p>
+            <p>Você deve ajudá-lo a explorar, encontrar pistas e abrir uma rota de fuga.</p>
         </div>
         <div class="menu-textbox-back">Pressione <span>ESC</span> ou <span>ENTER</span> para voltar</div>
     </div>
@@ -29,7 +23,7 @@ const LORE_HTML = `
 
 const TUTORIAL_HTML = `
     <div class="menu-textbox">
-        <div class="menu-textbox-title">Tutorial</div>
+        <div class="menu-textbox-title">⌁ Protocolos de Controle ⌁</div>
         <div class="menu-textbox-body">
             <table>
                 <tr>
@@ -50,7 +44,7 @@ const TUTORIAL_HTML = `
                 </tr>
                 <tr>
                     <td><span class="key">ESC</span></td>
-                    <td>Liberar o cursor</td>
+                    <td>Voltar ao menu principal</td>
                 </tr>
             </table>
         </div>
@@ -64,7 +58,6 @@ const OPTIONS = [
     { label: 'Jogar',    action: 'play'     },
     { label: 'Lore',     action: 'lore'     },
     { label: 'Tutorial', action: 'tutorial' },
-    { label: 'Sair',     action: 'quit'     },
 ];
 
 // ─── Classe MainMenu ───────────────────────────────────────
@@ -80,9 +73,11 @@ export class MainMenu {
 
         this.activeIndex = 0;          // Opção selecionada
         this.state = 'main';           // 'main' | 'lore' | 'tutorial'
+        this.isPlaying = false;        // true quando gameplay está ativa
 
-        // Bound handler (para poder remover depois)
+        // Bound handlers (para poder remover depois)
         this._onKeyDown = this._handleKeyDown.bind(this);
+        this._onEscDuringGame = this._handleEscDuringGame.bind(this);
     }
 
     // ── API pública ─────────────────────────────────
@@ -90,15 +85,19 @@ export class MainMenu {
     show() {
         this.state = 'main';
         this.activeIndex = 0;
+        this.isPlaying = false;
         this._renderMain();
         this.container.classList.remove('hidden');
         window.addEventListener('keydown', this._onKeyDown);
+        window.removeEventListener('keydown', this._onEscDuringGame);
     }
 
     hide() {
         this.container.classList.add('hidden');
         this.container.innerHTML = '';
+        this.isPlaying = true;
         window.removeEventListener('keydown', this._onKeyDown);
+        window.addEventListener('keydown', this._onEscDuringGame);
     }
 
     // ── Renderização ─────────────────────────────────
@@ -111,10 +110,11 @@ export class MainMenu {
         }).join('');
 
         this.container.innerHTML = `
-            <div class="menu-title">Nave Perdida</div>
-            <div class="menu-subtitle">Uma aventura no espaço</div>
+            <div class="menu-ufo-icon">&#x1F6F8;</div>
+            <div class="menu-title">Gabrielzito: Beyond the Abduction</div>
+            <div class="menu-subtitle">os homenzinhos verdes me pegaram</div>
             <ul class="menu-options">${optionsHTML}</ul>
-            <div class="menu-hint">↑ ↓ para navegar  ·  ENTER para selecionar</div>
+            <div class="menu-hint">↑ ↓ navegar  ·  ENTER selecionar  ·  ESC voltar ao menu durante o jogo</div>
         `;
     }
 
@@ -144,6 +144,16 @@ export class MainMenu {
         } else {
             // Sub-tela (lore / tutorial): qualquer ESC ou Enter volta
             this._handleSubScreenInput(e);
+        }
+    }
+
+    /** ESC pressionado durante a gameplay → volta ao menu */
+    _handleEscDuringGame(e) {
+        if (e.code === 'Escape' && this.isPlaying) {
+            e.preventDefault();
+            // Callback registrado por main.js para pausar o loop
+            if (this.onPause) this.onPause();
+            this.show();
         }
     }
 
@@ -189,13 +199,6 @@ export class MainMenu {
             case 'tutorial':
                 this.state = 'tutorial';
                 this._renderSubScreen(TUTORIAL_HTML);
-                break;
-
-            case 'quit':
-                // window.close() só funciona se a aba foi aberta via JS
-                window.close();
-                // Fallback caso o browser bloqueie
-                window.location.href = 'about:blank';
                 break;
         }
     }

@@ -24,6 +24,10 @@ class Game {
         this.ufoRotation = 0;
         this.canRotation = 0;
 
+        // Controle do loop
+        this.running = false;
+        this.rafId = null;
+
         // Dados Geométricos (Meshes)
         // Padronizamos os nomes: ufoMesh, canMesh, cubeMesh
         this.cubeMesh = null;
@@ -120,9 +124,14 @@ class Game {
         this.menu = new MainMenu(menuOverlay, {
             onPlay: () => {
                 this.fpsCamera.allowActivation = true;
-                requestAnimationFrame((t) => this.loop(t));
+                this.startLoop();
             }
         });
+        // Callback: ESC durante gameplay → pausa e volta ao menu
+        this.menu.onPause = () => {
+            this.stopLoop();
+            this.fpsCamera.toggle(false);
+        };
         this.menu.show();
     }
 
@@ -174,12 +183,28 @@ class Game {
         drawCrushedCan(this);
     }
 
+    startLoop() {
+        if (this.running) return;
+        this.running = true;
+        this.lastTime = performance.now();
+        this.rafId = requestAnimationFrame((t) => this.loop(t));
+    }
+
+    stopLoop() {
+        this.running = false;
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
+    }
+
     loop(timestamp) {
+        if (!this.running) return;
         const dt = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
         this.update(dt);
         this.draw();
-        requestAnimationFrame((t) => this.loop(t));
+        this.rafId = requestAnimationFrame((t) => this.loop(t));
     }
 }
 
