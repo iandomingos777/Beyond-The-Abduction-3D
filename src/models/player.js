@@ -6,13 +6,30 @@ export class Player {
         this.yaw = -90;
         this.pitch = 0;
         this.eyeOffset = 1.8; // Aqui você controla a altura da câmera
-        this.speed = 12.0;
-        this.sensitivity = 1.0;
-        this.isBuildingMode = true;
+        this.speed = 20.0;
+        this.sensitivity = 0.3;
+        this.isBuildingMode = false;
         this.flySpeed = 30.0;
         
         // Tamanho para o sistema de colisão [largura, altura, profundidade]
         this.size = [0.6, 2.0, 0.6]; 
+    }
+
+    /**
+     * Toggle building mode (fly mode sem colisão)
+     */
+    toggleBuildingMode() {
+        const wasFlying = this.isBuildingMode;
+        this.isBuildingMode = !this.isBuildingMode;
+        
+        // Se estava voando e agora voltou para walk mode, reposiciona no chão
+        if (wasFlying && !this.isBuildingMode) {
+            // Altura do chão padrão + altura do personagem
+            this.position[1] = 0.0; // Ajuste conforme a altura do chão do seu mapa
+            console.log('Building Mode: OFF (Walk Mode) - Retornado ao chão');
+        } else {
+            console.log(`Building Mode: ${this.isBuildingMode ? 'ON (Fly Mode)' : 'OFF (Walk Mode)'}`);
+        }
     }
 
     /**
@@ -131,6 +148,12 @@ export class Player {
         // Teclas extras para subir/descer verticalmente
         if (input.isPressed('Space')) this.position[1] += this.flySpeed * dt;
         if (input.isPressed('ShiftLeft')) this.position[1] -= this.flySpeed * dt;
+
+        // Limites de Y para evitar cair infinito ou subir demais
+        const MIN_Y = -10.0;
+        const MAX_Y = 50.0;
+        if (this.position[1] < MIN_Y) this.position[1] = MIN_Y;
+        if (this.position[1] > MAX_Y) this.position[1] = MAX_Y;
 
         this.velocityLineY = 0; // Reseta gravidade para quando sair do modo building
     }
