@@ -7,7 +7,7 @@ import { loadTexture } from './core/textureLoader.js';
 import { Light } from './core/light.js';
 import { Camera } from './core/camera.js';
 import { CollisionSystem } from './systems/collision.js';
-import { setupSceneColliders } from './scenes/environment.js';
+import { setupSceneColliders, ESCAPE_ROOM } from './scenes/environment.js';
 import { MainMenu } from './menu/mainMenu.js';
 import { Player } from './models/player.js';
 import { InputHandler } from './core/input.js';
@@ -124,6 +124,9 @@ class Game {
         // Configurar colisores do ambiente
         setupSceneColliders(this.collisionSystem);
 
+        // Toggle building mode com tecla 'B'
+        this.input.onBuildingModeToggle = () => this.player.toggleBuildingMode();
+
         this.setupMatrices();
 
         // Pointer lock ao clicar no canvas (só ativa durante gameplay)
@@ -137,14 +140,16 @@ class Game {
         const menuOverlay = document.getElementById('menu-overlay');
         this.menu = new MainMenu(menuOverlay, {
             onPlay: () => {
-                this.fpsCamera.allowActivation = true;
                 this.startLoop();
             }
         });
         // Callback: ESC durante gameplay → pausa e volta ao menu
         this.menu.onPause = () => {
             this.stopLoop();
-            this.fpsCamera.toggle(false);
+            if (document.pointerLockElement) {
+                document.exitPointerLock();
+            }
+            this.input.consumeMouseDelta(); // Limpa delta acumulado
         };
         this.menu.show();
     }
@@ -174,7 +179,19 @@ class Game {
     this.fpsCamera.position = this.player.getEyePosition();
     this.fpsCamera.yaw = this.player.yaw;
     this.fpsCamera.pitch = this.player.pitch;
-    this.fpsCamera._updateVectors(); 
+    this.fpsCamera._updateVectors();
+
+    // 4. Zona da sala de fuga → luz verde alienígena
+    const pos = this.player.position;
+    const inEscape = pos[0] >= ESCAPE_ROOM.minX && pos[0] <= ESCAPE_ROOM.maxX
+                  && pos[2] >= ESCAPE_ROOM.minZ && pos[2] <= ESCAPE_ROOM.maxZ;
+    if (inEscape) {
+        this.light.color = [0.15, 1.0, 0.25];
+        this.light.position = [ESCAPE_ROOM.center[0], 10.0, ESCAPE_ROOM.center[2]];
+    } else {
+        this.light.color = [1.0, 0.95, 0.8];
+        this.light.position = [pos[0], 10.0, pos[2] + 5.0];
+    }
 }
 
     draw() {

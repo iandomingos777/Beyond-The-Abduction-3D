@@ -190,7 +190,7 @@ export function drawCrushedCan(game) {
  * @param {Array} scale - Vetor [sx, sy, sz] para escala da caixa
  * @param {Array} color - Vetor [r, g, b] para cor sólida da caixa
  */
-function drawBox(game, position, scale, color) {
+function drawBox(game, position, scale, color, elemType, elemMaterial) {
     if (!game.cubeMesh) return;
     let model = mat4.identityMatrix();
 
@@ -199,13 +199,18 @@ function drawBox(game, position, scale, color) {
     // 2. Escala (largura, altura, profundidade)
     model = mat4.scale(model, scale[0], scale[1], scale[2]);
 
-    // Material simples (fosco para paredes/chão)
-    const material = {
-        ka: 2.0,
-        kd: 0.6,
+    // Material padrão (fosco para paredes/chão)
+    const defaultMat = {
+        ka: 0.5,
+        kd: 0.7,
         ks: [0.1, 0.1, 0.1],
         shininess: 10.0,
     };
+    const material = elemMaterial ? { ...defaultMat, ...elemMaterial } : defaultMat;
+
+    // Textura: paredes e chão usam wallTexture; outros elementos sem textura
+    const useTexture = (elemType === 'wall' || elemType === 'floor');
+    const texture = useTexture ? game.wallTexture : null;
 
     drawGenericMesh(
         game.gl,
@@ -213,7 +218,7 @@ function drawBox(game, position, scale, color) {
         model,
         game.cubeMesh,
         color,
-        game.wallTexture, // Sem textura por enquanto (ou passe game.envTexture se quiser)
+        texture,
         material,
     );
 }
@@ -221,6 +226,6 @@ function drawBox(game, position, scale, color) {
 export function drawEnvironment(game) {
     // Desenha todos os elementos definidos em SCENE_GEOMETRY
     SCENE_GEOMETRY.forEach((elem) => {
-        drawBox(game, elem.position, elem.size, elem.color);
+        drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
     });
 }
