@@ -2,7 +2,13 @@ import { getGL } from './core/glContext.js';
 import { createShader, createProgram } from './core/shaderUtils.js';
 import { createCubeMesh } from './geometries/cube.js';
 import { loadOBJModel } from './core/objLoader.js';
-import { drawCrushedCan, drawCube, drawUFO, drawEnvironment } from './core/draw.js';
+import {
+    drawCrushedCan,
+    drawCube,
+    drawUFO,
+    drawEnvironment,
+    drawSceneObjects,
+} from './core/draw.js';
 import { loadTexture } from './core/textureLoader.js';
 import { Light } from './core/light.js';
 import { Camera } from './core/camera.js';
@@ -13,6 +19,233 @@ import { Player } from './models/player.js';
 import { InputHandler } from './core/input.js';
 
 import * as mat4 from './math/mat4.js';
+
+// --- CONFIGURAÇÃO DOS OBJETOS ---
+// Sala 2: Aprox. Z entre 30 e 90.
+// Sala 3: Aprox. Z entre 140 e 200, X negativo.
+const OBJECTS_TO_LOAD = [
+    // --- PERSONAGENS / FIGURAS ---
+    {
+        id: 'alien',
+        objPath: '../assets/models/Alien.obj',
+        texPath: '../assets/textures/Alien_skin_gray.png',
+        color: [0.0, 0.8, 0.5], // verde escurecido
+        // Sala 3 (Escondido no fundo)
+        position: [-50.0, 0.0, 180.0],
+        rotation: [0, Math.PI / 4, 0], // Virado para o centro
+        scale: [1.0, 1.0, 1.0],
+        material: {
+            ka: 0.4,
+            kd: 0.6,
+            ks: [0.2, 0.2, 0.2],
+            shininess: 10.0, // Pele: brilho baixo e espalhado
+        },
+    },
+    {
+        id: 'buddha',
+        objPath: '../assets/models/buddha_lowpoly.obj',
+        texPath: '../assets/textures/buddha_lowpoly.png',
+        // Sala 2 (Centro, como uma estátua)
+        position: [0.0, 0.0, 60.0],
+        scale: [5.0, 5.0, 5.0],
+        material: {
+            ka: 0.5,
+            kd: 0.5,
+            ks: [1.0, 0.8, 0.2],
+            shininess: 100.0, // Ouro/Bronze: Brilho forte e amarelado
+        },
+    },
+
+    // --- VEÍCULOS ---
+    {
+        id: 'police_car',
+        objPath: '../assets/models/carPolice.obj',
+        texPath: '../assets/textures/carPolice.png',
+        // Sala 2 (Estacionado no canto)
+        position: [15.0, 0.0, 50.0],
+        rotation: [0, -Math.PI / 6, 0],
+        scale: [1.0, 1.0, 1.0],
+        material: {
+            ka: 0.3,
+            kd: 0.7,
+            ks: [1.0, 1.0, 1.0],
+            shininess: 200.0, // Lataria: Muito brilhante e polido
+        },
+    },
+    {
+        id: 'ufo',
+        objPath: '../assets/models/Low_poly_UFO.obj',
+        texPath: '../assets/textures/ufo_diffuse.png',
+        // Sala 3 (Flutuando alto no centro da sala final)
+        position: [-37.5, 8.0, 170.0],
+        scale: [0.08, 0.08, 0.08],
+        rotation: [Math.PI / 6, 0, 0], // Levemente inclinado
+        material: {
+            ka: 0.8,
+            kd: 0.8,
+            ks: [0.5, 1.0, 1.0],
+            shininess: 150.0, // Sci-fi: Brilho ciano/metálico
+        },
+    },
+
+    // --- MOBÍLIA ---
+    {
+        id: 'couch',
+        objPath: '../assets/models/Couch.obj',
+        texPath: '../assets/textures/Couch.png',
+        // Sala 2 (Área de estar)
+        position: [-15.0, 0.0, 60.0],
+        rotation: [0, Math.PI / 2, 0],
+        scale: [1.0, 1.0, 1.0],
+        material: {
+            ka: 0.6,
+            kd: 0.8,
+            ks: [0.0, 0.0, 0.0],
+            shininess: 1.0, // Tecido: Quase sem brilho especular
+        },
+    },
+    {
+        id: 'couchDiner',
+        objPath: '../assets/models/CouchDiner.obj',
+        texPath: '../assets/textures/CouchDiner.png',
+        // Sala 2 (De frente pro outro sofá)
+        position: [-15.0, 0.0, 70.0],
+        rotation: [0, -Math.PI / 2, 0],
+        scale: [1.0, 1.0, 1.0],
+        material: {
+            ka: 0.5,
+            kd: 0.8,
+            ks: [0.3, 0.3, 0.3],
+            shininess: 20.0, // Couro/Vinil: Brilho leve
+        },
+    },
+    {
+        id: 'old_tv',
+        objPath: '../assets/models/old_tv.obj',
+        texPath: '../assets/textures/old_tv.png',
+        // Sala 2 (Perto dos sofás, no chão ou flutuando levemente)
+        position: [-10.0, 0.5, 65.0],
+        rotation: [0, Math.PI, 0],
+        scale: [1.0, 1.0, 1.0],
+        material: {
+            ka: 0.5,
+            kd: 0.7,
+            ks: [0.8, 0.8, 0.8],
+            shininess: 64.0, // Plástico/Vidro: Brilho médio
+        },
+    },
+    {
+        id: 'wooden_box_stack1',
+        objPath: '../assets/models/Wooden_box.obj',
+        texPath: '../assets/textures/Wooden_box.png',
+        // Sala 3 (Empilhada no canto)
+        position: [-55.0, 0.0, 160.0],
+        scale: [1.5, 1.5, 1.5],
+        material: {
+            ka: 0.7,
+            kd: 0.8,
+            ks: [0.1, 0.1, 0.1],
+            shininess: 5.0, // Madeira: Fosco
+        },
+    },
+    {
+        id: 'wooden_box_stack2', // Segunda caixa
+        objPath: '../assets/models/Wooden_box.obj',
+        texPath: '../assets/textures/Wooden_box.png',
+        // Sala 3 (Em cima da primeira)
+        position: [-55.0, 3.0, 160.0],
+        rotation: [0, Math.PI / 3, 0],
+        scale: [1.2, 1.2, 1.2],
+        material: { ka: 0.7, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+    },
+
+    // --- ITENS PEQUENOS / PROPS ---
+    {
+        id: 'flashlight',
+        objPath: '../assets/models/flashlight_notexture.obj',
+        texPath: null,
+        // Corredor chegando na Sala 2
+        position: [0.0, 0.2, 40.0],
+        rotation: [0, Math.PI / 4, 0],
+        scale: [1.0, 1.0, 1.0],
+        color: [0.2, 0.2, 0.2], // Cinza escuro
+        material: { ka: 0.5, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
+    },
+    {
+        id: 'food',
+        objPath: '../assets/models/Food1.obj',
+        texPath: '../assets/textures/Food1.png',
+        // Sala 2 (Em cima do sofá ou chão perto)
+        position: [-15.0, 1.0, 60.0],
+        scale: [0.5, 0.5, 0.5],
+        material: { ka: 0.8, kd: 0.8, ks: [0.2, 0.2, 0.2], shininess: 10.0 },
+    },
+    {
+        id: 'can_extra',
+        objPath: '../assets/models/can_crushed_lowpoly.obj',
+        texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
+        // Sala 3 (Lixo no chão)
+        position: [-30.0, 0.2, 180.0],
+        scale: [0.1, 0.1, 0.1],
+        material: { ka: 0.5, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+    },
+
+    // --- EQUIPAMENTOS / LUZES ---
+    {
+        id: 'street_lamp_1',
+        objPath: '../assets/models/street-lamp.obj',
+        texPath: '../assets/textures/street-lamp.png',
+        // Sala 2 (Canto esquerdo)
+        position: [-25.0, 0.0, 35.0],
+        scale: [1.5, 1.5, 1.5],
+        material: { ka: 0.5, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+    },
+    {
+        id: 'street_lamp_2',
+        objPath: '../assets/models/street-lamp.obj',
+        texPath: '../assets/textures/street-lamp.png',
+        // Sala 2 (Canto direito oposto)
+        position: [25.0, 0.0, 85.0],
+        rotation: [0, Math.PI, 0],
+        scale: [1.5, 1.5, 1.5],
+        material: { ka: 0.5, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+    },
+    {
+        id: 'surgery_lamp',
+        objPath: '../assets/models/SurgeryLamp.obj',
+        texPath: '../assets/textures/SurgeryLamp.png',
+        // Sala 3 (Perto do Alien)
+        position: [-45.0, 0.0, 175.0],
+        rotation: [0, -Math.PI / 4, 0],
+        scale: [1.2, 1.2, 1.2],
+        material: {
+            ka: 0.7,
+            kd: 0.8,
+            ks: [0.9, 0.9, 0.9],
+            shininess: 80.0, // Metal hospitalar limpo
+        },
+    },
+    {
+        id: 'emergency_button',
+        objPath: '../assets/models/emergency_button.obj',
+        texPath: '../assets/textures/emergency_button.png',
+        // Corredor final (Parede antes da Sala 3)
+        // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
+        position: [-22.0, 2.5, 135.0],
+        rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
+        scale: [0.5, 0.5, 0.5],
+        material: { ka: 0.8, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
+    },
+    {
+        id: 'trash_can',
+        objPath: '../assets/models/TrashCan.obj',
+        texPath: '../assets/textures/TrashCan.png',
+        // Sala 2 (Perto da saída pro corredor)
+        position: [15.0, 0.0, 95.0],
+        scale: [1.2, 1.2, 1.2],
+        material: { ka: 0.4, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 20.0 },
+    },
+];
 
 class Game {
     constructor(canvasId) {
@@ -29,6 +262,9 @@ class Game {
         // Controle do loop
         this.running = false;
         this.rafId = null;
+
+        // Objetos
+        this.sceneObjects = []; // Array para guardar os objetos carregados
 
         // Dados Geométricos (Meshes)
         // Padronizamos os nomes: ufoMesh, canMesh, cubeMesh
@@ -98,16 +334,20 @@ class Game {
 
         // Inicializar Sistema de Colisão
         this.collisionSystem = new CollisionSystem();
-        
 
         // Inicializar Luz principal
         this.light = new Light(this.gl);
         this.light.color = [1.0, 0.95, 0.8];
         this.light.position = [5.0, 5.0, 5.0];
 
-        // Carregar assets
-
-        // Carrega a textura em paralelo com os modelos
+        // --- CARREGAMENTO ---
+        // 1. Carrega os Assets "Hardcoded" antigos (pode manter ou remover se tudo estiver na lista)
+        this.cubeMesh = createCubeMesh(this.gl);
+        this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
+        // (Opcional: mantenha ufoMesh e canMesh antigos se quiser compatibilidade com código velho)
+        this.ufoMesh = await loadOBJModel(this, '../assets/models/Low_poly_UFO.obj');
+        this.ufoTexture = await loadTexture(this.gl, '../assets/textures/ufo_diffuse.png');
+        this.canMesh = await loadOBJModel(this, '../assets/models/can_crushed_lowpoly.obj');
         this.crushedCanTexture = await loadTexture(
             this.gl,
             '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
@@ -117,13 +357,10 @@ class Game {
         this.ceilingTexture = await loadTexture(this.gl, '../assets/textures/roof.jpeg');
         this.platformTexture = await loadTexture(this.gl, '../assets/textures/platform.jpeg');
 
-        this.cubeMesh = createCubeMesh(this.gl);
+        // 2. Carrega a NOVA LISTA de Objetos
+        await this.loadSceneObjects();
 
-        // Carregar OBJs
-        this.ufoMesh = await loadOBJModel(this, '../assets/models/Low_poly_UFO.obj');
-        this.canMesh = await loadOBJModel(this, '../assets/models/can_crushed_lowpoly.obj');
-
-        // Configurar colisores do ambiente
+        // Configura colisoes e matrizes
         setupSceneColliders(this.collisionSystem);
 
         // Toggle building mode com tecla 'B'
@@ -143,7 +380,7 @@ class Game {
         this.menu = new MainMenu(menuOverlay, {
             onPlay: () => {
                 this.startLoop();
-            }
+            },
         });
         // Callback: ESC durante gameplay → pausa e volta ao menu
         this.menu.onPause = () => {
@@ -154,6 +391,40 @@ class Game {
             this.input.consumeMouseDelta(); // Limpa delta acumulado
         };
         this.menu.show();
+    }
+
+    async loadSceneObjects() {
+        console.log('Carregando objetos da lista...');
+
+        const promises = OBJECTS_TO_LOAD.map(async (conf) => {
+            const obj = {
+                ...conf, // Copia id, position, scale, etc.
+                mesh: null,
+                texture: null,
+            };
+
+            // Carregar OBJ
+            try {
+                // Tenta carregar. Se falhar, usa o cubo de debug.
+                obj.mesh = await loadOBJModel(this, conf.objPath);
+            } catch (e) {
+                console.error(`Erro OBJ ${conf.id}:`, e);
+                obj.mesh = this.cubeMesh; // Fallback visual
+            }
+
+            // Carregar Textura
+            if (conf.texPath) {
+                try {
+                    obj.texture = await loadTexture(this.gl, conf.texPath);
+                } catch (e) {
+                    console.warn(`Textura não carregou para ${conf.id}. Usando cor sólida.`);
+                }
+            }
+            return obj;
+        });
+
+        this.sceneObjects = await Promise.all(promises);
+        console.log('Objetos carregados:', this.sceneObjects);
     }
 
     setupMatrices() {
@@ -170,37 +441,37 @@ class Game {
     }
 
     update(dt) {
-    // 1. Captura inputs do mouse
-    const mouse = this.input.consumeMouseDelta();
-    
-    // 2. Rotaciona e move o player
-    this.player.applyRotation(mouse.x, mouse.y);
-    this.player.update(dt, this.input, this.collisionSystem);
+        // 1. Captura inputs do mouse
+        const mouse = this.input.consumeMouseDelta();
 
-    // 3. A câmera apenas "segue" o player
-    this.fpsCamera.position = this.player.getEyePosition();
-    this.fpsCamera.yaw = this.player.yaw;
-    this.fpsCamera.pitch = this.player.pitch;
-    this.fpsCamera._updateVectors();
+        // 2. Rotaciona e move o player
+        this.player.applyRotation(mouse.x, mouse.y);
+        this.player.update(dt, this.input, this.collisionSystem);
 
-    // 4. Zona da sala de fuga → luz verde alienígena (com transição suave)
-    const pos = this.player.position;
-    const inEscape = pos[0] >= ESCAPE_ROOM.minX && pos[0] <= ESCAPE_ROOM.maxX
-                  && pos[2] >= ESCAPE_ROOM.minZ && pos[2] <= ESCAPE_ROOM.maxZ;
-    
-    const targetColor = inEscape ? [0.2, 1.3, 0.35] : [1.0, 0.95, 0.8]; // Luz mais forte no escape room
-    const targetPos = inEscape ? [-37.5, 6.0, 230.0] : [pos[0], 10.0, pos[2] + 5.0]; // Posicionar luz na plataforma
-    
-    // Lerp suave (5% por frame)
-    const lerpFactor = 0.05;
-    this.light.color[0] += (targetColor[0] - this.light.color[0]) * lerpFactor;
-    this.light.color[1] += (targetColor[1] - this.light.color[1]) * lerpFactor;
-    this.light.color[2] += (targetColor[2] - this.light.color[2]) * lerpFactor;
-    
-    this.light.position[0] += (targetPos[0] - this.light.position[0]) * lerpFactor;
-    this.light.position[1] += (targetPos[1] - this.light.position[1]) * lerpFactor;
-    this.light.position[2] += (targetPos[2] - this.light.position[2]) * lerpFactor;
-}
+        // 3. A câmera apenas "segue" o player
+        this.fpsCamera.position = this.player.getEyePosition();
+        this.fpsCamera.yaw = this.player.yaw;
+        this.fpsCamera.pitch = this.player.pitch;
+        this.fpsCamera._updateVectors();
+
+        // 4. Zona da sala de fuga → luz verde alienígena (com transição suave)
+        const pos = this.player.position;
+        const inEscape = pos[0] >= ESCAPE_ROOM.minX && pos[0] <= ESCAPE_ROOM.maxX
+                      && pos[2] >= ESCAPE_ROOM.minZ && pos[2] <= ESCAPE_ROOM.maxZ;
+        
+        const targetColor = inEscape ? [0.2, 1.3, 0.35] : [1.0, 0.95, 0.8];
+        const targetPos = inEscape ? [-37.5, 6.0, 230.0] : [pos[0], 10.0, pos[2] + 5.0];
+        
+        // Lerp suave (5% por frame)
+        const lerpFactor = 0.05;
+        this.light.color[0] += (targetColor[0] - this.light.color[0]) * lerpFactor;
+        this.light.color[1] += (targetColor[1] - this.light.color[1]) * lerpFactor;
+        this.light.color[2] += (targetColor[2] - this.light.color[2]) * lerpFactor;
+        
+        this.light.position[0] += (targetPos[0] - this.light.position[0]) * lerpFactor;
+        this.light.position[1] += (targetPos[1] - this.light.position[1]) * lerpFactor;
+        this.light.position[2] += (targetPos[2] - this.light.position[2]) * lerpFactor;
+    }
 
     draw() {
         const gl = this.gl;
@@ -226,6 +497,8 @@ class Game {
         drawUFO(this);
         drawCube(this);
         drawCrushedCan(this);
+        // --- DESENHAR NOVOS OBJETOS ---
+        drawSceneObjects(this);
     }
 
     startLoop() {

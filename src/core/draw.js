@@ -276,3 +276,53 @@ function drawPlatformTop(game, position, size) {
     );
 }
 
+/**
+ * Renderiza a lista de objetos dinâmicos do jogo
+ */
+export function drawSceneObjects(game) {
+    if (!game.sceneObjects || game.sceneObjects.length === 0) return;
+
+    game.sceneObjects.forEach((obj) => {
+        // Pula se a malha (mesh) ainda não carregou
+        if (!obj.mesh || !obj.mesh.positionBuffer) return;
+
+        let model = mat4.identityMatrix();
+
+        // 1. Translação
+        model = mat4.translate(model, obj.position[0], obj.position[1], obj.position[2]);
+
+        // 2. Rotação (Z -> Y -> X)
+        if (obj.rotation) {
+            if (obj.rotation[2]) model = mat4.rotateZ(model, obj.rotation[2]);
+            if (obj.rotation[1]) model = mat4.rotateY(model, obj.rotation[1]);
+            if (obj.rotation[0]) model = mat4.rotateX(model, obj.rotation[0]);
+        }
+
+        // 3. Escala
+        if (obj.scale) {
+            model = mat4.scale(model, obj.scale[0], obj.scale[1], obj.scale[2]);
+        }
+
+        // Material padrão (se não definido no config)
+        const material = obj.material || {
+            ka: 0.5,
+            kd: 0.8,
+            ks: [0.3, 0.3, 0.3],
+            shininess: 32.0,
+        };
+
+        // Cor padrão (Branco se tiver textura, Cinza se não tiver)
+        const defaultColor = obj.texture ? [1.0, 1.0, 1.0] : [0.7, 0.7, 0.7];
+        const color = obj.color || defaultColor;
+
+        drawGenericMesh(
+            game.gl,
+            game.program,
+            model,
+            obj.mesh,
+            color,
+            obj.texture, // Passa null se não existir
+            material,
+        );
+    });
+}
