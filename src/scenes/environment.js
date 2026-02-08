@@ -446,9 +446,9 @@ export const SCENE_GEOMETRY = [
         type: 'platform',
         position: [-37.5, FLOOR_POS_Y + 1.0, 230.0],
         size: [6.0, 2.0, 4.0],
-        color: PLATFORM_COLOR,
+        color: [0.3, 0.9, 0.4],
         isCollider: true,
-        material: { ka: 0.4, kd: 0.7, ks: [0.3, 0.3, 0.3], shininess: 40.0 },
+        material: { ka: 0.6, kd: 0.8, ks: [0.8, 1.0, 0.8], shininess: 80.0 },
     },
     
     // --- Quadro decorativo grande na parede norte (frente da plataforma) ---
