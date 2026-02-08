@@ -40,6 +40,8 @@ class Game {
         this.crushedCanTexture = null;
         this.ufoTexture = null;
         this.wallTexture = null;
+        this.ceilingTexture = null;
+        this.platformTexture = null;
 
         // Iluminação
         this.light = null;
@@ -98,10 +100,8 @@ class Game {
         this.collisionSystem = new CollisionSystem();
         
 
-        // Inicializar Luz
+        // Inicializar Luz principal
         this.light = new Light(this.gl);
-        // Exemplo: Mudar a cor da luz para levemente amarelada
-        // Pode ser removido no futuro
         this.light.color = [1.0, 0.95, 0.8];
         this.light.position = [5.0, 5.0, 5.0];
 
@@ -114,6 +114,8 @@ class Game {
         );
         this.ufoTexture = await loadTexture(this.gl, '../assets/textures/ufo_diffuse.png');
         this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
+        this.ceilingTexture = await loadTexture(this.gl, '../assets/textures/roof.jpeg');
+        this.platformTexture = await loadTexture(this.gl, '../assets/textures/platform.jpeg');
 
         this.cubeMesh = createCubeMesh(this.gl);
 
@@ -181,17 +183,23 @@ class Game {
     this.fpsCamera.pitch = this.player.pitch;
     this.fpsCamera._updateVectors();
 
-    // 4. Zona da sala de fuga → luz verde alienígena
+    // 4. Zona da sala de fuga → luz verde alienígena (com transição suave)
     const pos = this.player.position;
     const inEscape = pos[0] >= ESCAPE_ROOM.minX && pos[0] <= ESCAPE_ROOM.maxX
                   && pos[2] >= ESCAPE_ROOM.minZ && pos[2] <= ESCAPE_ROOM.maxZ;
-    if (inEscape) {
-        this.light.color = [0.15, 1.0, 0.25];
-        this.light.position = [ESCAPE_ROOM.center[0], 10.0, ESCAPE_ROOM.center[2]];
-    } else {
-        this.light.color = [1.0, 0.95, 0.8];
-        this.light.position = [pos[0], 10.0, pos[2] + 5.0];
-    }
+    
+    const targetColor = inEscape ? [0.2, 1.3, 0.35] : [1.0, 0.95, 0.8]; // Luz mais forte no escape room
+    const targetPos = inEscape ? [-37.5, 6.0, 230.0] : [pos[0], 10.0, pos[2] + 5.0]; // Posicionar luz na plataforma
+    
+    // Lerp suave (5% por frame)
+    const lerpFactor = 0.05;
+    this.light.color[0] += (targetColor[0] - this.light.color[0]) * lerpFactor;
+    this.light.color[1] += (targetColor[1] - this.light.color[1]) * lerpFactor;
+    this.light.color[2] += (targetColor[2] - this.light.color[2]) * lerpFactor;
+    
+    this.light.position[0] += (targetPos[0] - this.light.position[0]) * lerpFactor;
+    this.light.position[1] += (targetPos[1] - this.light.position[1]) * lerpFactor;
+    this.light.position[2] += (targetPos[2] - this.light.position[2]) * lerpFactor;
 }
 
     draw() {

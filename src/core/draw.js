@@ -208,9 +208,15 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
     };
     const material = elemMaterial ? { ...defaultMat, ...elemMaterial } : defaultMat;
 
-    // Textura: paredes e chão usam wallTexture; outros elementos sem textura
-    const useTexture = (elemType === 'wall' || elemType === 'floor');
-    const texture = useTexture ? game.wallTexture : null;
+    // Textura: paredes e chão usam wallTexture; tetos usam ceilingTexture
+    // Plataforma NÃO usa textura aqui (será aplicada manualmente apenas no topo)
+    let texture = null;
+    if (elemType === 'wall' || elemType === 'floor') {
+        texture = game.wallTexture;
+    } else if (elemType === 'ceiling') {
+        texture = game.ceilingTexture;
+    }
+    // Para plataforma, não definimos textura aqui (renderiza cor sólida)
 
     drawGenericMesh(
         game.gl,
@@ -226,6 +232,47 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
 export function drawEnvironment(game) {
     // Desenha todos os elementos definidos em SCENE_GEOMETRY
     SCENE_GEOMETRY.forEach((elem) => {
-        drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
+        // Para plataformas, desenha o corpo sem textura e depois a face superior com textura
+        if (elem.type === 'platform') {
+            // 1. Desenha o cubo completo sem textura (cor sólida)
+            drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
+            
+            // 2. Desenha apenas a face superior com textura (quad fino no topo)
+            const topY = elem.position[1] + elem.size[1] / 2 + 0.01; // Ligeiramente acima para evitar z-fighting
+            drawPlatformTop(game, [elem.position[0], topY, elem.position[2]], [elem.size[0], elem.size[2]]);
+        } else {
+            drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
+        }
     });
 }
+
+/**
+ * Desenha apenas a face superior de uma plataforma com textura
+ */
+function drawPlatformTop(game, position, size) {
+    if (!game.cubeMesh || !game.platformTexture) return;
+    
+    let model = mat4.identityMatrix();
+    // Posiciona no topo da plataforma
+    model = mat4.translate(model, position[0], position[1], position[2]);
+    // Escala: largura e profundidade da plataforma, altura mínima para face plana
+    model = mat4.scale(model, size[0], 0.001, size[1]);
+    
+    const material = {
+        ka: 0.5,
+        kd: 0.8,
+        ks: [0.3, 0.3, 0.3],
+        shininess: 50.0,
+    };
+    
+    drawGenericMesh(
+        game.gl,
+        game.program,
+        model,
+        game.cubeMesh,
+        [1.0, 1.0, 1.0],
+        game.platformTexture,
+        material,
+    );
+}
+

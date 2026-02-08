@@ -11,6 +11,12 @@ export class Player {
         this.isBuildingMode = false;
         this.flySpeed = 30.0;
         
+        // Sistema de pulo
+        this.velocityY = 0;
+        this.jumpForce = 7.5;
+        this.gravity = -22.0;
+        this.isGrounded = true;
+        
         // Tamanho para o sistema de colisão [largura, altura, profundidade]
         this.size = [0.6, 2.0, 0.6]; 
     }
@@ -76,37 +82,52 @@ export class Player {
         const forward = [Math.cos(radYaw), Math.sin(radYaw)]; 
         const right = [-forward[1], forward[0]];
 
-        // Uso do input.isPressed em vez de checar objeto direto
+        // Movimento horizontal (funciona no ar e no chão)
         if (input.isPressed('KeyW')) { moveX += forward[0]; moveZ += forward[1]; }
         if (input.isPressed('KeyS')) { moveX -= forward[0]; moveZ -= forward[1]; }
         if (input.isPressed('KeyA')) { moveX -= right[0]; moveZ -= right[1]; }
         if (input.isPressed('KeyD')) { moveX += right[0]; moveZ += right[1]; }
+        
+        // Pulo - funciona parado ou andando
+        if (input.isPressed('Space') && this.isGrounded) {
+            this.velocityY = this.jumpForce;
+            this.isGrounded = false;
+        }
+        
+        // Aplicar gravidade
+        this.velocityY += this.gravity * dt;
 
         // Normalização para evitar velocidade diagonal excessiva
         const mag = Math.sqrt(moveX * moveX + moveZ * moveZ);
-        if (mag > 0) {
-            const velocity = (this.speed * dt) / mag;
-            
-            const nextPos = [
-                this.position[0] + moveX * velocity,
-                this.position[1], // Y fixo ou controlado por gravidade
-                this.position[2] + moveZ * velocity
-            ];
+        const velocity = mag > 0 ? (this.speed * dt) / mag : 0;
+        
+        const nextPos = [
+            this.position[0] + moveX * velocity,
+            this.position[1] + this.velocityY * dt,
+            this.position[2] + moveZ * velocity
+        ];
 
-            // Resolve colisão
-            if (collisionSystem) {
-                const corrected = collisionSystem.resolveCollision(
-                    this.position, 
-                    nextPos, 
-                    this.size
-                );
-                this.position[0] = corrected[0];
-                this.position[1] = corrected[1];
-                this.position[2] = corrected[2];
-            } else {
-                this.position[0] = nextPos[0];
-                this.position[2] = nextPos[2];
-            }
+        // Resolve colisão
+        if (collisionSystem) {
+            const corrected = collisionSystem.resolveCollision(
+                this.position, 
+                nextPos, 
+                this.size
+            );
+            this.position[0] = corrected[0];
+            this.position[1] = corrected[1];
+            this.position[2] = corrected[2];
+        } else {
+            this.position[0] = nextPos[0];
+            this.position[1] = nextPos[1];
+            this.position[2] = nextPos[2];
+        }
+        
+        // Checar se está no chão
+        if (this.position[1] <= 0.0) {
+            this.position[1] = 0.0;
+            this.velocityY = 0;
+            this.isGrounded = true;
         }
     }
 
