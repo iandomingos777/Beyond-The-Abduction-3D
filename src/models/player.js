@@ -1,18 +1,18 @@
 export class Player {
     constructor(startPos = [0, 0, 8]) {
         this.position = new Float32Array(startPos);
-        
+
         // Atributos de Visão e Física
         this.yaw = -90;
         this.pitch = 0;
         this.eyeOffset = 1.8; // Aqui você controla a altura da câmera
         this.speed = 20.0;
-        this.sensitivity = 0.3;
+        this.sensitivity = 0.9;
         this.isBuildingMode = false;
         this.flySpeed = 30.0;
-        
+
         // Tamanho para o sistema de colisão [largura, altura, profundidade]
-        this.size = [0.6, 2.0, 0.6]; 
+        this.size = [0.6, 2.0, 0.6];
     }
 
     /**
@@ -21,14 +21,16 @@ export class Player {
     toggleBuildingMode() {
         const wasFlying = this.isBuildingMode;
         this.isBuildingMode = !this.isBuildingMode;
-        
+
         // Se estava voando e agora voltou para walk mode, reposiciona no chão
         if (wasFlying && !this.isBuildingMode) {
             // Altura do chão padrão + altura do personagem
             this.position[1] = 0.0; // Ajuste conforme a altura do chão do seu mapa
             console.log('Building Mode: OFF (Walk Mode) - Retornado ao chão');
         } else {
-            console.log(`Building Mode: ${this.isBuildingMode ? 'ON (Fly Mode)' : 'OFF (Walk Mode)'}`);
+            console.log(
+                `Building Mode: ${this.isBuildingMode ? 'ON (Fly Mode)' : 'OFF (Walk Mode)'}`,
+            );
         }
     }
 
@@ -36,11 +38,7 @@ export class Player {
      * Retorna a posição dos olhos para a câmera
      */
     getEyePosition() {
-        return [
-            this.position[0],
-            this.position[1] + this.eyeOffset,
-            this.position[2]
-        ];
+        return [this.position[0], this.position[1] + this.eyeOffset, this.position[2]];
     }
 
     /**
@@ -73,32 +71,44 @@ export class Player {
 
         // Direção baseada no Yaw (usamos apenas o plano horizontal XZ)
         const radYaw = (this.yaw * Math.PI) / 180;
-        const forward = [Math.cos(radYaw), Math.sin(radYaw)]; 
+        const forward = [Math.cos(radYaw), Math.sin(radYaw)];
         const right = [-forward[1], forward[0]];
 
         // Uso do input.isPressed em vez de checar objeto direto
-        if (input.isPressed('KeyW')) { moveX += forward[0]; moveZ += forward[1]; }
-        if (input.isPressed('KeyS')) { moveX -= forward[0]; moveZ -= forward[1]; }
-        if (input.isPressed('KeyA')) { moveX -= right[0]; moveZ -= right[1]; }
-        if (input.isPressed('KeyD')) { moveX += right[0]; moveZ += right[1]; }
+        if (input.isPressed('KeyW')) {
+            moveX += forward[0];
+            moveZ += forward[1];
+        }
+        if (input.isPressed('KeyS')) {
+            moveX -= forward[0];
+            moveZ -= forward[1];
+        }
+        if (input.isPressed('KeyA')) {
+            moveX -= right[0];
+            moveZ -= right[1];
+        }
+        if (input.isPressed('KeyD')) {
+            moveX += right[0];
+            moveZ += right[1];
+        }
 
         // Normalização para evitar velocidade diagonal excessiva
         const mag = Math.sqrt(moveX * moveX + moveZ * moveZ);
         if (mag > 0) {
             const velocity = (this.speed * dt) / mag;
-            
+
             const nextPos = [
                 this.position[0] + moveX * velocity,
                 this.position[1], // Y fixo ou controlado por gravidade
-                this.position[2] + moveZ * velocity
+                this.position[2] + moveZ * velocity,
             ];
 
             // Resolve colisão
             if (collisionSystem) {
                 const corrected = collisionSystem.resolveCollision(
-                    this.position, 
-                    nextPos, 
-                    this.size
+                    this.position,
+                    nextPos,
+                    this.size,
                 );
                 this.position[0] = corrected[0];
                 this.position[1] = corrected[1];
@@ -110,11 +120,11 @@ export class Player {
         }
     }
 
-
-// Modo Voar (Sem colisão, sem gravidade)
-    _updateFlyMode(dt, input){
-
-        let moveX = 0, moveY = 0, moveZ = 0;
+    // Modo Voar (Sem colisão, sem gravidade)
+    _updateFlyMode(dt, input) {
+        let moveX = 0,
+            moveY = 0,
+            moveZ = 0;
         const radYaw = (this.yaw * Math.PI) / 180;
         const radPitch = (this.pitch * Math.PI) / 180;
 
@@ -122,7 +132,7 @@ export class Player {
         const forward = [
             Math.cos(radYaw) * Math.cos(radPitch),
             Math.sin(radPitch),
-            Math.sin(radYaw) * Math.cos(radPitch)
+            Math.sin(radYaw) * Math.cos(radPitch),
         ];
         const right = [-Math.sin(radYaw), 0, Math.cos(radYaw)];
 
@@ -144,7 +154,7 @@ export class Player {
             this.position[0] += right[0] * this.flySpeed * dt;
             this.position[2] += right[2] * this.flySpeed * dt;
         }
-        
+
         // Teclas extras para subir/descer verticalmente
         if (input.isPressed('Space')) this.position[1] += this.flySpeed * dt;
         if (input.isPressed('ShiftLeft')) this.position[1] -= this.flySpeed * dt;

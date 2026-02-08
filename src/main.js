@@ -45,19 +45,21 @@ const OBJECTS_TO_LOAD = [
         id: 'buddha',
         objPath: '../assets/models/buddha_lowpoly.obj',
         texPath: '../assets/textures/buddha_lowpoly.png',
-        // Sala 2 (Centro, como uma estátua)
+        color: [0.8, 0.7, 0.2], // amarelo dourado
+        // Sala 2
         position: [0.0, 0.0, 60.0],
-        scale: [5.0, 5.0, 5.0],
+        scale: [20.0, 20.0, 20.0],
         material: {
-            ka: 0.5,
+            ka: 0.4,
             kd: 0.5,
-            ks: [1.0, 0.8, 0.2],
-            shininess: 100.0, // Ouro/Bronze: Brilho forte e amarelado
+            ks: [0.8, 0.6, 0.2],
+            shininess: 30.0, // Ouro/Bronze: Brilho forte e amarelado
         },
     },
 
     // --- VEÍCULOS ---
     {
+        // Não está renderizando
         id: 'police_car',
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
@@ -93,10 +95,10 @@ const OBJECTS_TO_LOAD = [
         id: 'couch',
         objPath: '../assets/models/Couch.obj',
         texPath: '../assets/textures/Couch.png',
-        // Sala 2 (Área de estar)
+        // Sala 2
         position: [-15.0, 0.0, 60.0],
         rotation: [0, Math.PI / 2, 0],
-        scale: [1.0, 1.0, 1.0],
+        scale: [4.0, 4.0, 4.0],
         material: {
             ka: 0.6,
             kd: 0.8,
@@ -105,13 +107,14 @@ const OBJECTS_TO_LOAD = [
         },
     },
     {
+        // FIX: Não está renderizando
         id: 'couchDiner',
         objPath: '../assets/models/CouchDiner.obj',
         texPath: '../assets/textures/CouchDiner.png',
         // Sala 2 (De frente pro outro sofá)
         position: [-15.0, 0.0, 70.0],
         rotation: [0, -Math.PI / 2, 0],
-        scale: [1.0, 1.0, 1.0],
+        scale: [10.0, 10.0, 10.0],
         material: {
             ka: 0.5,
             kd: 0.8,
