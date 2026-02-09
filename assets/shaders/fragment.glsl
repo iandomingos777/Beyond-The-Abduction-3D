@@ -1,4 +1,5 @@
-precision mediump float;
+// fragment.glsl
+precision highp float;
 
 #define MAX_SPOTLIGHTS 3
 
@@ -6,20 +7,21 @@ uniform vec3 uColor;
 uniform sampler2D uSampler;
 uniform bool uUseTexture;
 
-// Luz Global
-uniform vec3 uLightPos;
+uniform vec3 uLightPos;       // posição da luz (mundo)
 uniform vec3 uLightColor;
-uniform vec3 uAmbientColor;
-uniform vec3 uViewPos;
+uniform vec3 uAmbientColor;   // cor ambiente global
+uniform vec3 uViewPos;        // posição da câmera (mundo)
 
-// Material
 uniform float uKa;
 uniform float uKd;
-uniform vec3 uKs;
+uniform vec3  uKs;
 uniform float uShininess;
 
+// Debug mode: 0 = off, 1 = show distance, 2 = show normal, 3 = show dot(N,L), 4 = show attenuation
+// uniform int uDebugMode;
+
 varying vec2 vTexCoord;
-varying vec3 vNormal;
+varying vec3 vWorldNormal;
 varying vec3 vFragPos;
 
 // --- CORREÇÃO: Spotlight como ARRAYS ---
@@ -30,34 +32,60 @@ uniform float uInnerCutoff;
 uniform float uOuterCutoff;
 
 void main() {
-    // 1. Cor Base
-    vec4 objectColor;
-    if (uUseTexture) {
-        objectColor = texture2D(uSampler, vTexCoord) * vec4(uColor, 1.0);
-    } else {
-        objectColor = vec4(uColor, 1.0);
-    }
-    
-    if(objectColor.a < 0.1) discard;
+    // Pega a cor base da textura (ou Branco se não tiver textura)
+    vec4 texColor = uUseTexture ? texture2D(uSampler, vTexCoord) : vec4(1.0, 1.0, 1.0, 1.0);
 
-    // Normalização comum
-    vec3 norm = normalize(vNormal);
-    vec3 viewDir = normalize(uViewPos - vFragPos);
+    // Multiplica pela cor do objeto (Tinting / Blend)
+    vec4 objectColor = texColor * vec4(uColor, 1.0);
 
-    // --- LUZ 1: GLOBAL (PHONG) ---
-    vec3 lightDir = normalize(uLightPos - vFragPos);
-    
+    vec3 N = normalize(vWorldNormal);
+    vec3 L = normalize(uLightPos - vFragPos);
+    vec3 V = normalize(uViewPos - vFragPos);
+
+    // distância e atenuação
+    float dist = length(uLightPos - vFragPos);
+    float constant = 1.0;
+    float linear = 0.010; 
+    float quadratic = 0.0005;
+    float attenuation = 1.0 / (constant + linear * dist + quadratic * dist * dist);
+
     // Ambiente
     vec3 ambient = uAmbientColor * objectColor.rgb * uKa;
 
-    // Difusa Global
-    float diff = max(dot(norm, lightDir), 0.0);
+    // Difuso (Lambert)
+    float diff = max(dot(N, L), 0.0);
     vec3 diffuse = diff * uLightColor * objectColor.rgb * uKd;
 
-    // Especular Global
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
-    vec3 specular = spec * uKs; 
+    // Especular (Blinn-Phong)
+    vec3 H = normalize(L + V);
+    float spec = pow(max(dot(N, H), 0.0), uShininess);
+    vec3 specular = spec * uKs * uLightColor;
+
+    // Aplica atenuação a difusa e especular
+    diffuse *= attenuation;
+    specular *= attenuation;
+
+    vec3 color = ambient + diffuse + specular;
+
+    // // Debug outputs
+    // if (uDebugMode == 1) {
+    //     // mapa de distância — normalizado arbitrariamente (ajuste divisor)
+    //     float d = clamp(dist / 50.0, 0.0, 1.0);
+    //     gl_FragColor = vec4(vec3(d), 1.0);
+    //     return;
+    // } else if (uDebugMode == 2) {
+    //     // normal visualizada (0..1)
+    //     gl_FragColor = vec4(N * 0.5 + 0.5, 1.0);
+    //     return;
+    // } else if (uDebugMode == 3) {
+    //     float nDotL = clamp(dot(N, L), 0.0, 1.0);
+    //     gl_FragColor = vec4(vec3(nDotL), 1.0);
+    //     return;
+    // } else if (uDebugMode == 4) {
+    //     float a = clamp(attenuation, 0.0, 1.0);
+    //     gl_FragColor = vec4(vec3(a), 1.0);
+    //     return;
+    // }
 
     // --- LUZ 2: LANTERNAS (LOOP) ---
     vec3 totalSpotlight = vec3(0.0);
@@ -78,14 +106,11 @@ void main() {
         float attenuation = 1.0 / (1.0 + 0.045 * dist + 0.0075 * (dist * dist));
         
         // Difusa da lanterna
-        float sDiff = max(dot(norm, sLightDir), 0.0);
+        float sDiff = max(dot(N, sLightDir), 0.0);
         
         // Soma o brilho desta lanterna ao acumulador
         totalSpotlight += (uSpotColor[i] * sDiff * intensity * attenuation * objectColor.rgb);
     }
 
-    // Resultado final: Ambiente + Difusa/Especular Global + Todas as Lanternas
-    vec3 result = ambient + diffuse + specular + totalSpotlight;
-    
-    gl_FragColor = vec4(result, objectColor.a);
+    gl_FragColor = vec4(color + totalSpotlight, objectColor.a);
 }

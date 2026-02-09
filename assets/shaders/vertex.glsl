@@ -1,26 +1,27 @@
+// vertex.glsl
 attribute vec3 position;
 attribute vec2 texCoord;
-attribute vec3 normal; // Recebe a normal do buffer
+attribute vec3 normal;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uProjectionMatrix;
+uniform mat3 uNormalMatrix; // inverse-transpose da parte 3x3 de uModelMatrix
 
 varying vec2 vTexCoord;
-varying vec3 vNormal;   // Envia para o fragment
-varying vec3 vFragPos;  // Posição do pixel no mundo 3D
+varying vec3 vWorldNormal;
+varying vec3 vFragPos;
 
 void main() {
     vTexCoord = texCoord;
 
-    // Calcula a posição no mundo (sem view/projection no momento) para iluminação
+    // posição em espaço mundo
     vec4 worldPosition = uModelMatrix * vec4(position, 1.0);
-    vFragPos = vec3(worldPosition);
+    vFragPos = worldPosition.xyz;
 
-    // Calcula a normal rotacionada (Matriz Model).
-    // Nota: Para escalas não uniformes, o correto seria mat3(transpose(inverse(uModelMatrix)))
-    // Mas para rotação/translação simples, isso basta e é mais performático:
-    vNormal = mat3(uModelMatrix) * normal;
+    // normal corretamente transformada para espaço mundo
+    vWorldNormal = normalize(uNormalMatrix * normal);
 
+    // posição final na tela
     gl_Position = uProjectionMatrix * uViewMatrix * worldPosition;
 }

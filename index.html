@@ -26,6 +26,88 @@
             border: 1px solid #333;
             display: block;
         }
+
+        /* Victory Screen Overlay */
+        #victory-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('./assets/textures/exit.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        #victory-overlay.show {
+            display: flex;
+            animation: fadeIn 2s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .victory-message {
+            font-family: 'Courier New', monospace;
+            font-size: 4rem;
+            font-weight: bold;
+            color: #00ff41;
+            text-align: center;
+            text-shadow: none;
+            animation: slideIn 1.5s ease-out;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { 
+                text-shadow: 
+                    0 0 10px #00ff41,
+                    0 0 20px #00ff41,
+                    0 0 30px #00ff41,
+                    3px 3px 0 rgba(0, 0, 0, 0.8);
+            }
+            50% { 
+                text-shadow: 
+                    0 0 20px #00ff41,
+                    0 0 40px #00ff41,
+                    0 0 60px #00ff41,
+                    3px 3px 0 rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .victory-subtitle {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInSub 1s ease-in 1.5s forwards;
+        }
+
+        @keyframes fadeInSub {
+            to { opacity: 1; }
+        }
     </style>
 </head>
 
@@ -33,6 +115,10 @@
     <div id="game-wrapper">
         <canvas id="glcanvas1" width="1280" height="720"></canvas>
         <div id="menu-overlay"></div>
+        <div id="victory-overlay">
+            <div class="victory-message">GABRIELZITO<br>ESCAPOU!</div>
+            <div class="victory-subtitle">Pressione Enter para voltar ao menu</div>
+        </div>
     </div>
     <script type="module" src="./src/main.js"></script>
 </body>
