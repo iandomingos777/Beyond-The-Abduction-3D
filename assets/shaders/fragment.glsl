@@ -1,62 +1,82 @@
-precision mediump float;
+// fragment.glsl
+precision highp float;
 
 uniform vec3 uColor;
 uniform sampler2D uSampler;
 uniform bool uUseTexture;
 
-// Propriedades da Luz (Globais)
-uniform vec3 uLightPos;
+uniform vec3 uLightPos;       // posição da luz (mundo)
 uniform vec3 uLightColor;
-uniform vec3 uAmbientColor; // Cor base da luz ambiente da cena
-uniform vec3 uViewPos;
+uniform vec3 uAmbientColor;   // cor ambiente global
+uniform vec3 uViewPos;        // posição da câmera (mundo)
 
-// --- UNIFORMS DE MATERIAL (Por Objeto) ---
-uniform float uKa;        // Coeficiente Ambiente (0.0 a 1.0)
-uniform float uKd;        // Coeficiente Difuso (0.0 a 1.0)
-uniform vec3  uKs;        // Cor/Intensidade Especular (ex: branco [1,1,1])
-uniform float uShininess; // Brilho do material
+uniform float uKa;
+uniform float uKd;
+uniform vec3  uKs;
+uniform float uShininess;
+
+// Debug mode: 0 = off, 1 = show distance, 2 = show normal, 3 = show dot(N,L), 4 = show attenuation
+// uniform int uDebugMode;
 
 varying vec2 vTexCoord;
-varying vec3 vNormal;
+varying vec3 vWorldNormal;
 varying vec3 vFragPos;
 
 void main() {
-    // ... (cálculos de cor e normais mantidos iguais)
+    // Pega a cor base da textura (ou Branco se não tiver textura)
+    vec4 texColor = uUseTexture ? texture2D(uSampler, vTexCoord) : vec4(1.0, 1.0, 1.0, 1.0);
 
-    vec3 norm = normalize(vNormal);
-    vec3 lightDir = normalize(uLightPos - vFragPos);
-    vec3 viewDir = normalize(uViewPos - vFragPos);
+    // Multiplica pela cor do objeto (Tinting / Blend)
+    vec4 objectColor = texColor * vec4(uColor, 1.0);
 
-    // --- CÁLCULO DA DISTÂNCIA ---
-    float distance = length(uLightPos - vFragPos);
-    
-    // Fórmula de atenuação (Constante + Linear + Quadrática)
-    // Ajuste estes valores para controlar o alcance da luz
+    vec3 N = normalize(vWorldNormal);
+    vec3 L = normalize(uLightPos - vFragPos);
+    vec3 V = normalize(uViewPos - vFragPos);
+
+    // distância e atenuação
+    float dist = length(uLightPos - vFragPos);
     float constant = 1.0;
-    float linear = 0.09;
-    float quadratic = 0.032;
-    float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
+    float linear = 0.010; 
+    float quadratic = 0.0005;
+    float attenuation = 1.0 / (constant + linear * dist + quadratic * dist * dist);
 
-    // --- CÁLCULO DE PHONG (Mantido) ---
-    
-    // A. Ambiente (Geralmente o ambiente não sofre atenuação forte, mas pode sofrer)
-    vec3 ambient = uAmbientColor * objectColor.rgb * uKa; 
-    
-    // B. Difusa
-    float diff = max(dot(norm, lightDir), 0.0);
+    // Ambiente
+    vec3 ambient = uAmbientColor * objectColor.rgb * uKa;
+
+    // Difuso (Lambert)
+    float diff = max(dot(N, L), 0.0);
     vec3 diffuse = diff * uLightColor * objectColor.rgb * uKd;
-    
-    // C. Especular
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
-    vec3 specular = spec * uKs; // uKs já define a cor/intensidade do brilho
 
-    // --- APLICA A ATENUAÇÃO ---
-    // Multiplicamos a luz difusa e especular pela atenuação. 
-    // O ambiente geralmente mantemos (ou atenuamos menos) para não ficar breu total.
-    diffuse  *= attenuation;
+    // Especular (Blinn-Phong)
+    vec3 H = normalize(L + V);
+    float spec = pow(max(dot(N, H), 0.0), uShininess);
+    vec3 specular = spec * uKs * uLightColor;
+
+    // Aplica atenuação a difusa e especular
+    diffuse *= attenuation;
     specular *= attenuation;
 
-    vec3 finalColor = ambient + diffuse + specular;
-    gl_FragColor = vec4(finalColor, objectColor.a);
+    vec3 color = ambient + diffuse + specular;
+
+    // // Debug outputs
+    // if (uDebugMode == 1) {
+    //     // mapa de distância — normalizado arbitrariamente (ajuste divisor)
+    //     float d = clamp(dist / 50.0, 0.0, 1.0);
+    //     gl_FragColor = vec4(vec3(d), 1.0);
+    //     return;
+    // } else if (uDebugMode == 2) {
+    //     // normal visualizada (0..1)
+    //     gl_FragColor = vec4(N * 0.5 + 0.5, 1.0);
+    //     return;
+    // } else if (uDebugMode == 3) {
+    //     float nDotL = clamp(dot(N, L), 0.0, 1.0);
+    //     gl_FragColor = vec4(vec3(nDotL), 1.0);
+    //     return;
+    // } else if (uDebugMode == 4) {
+    //     float a = clamp(attenuation, 0.0, 1.0);
+    //     gl_FragColor = vec4(vec3(a), 1.0);
+    //     return;
+    // }
+
+    gl_FragColor = vec4(color, objectColor.a);
 }

@@ -47,9 +47,9 @@ const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/buddha_lowpoly.png',
         color: [0.8, 0.7, 0.2], // amarelo dourado
         // Sala 2
-        position: [15.0, 3.0, 80.0],
+        position: [15.0, -2.0, 80.0],
         rotation: [0, Math.PI, 0],
-        scale: [10.0, 10.0, 1.0],
+        scale: [45.0, 45.0, 45.0],
         material: {
             ka: 0.3,
             kd: 0.5,
@@ -65,7 +65,7 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
         // Sala 2 (Estacionado no canto)
-        position: [15.0, 2.0, 50.0],
+        position: [-15.0, 3.0, 170.0],
         rotation: [Math.PI, -Math.PI / 6, 0],
         scale: [20.0, 20.0, 20.0],
         normalize: true,
@@ -114,9 +114,9 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/CouchDiner.obj',
         texPath: '../assets/textures/CouchDiner.png',
         // Sala 2 (De frente pro outro sofá)
-        position: [-15.0, 0.0, 70.0],
+        position: [21.0, 0.0, 44.0],
         rotation: [0, -Math.PI / 2, 0],
-        scale: [10.0, 10.0, 10.0],
+        scale: [12, 12, 12],
         normalize: true,
         material: {
             ka: 0.3,
@@ -181,10 +181,10 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/flashlight_notexture.obj',
         texPath: null,
         // Corredor chegando na Sala 2
-        position: [0.0, -2.0, 40.0],
+        position: [-15.0, -1.0, 185.0],
         rotation: [0, Math.PI / 4, 0],
-        scale: [1.0, 1.0, 1.0],
-        color: [0.2, 0.2, 0.2], // Cinza escuro
+        scale: [2.5, 2.5, 2.5],
+        color: [0.9, 0.2, 0.2], // vermelho
         material: { ka: 0.3, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
     },
     {
@@ -249,7 +249,7 @@ const OBJECTS_TO_LOAD = [
         // Sala 2
         // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
         position: [-22.0, 2.5, 70.0],
-        rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
+        rotation: [0, Math.PI / 2, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
         scale: [0.5, 0.5, 0.5],
         material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
     },
@@ -280,9 +280,9 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/TrashCan.obj',
         texPath: '../assets/textures/TrashCan.png',
         // Sala 2
-        position: [25.0, -2.0, 60.0],
+        position: [22.0, -2.0, 60.0],
         rotation: [0, -Math.PI / 2, 0],
-        scale: [7, 7, 7],
+        scale: [9.0, 9.0, 9.0],
         material: { ka: 0.3, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
     },
 ];
@@ -372,7 +372,7 @@ class Game {
         // Inicializar Luz principal
         this.light = new Light(this.gl);
         this.light.color = [1.0, 0.95, 0.8];
-        this.light.position = [5.0, 5.0, 5.0];
+        this.light.position = [5.0, 5.0, 2.0];
 
         // --- CARREGAMENTO ---
         // 1. Carrega os Assets "Hardcoded" antigos (pode manter ou remover se tudo estiver na lista)
@@ -506,7 +506,7 @@ class Game {
             targetPos = [pos[0], 10.0, pos[2] + 5.0];
         } else {
             // MODO JOGO: Lógica normal (fixa na sala 2 ou no alien)
-            targetPos = inEscape ? [-37.5, 6.0, 230.0] : [0.0, 15.0, 60.0];
+            targetPos = inEscape ? [-37.5, 6.0, 230.0] : [0.0, 15.0, 50.0];
         }
 
         // Lerp suave (5% por frame)

@@ -1,4 +1,5 @@
 import { SCENE_GEOMETRY } from '../scenes/environment.js';
+import { computeNormalMatrixFromMat4 } from '../core/shaderUtils.js';
 
 /**
  * Função genérica para desenhar qualquer modelo OBJ carregado
@@ -31,6 +32,13 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
 
     gl.uniformMatrix4fv(uModel, false, modelMatrix);
     gl.uniform3fv(uColorLoc, color); // Cor RGB [r, g, b]
+
+    // --- NORMAL MATRIX (inverse-transpose do modelMatrix) ---
+    const uNormalMatrixLoc = gl.getUniformLocation(program, 'uNormalMatrix');
+    if (uNormalMatrixLoc) {
+        const normalMatrix = computeNormalMatrixFromMat4(modelMatrix);
+        gl.uniformMatrix3fv(uNormalMatrixLoc, false, normalMatrix);
+    }
 
     // Envia uniforms de material
     const uKa = gl.getUniformLocation(program, 'uKa');
@@ -201,8 +209,8 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
 
     // Material padrão (fosco para paredes/chão)
     const defaultMat = {
-        ka: 0.2,
-        kd: 0.6,
+        ka: 0.4,
+        kd: 0.9,
         ks: [0.2, 0.2, 0.2],
         shininess: 40.0,
     };

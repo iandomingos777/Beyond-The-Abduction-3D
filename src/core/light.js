@@ -1,7 +1,7 @@
 export class Light {
     constructor(gl) {
         this.position = [2.0, 2.0, 2.0]; // Posição X, Y, Z
-        this.color = [1.0, 1.0, 1.0]; // Cor da luz (Branco)
+        this.color = [0.7, 1.0, 0.7]; // Cor da luz (Branco)
         this.ambient = [0.2, 0.2, 0.2]; // Luz base (para não ficar tudo preto na sombra)
         this.shininess = 32.0; // Brilho especular
     }
