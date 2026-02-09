@@ -17,11 +17,18 @@ export class OBJLoader {
         this.nextIndex = 0;
     }
 
-    async load(url) {
+    async load(url, normalize = false) {
         this.reset();
         const response = await fetch(url);
         const text = await response.text();
-        return this.parse(text);
+        const data = this.parse(text);
+
+        // Aplica a normalização apenas se solicitado (para o sofá)
+        if (normalize) {
+            this.normalizeMesh(data);
+        }
+
+        return data;
     }
 
     parse(objText) {
@@ -49,15 +56,12 @@ export class OBJLoader {
             } else if (type === 'vt') {
                 this.rawTexCoords.push([parseFloat(parts[1]), parseFloat(parts[2])]);
             } else if (type === 'f') {
-                // TRIANGULAÇÃO DE FACES
-                // Transforma faces de N vértices em triângulos (Fan Triangulation)
                 const faceVerts = [];
                 for (let i = 1; i < parts.length; i++) {
                     faceVerts.push(this.processVertex(parts[i]));
                 }
 
-                // Se for um triângulo (3 vértices), empurra 0, 1, 2
-                // Se for um quadrado (4 vértices), empurra 0,1,2 e 0,2,3
+                // Triangulação Fan (padrão do seu código original)
                 const v0 = faceVerts[0];
                 for (let i = 1; i < faceVerts.length - 1; i++) {
                     this.finalIndices.push(v0);
@@ -82,15 +86,16 @@ export class OBJLoader {
 
         const indices = vertexData.split('/');
 
-        // Posição
+        // Posição: Volta para a lógica simples (Base-1 para Base-0)
         const vIdx = parseInt(indices[0]) - 1;
-        const pos = this.rawPositions[vIdx];
+        // Proteção contra índice inválido (evita crash "partial render")
+        const pos = this.rawPositions[vIdx] || [0, 0, 0];
         this.finalVertices.push(...pos);
 
-        // Textura
+        // Textura: Volta para a lógica original (sem inverter Y)
         if (indices[1] && indices[1] !== '') {
             const tIdx = parseInt(indices[1]) - 1;
-            const tex = this.rawTexCoords[tIdx];
+            const tex = this.rawTexCoords[tIdx] || [0, 0];
             this.finalTexCoords.push(...tex);
         } else {
             this.finalTexCoords.push(0, 0);
@@ -99,7 +104,7 @@ export class OBJLoader {
         // Normal
         if (indices[2] && indices[2] !== '') {
             const nIdx = parseInt(indices[2]) - 1;
-            const norm = this.rawNormals[nIdx];
+            const norm = this.rawNormals[nIdx] || [0, 1, 0];
             this.finalNormals.push(...norm);
         } else {
             this.finalNormals.push(0, 1, 0);
@@ -109,47 +114,75 @@ export class OBJLoader {
         this.cache[vertexData] = index;
         return index;
     }
+
+    normalizeMesh(meshData) {
+        let minX = Infinity,
+            minY = Infinity,
+            minZ = Infinity;
+        let maxX = -Infinity,
+            maxY = -Infinity,
+            maxZ = -Infinity;
+        const verts = meshData.vertices;
+
+        // 1. Encontra limites
+        for (let i = 0; i < verts.length; i += 3) {
+            const x = verts[i],
+                y = verts[i + 1],
+                z = verts[i + 2];
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (z < minZ) minZ = z;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+            if (z > maxZ) maxZ = z;
+        }
+
+        // 2. Calcula escala e centro
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+        const centerZ = (minZ + maxZ) / 2;
+        const maxDim = Math.max(maxX - minX, maxY - minY, maxZ - minZ);
+        // Evita divisão por zero
+        const scale = maxDim > 0 ? 1.0 / maxDim : 1.0;
+
+        // 3. Aplica
+        for (let i = 0; i < verts.length; i += 3) {
+            verts[i] = (verts[i] - centerX) * scale;
+            verts[i + 1] = (verts[i + 1] - centerY) * scale;
+            verts[i + 2] = (verts[i + 2] - centerZ) * scale;
+        }
+    }
 }
 
-export async function loadOBJModel(game, path) {
+// Wrapper mantido igual, mas usando o parâmetro normalize
+export async function loadOBJModel(game, path, normalize = true) {
     const loader = new OBJLoader();
-    const modelData = await loader.load(path);
+    const modelData = await loader.load(path, normalize);
 
     const gl = game.gl;
-    // Objeto que conterá todos os buffers desta malha 3D
     const mesh = {
-        positionBuffer: null,
-        normalBuffer: null, // Adicionado para Iluminação (Phong)
-        texCoordBuffer: null, // Adicionado para Texturas
-        indexBuffer: null,
-        count: 0,
+        positionBuffer: gl.createBuffer(),
+        normalBuffer: modelData.normals.length > 0 ? gl.createBuffer() : null,
+        texCoordBuffer: modelData.texCoords.length > 0 ? gl.createBuffer() : null,
+        indexBuffer: gl.createBuffer(),
+        count: modelData.indices.length,
     };
 
-    // Buffer de Posições (Vértices)
-    mesh.positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, modelData.vertices, gl.STATIC_DRAW);
 
-    // Enviar as normais para a GPU
-    if (modelData.normals && modelData.normals.length > 0) {
-        mesh.normalBuffer = gl.createBuffer();
+    if (mesh.normalBuffer) {
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, modelData.normals, gl.STATIC_DRAW);
     }
 
-    // Buffer de Textura (UVs)
-    if (modelData.texCoords && modelData.texCoords.length > 0) {
-        mesh.texCoordBuffer = gl.createBuffer();
+    if (mesh.texCoordBuffer) {
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, modelData.texCoords, gl.STATIC_DRAW);
     }
 
-    // Buffer de Índices
-    mesh.indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, modelData.indices, gl.STATIC_DRAW);
 
-    mesh.count = modelData.indices.length;
-
-    return mesh; // Retorna o objeto pronto para uso
+    return mesh;
 }

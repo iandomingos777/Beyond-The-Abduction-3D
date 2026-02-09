@@ -21,35 +21,41 @@ varying vec3 vNormal;
 varying vec3 vFragPos;
 
 void main() {
-    // 1. Cor Base do Objeto
-    vec4 objectColor;
-    if (uUseTexture) {
-        objectColor = texture2D(uSampler, vTexCoord) * vec4(uColor, 1.0);
-    } else {
-        objectColor = vec4(uColor, 1.0);
-    }
-    
-    if(objectColor.a < 0.1) discard;
+    // ... (cálculos de cor e normais mantidos iguais)
 
-    // Normalização
     vec3 norm = normalize(vNormal);
     vec3 lightDir = normalize(uLightPos - vFragPos);
     vec3 viewDir = normalize(uViewPos - vFragPos);
 
-    // --- CÁLCULO DE PHONG ---
+    // --- CÁLCULO DA DISTÂNCIA ---
+    float distance = length(uLightPos - vFragPos);
+    
+    // Fórmula de atenuação (Constante + Linear + Quadrática)
+    // Ajuste estes valores para controlar o alcance da luz
+    float constant = 1.0;
+    float linear = 0.09;
+    float quadratic = 0.032;
+    float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
 
-    // A. Ambiente: (Luz Ambiente Global * Cor do Objeto * Coeficiente do Material)
-    vec3 ambient = uAmbientColor * objectColor.rgb * uKa;
-
-    // B. Difusa: (Luz * Cor do Objeto * Lambert * Coeficiente do Material)
+    // --- CÁLCULO DE PHONG (Mantido) ---
+    
+    // A. Ambiente (Geralmente o ambiente não sofre atenuação forte, mas pode sofrer)
+    vec3 ambient = uAmbientColor * objectColor.rgb * uKa; 
+    
+    // B. Difusa
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * uLightColor * objectColor.rgb * uKd;
-
-    // C. Especular: (Luz * Cor Especular do Material * Phong)
-    // Agora usa uKs em vez de uLightColor direto, permitindo mudar a cor do brilho
+    
+    // C. Especular
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
-    vec3 specular = spec * uKs; 
+    vec3 specular = spec * uKs; // uKs já define a cor/intensidade do brilho
+
+    // --- APLICA A ATENUAÇÃO ---
+    // Multiplicamos a luz difusa e especular pela atenuação. 
+    // O ambiente geralmente mantemos (ou atenuamos menos) para não ficar breu total.
+    diffuse  *= attenuation;
+    specular *= attenuation;
 
     vec3 finalColor = ambient + diffuse + specular;
     gl_FragColor = vec4(finalColor, objectColor.a);

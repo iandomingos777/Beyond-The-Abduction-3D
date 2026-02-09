@@ -3,14 +3,14 @@
  * Centraliza a geometria tanto para renderização quanto para colisão
  */
 
-const WALL_POS_Y = 9.0;       // Centro Y das paredes
-const WALL_THICKNESS = 0.5;    // Espessura padrão das paredes
-const WALL_HEIGHT = 22.0;      // Altura padrão das paredes
-const FLOOR_POS_Y = -2.0;      // Altura do chão
+const WALL_POS_Y = 9.0; // Centro Y das paredes
+const WALL_THICKNESS = 0.5; // Espessura padrão das paredes
+const WALL_HEIGHT = 22.0; // Altura padrão das paredes
+const FLOOR_POS_Y = -2.0; // Altura do chão
 const CEILING_POS_Y = FLOOR_POS_Y + WALL_HEIGHT; // Topo = chão + altura
 
 const WALL_COLOR = [0.7, 0.7, 0.7];
-const FLOOR_COLOR = [0.4, 0.4, 0.9];
+const FLOOR_COLOR = [0.4, 0.4, 0.6];
 const CEILING_COLOR = [0.35, 0.35, 0.4];
 const ESCAPE_WALL_COLOR = [0.3, 0.5, 0.35];
 const ESCAPE_FLOOR_COLOR = [0.25, 0.4, 0.3];
@@ -450,7 +450,7 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
         material: { ka: 0.6, kd: 0.8, ks: [0.8, 1.0, 0.8], shininess: 80.0 },
     },
-    
+
     // --- Quadro decorativo grande na parede norte (frente da plataforma) ---
     {
         type: 'frame',

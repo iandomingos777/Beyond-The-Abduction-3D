@@ -31,11 +31,11 @@ const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/Alien_skin_gray.png',
         color: [0.0, 0.8, 0.5], // verde escurecido
         // Sala 3 (Escondido no fundo)
-        position: [-50.0, 0.0, 180.0],
+        position: [-50.0, -2.0, 180.0],
         rotation: [0, Math.PI / 4, 0], // Virado para o centro
-        scale: [1.0, 1.0, 1.0],
+        scale: [6.0, 6.0, 6.0],
         material: {
-            ka: 0.4,
+            ka: 0.3,
             kd: 0.6,
             ks: [0.2, 0.2, 0.2],
             shininess: 10.0, // Pele: brilho baixo e espalhado
@@ -47,10 +47,11 @@ const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/buddha_lowpoly.png',
         color: [0.8, 0.7, 0.2], // amarelo dourado
         // Sala 2
-        position: [0.0, 0.0, 60.0],
-        scale: [20.0, 20.0, 20.0],
+        position: [15.0, 3.0, 80.0],
+        rotation: [0, Math.PI, 0],
+        scale: [10.0, 10.0, 1.0],
         material: {
-            ka: 0.4,
+            ka: 0.3,
             kd: 0.5,
             ks: [0.8, 0.6, 0.2],
             shininess: 30.0, // Ouro/Bronze: Brilho forte e amarelado
@@ -64,9 +65,10 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
         // Sala 2 (Estacionado no canto)
-        position: [15.0, 0.0, 50.0],
-        rotation: [0, -Math.PI / 6, 0],
-        scale: [1.0, 1.0, 1.0],
+        position: [15.0, 2.0, 50.0],
+        rotation: [Math.PI, -Math.PI / 6, 0],
+        scale: [20.0, 20.0, 20.0],
+        normalize: true,
         material: {
             ka: 0.3,
             kd: 0.7,
@@ -83,7 +85,7 @@ const OBJECTS_TO_LOAD = [
         scale: [0.08, 0.08, 0.08],
         rotation: [Math.PI / 6, 0, 0], // Levemente inclinado
         material: {
-            ka: 0.8,
+            ka: 0.6,
             kd: 0.8,
             ks: [0.5, 1.0, 1.0],
             shininess: 150.0, // Sci-fi: Brilho ciano/metálico
@@ -96,11 +98,11 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/Couch.obj',
         texPath: '../assets/textures/Couch.png',
         // Sala 2
-        position: [-15.0, 0.0, 60.0],
-        rotation: [0, Math.PI / 2, 0],
+        position: [-25.0, -2.0, 60.0],
+        rotation: [0, 0, 0],
         scale: [4.0, 4.0, 4.0],
         material: {
-            ka: 0.6,
+            ka: 0.3,
             kd: 0.8,
             ks: [0.0, 0.0, 0.0],
             shininess: 1.0, // Tecido: Quase sem brilho especular
@@ -115,8 +117,9 @@ const OBJECTS_TO_LOAD = [
         position: [-15.0, 0.0, 70.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [10.0, 10.0, 10.0],
+        normalize: true,
         material: {
-            ka: 0.5,
+            ka: 0.3,
             kd: 0.8,
             ks: [0.3, 0.3, 0.3],
             shininess: 20.0, // Couro/Vinil: Brilho leve
@@ -127,11 +130,11 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/old_tv.obj',
         texPath: '../assets/textures/old_tv.png',
         // Sala 2 (Perto dos sofás, no chão ou flutuando levemente)
-        position: [-10.0, 0.5, 65.0],
-        rotation: [0, Math.PI, 0],
-        scale: [1.0, 1.0, 1.0],
+        position: [-10.0, -2.0, 85.0],
+        rotation: [0, 0, 0],
+        scale: [8.0, 8.0, 8.0],
         material: {
-            ka: 0.5,
+            ka: 0.4,
             kd: 0.7,
             ks: [0.8, 0.8, 0.8],
             shininess: 64.0, // Plástico/Vidro: Brilho médio
@@ -143,9 +146,9 @@ const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/Wooden_box.png',
         // Sala 3 (Empilhada no canto)
         position: [-55.0, 0.0, 160.0],
-        scale: [1.5, 1.5, 1.5],
+        scale: [3.5, 3.5, 3.5],
         material: {
-            ka: 0.7,
+            ka: 0.3,
             kd: 0.8,
             ks: [0.1, 0.1, 0.1],
             shininess: 5.0, // Madeira: Fosco
@@ -156,10 +159,20 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/Wooden_box.obj',
         texPath: '../assets/textures/Wooden_box.png',
         // Sala 3 (Em cima da primeira)
-        position: [-55.0, 3.0, 160.0],
+        position: [-55.0, 4.0, 160.0],
         rotation: [0, Math.PI / 3, 0],
-        scale: [1.2, 1.2, 1.2],
-        material: { ka: 0.7, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+        scale: [3.5, 3.5, 3.5],
+        material: { ka: 0.3, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+    },
+    {
+        id: 'wooden_box_stack3', // Terceira caixa
+        objPath: '../assets/models/Wooden_box.obj',
+        texPath: '../assets/textures/Wooden_box.png',
+        // Sala 3 (Ao lado da segunda, formando um "L" de caixas)
+        position: [-52.0, 0.0, 160.0],
+        rotation: [0, Math.PI / 3, 0],
+        scale: [3.5, 3.5, 3.5],
+        material: { ka: 0.3, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
 
     // --- ITENS PEQUENOS / PROPS ---
@@ -168,29 +181,30 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/flashlight_notexture.obj',
         texPath: null,
         // Corredor chegando na Sala 2
-        position: [0.0, 0.2, 40.0],
+        position: [0.0, -2.0, 40.0],
         rotation: [0, Math.PI / 4, 0],
         scale: [1.0, 1.0, 1.0],
         color: [0.2, 0.2, 0.2], // Cinza escuro
-        material: { ka: 0.5, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
+        material: { ka: 0.3, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
     },
     {
-        id: 'food',
-        objPath: '../assets/models/Food1.obj',
-        texPath: '../assets/textures/Food1.png',
-        // Sala 2 (Em cima do sofá ou chão perto)
-        position: [-15.0, 1.0, 60.0],
-        scale: [0.5, 0.5, 0.5],
-        material: { ka: 0.8, kd: 0.8, ks: [0.2, 0.2, 0.2], shininess: 10.0 },
-    },
-    {
-        id: 'can_extra',
+        id: 'can',
         objPath: '../assets/models/can_crushed_lowpoly.obj',
         texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
         // Sala 3 (Lixo no chão)
-        position: [-30.0, 0.2, 180.0],
-        scale: [0.1, 0.1, 0.1],
-        material: { ka: 0.5, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+        position: [-30.0, -2.0, 180.0],
+        scale: [0.3, 0.3, 0.3],
+        material: { ka: 0.3, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+    },
+    {
+        id: 'can2',
+        objPath: '../assets/models/can_crushed_lowpoly.obj',
+        texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
+        // Sala 3 (Lixo no chão)
+        position: [-32.0, -2.0, 180.0],
+        rotation: [0, Math.PI / 4, 0],
+        scale: [0.3, 0.3, 0.3],
+        material: { ka: 0.3, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
     },
 
     // --- EQUIPAMENTOS / LUZES ---
@@ -199,19 +213,19 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/street-lamp.obj',
         texPath: '../assets/textures/street-lamp.png',
         // Sala 2 (Canto esquerdo)
-        position: [-25.0, 0.0, 35.0],
+        position: [-25.0, -2.0, 35.0],
         scale: [1.5, 1.5, 1.5],
-        material: { ka: 0.5, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+        material: { ka: 0.3, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
     },
     {
         id: 'street_lamp_2',
         objPath: '../assets/models/street-lamp.obj',
         texPath: '../assets/textures/street-lamp.png',
         // Sala 2 (Canto direito oposto)
-        position: [25.0, 0.0, 85.0],
+        position: [25.0, -2.0, 85.0],
         rotation: [0, Math.PI, 0],
         scale: [1.5, 1.5, 1.5],
-        material: { ka: 0.5, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+        material: { ka: 0.3, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
     },
     {
         id: 'surgery_lamp',
@@ -220,33 +234,56 @@ const OBJECTS_TO_LOAD = [
         // Sala 3 (Perto do Alien)
         position: [-45.0, 0.0, 175.0],
         rotation: [0, -Math.PI / 4, 0],
-        scale: [1.2, 1.2, 1.2],
+        scale: [2.0, 2.0, 2.0],
         material: {
-            ka: 0.7,
+            ka: 0.3,
             kd: 0.8,
             ks: [0.9, 0.9, 0.9],
             shininess: 80.0, // Metal hospitalar limpo
         },
     },
     {
-        id: 'emergency_button',
+        id: 'emergency_button_sala_2',
         objPath: '../assets/models/emergency_button.obj',
         texPath: '../assets/textures/emergency_button.png',
-        // Corredor final (Parede antes da Sala 3)
+        // Sala 2
         // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
-        position: [-22.0, 2.5, 135.0],
+        position: [-22.0, 2.5, 70.0],
         rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
         scale: [0.5, 0.5, 0.5],
-        material: { ka: 0.8, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
+        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
+    },
+    {
+        id: 'emergency_button_sala_3_1',
+        objPath: '../assets/models/emergency_button.obj',
+        texPath: '../assets/textures/emergency_button.png',
+        // Sala 3
+        // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
+        position: [-22.0, 2.5, 140.0],
+        rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
+        scale: [0.5, 0.5, 0.5],
+        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
+    },
+    {
+        id: 'emergency_button_sala_3_2',
+        objPath: '../assets/models/emergency_button.obj',
+        texPath: '../assets/textures/emergency_button.png',
+        // Sala 3
+        // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
+        position: [-22.0, 2.5, 150.0],
+        rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
+        scale: [0.5, 0.5, 0.5],
+        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
     },
     {
         id: 'trash_can',
         objPath: '../assets/models/TrashCan.obj',
         texPath: '../assets/textures/TrashCan.png',
-        // Sala 2 (Perto da saída pro corredor)
-        position: [15.0, 0.0, 95.0],
-        scale: [1.2, 1.2, 1.2],
-        material: { ka: 0.4, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 20.0 },
+        // Sala 2
+        position: [25.0, -2.0, 60.0],
+        rotation: [0, -Math.PI / 2, 0],
+        scale: [7, 7, 7],
+        material: { ka: 0.3, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
     },
 ];
 
@@ -258,9 +295,6 @@ class Game {
 
         // Estado
         this.lastTime = 0;
-        this.cubeRotation = 0;
-        this.ufoRotation = 0;
-        this.canRotation = 0;
 
         // Controle do loop
         this.running = false;
@@ -272,18 +306,15 @@ class Game {
         // Dados Geométricos (Meshes)
         // Padronizamos os nomes: ufoMesh, canMesh, cubeMesh
         this.cubeMesh = null;
-        this.ufoMesh = {};
-        this.canMesh = {};
 
         // Texturas
-        this.crushedCanTexture = null;
-        this.ufoTexture = null;
         this.wallTexture = null;
         this.ceilingTexture = null;
         this.platformTexture = null;
 
         // Iluminação
         this.light = null;
+        this.debugLight = false;
 
         // Câmera (movido para o constructor para poder acessar no draw)
         this.cameraPos = [0, 0, 8];
@@ -347,18 +378,10 @@ class Game {
         // 1. Carrega os Assets "Hardcoded" antigos (pode manter ou remover se tudo estiver na lista)
         this.cubeMesh = createCubeMesh(this.gl);
         this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
-        // (Opcional: mantenha ufoMesh e canMesh antigos se quiser compatibilidade com código velho)
-        this.ufoMesh = await loadOBJModel(this, '../assets/models/Low_poly_UFO.obj');
-        this.ufoTexture = await loadTexture(this.gl, '../assets/textures/ufo_diffuse.png');
-        this.canMesh = await loadOBJModel(this, '../assets/models/can_crushed_lowpoly.obj');
-        this.crushedCanTexture = await loadTexture(
-            this.gl,
-            '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
-        );
-        this.ufoTexture = await loadTexture(this.gl, '../assets/textures/ufo_diffuse.png');
         this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
         this.ceilingTexture = await loadTexture(this.gl, '../assets/textures/roof.jpeg');
         this.platformTexture = await loadTexture(this.gl, '../assets/textures/platform.jpeg');
+        this.floorTexture = await loadTexture(this.gl, '../assets/textures/scifi_floor.png');
 
         // 2. Carrega a NOVA LISTA de Objetos
         await this.loadSceneObjects();
@@ -368,6 +391,14 @@ class Game {
 
         // Toggle building mode com tecla 'B'
         this.input.onBuildingModeToggle = () => this.player.toggleBuildingMode();
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyL') {
+                // Usa 'KeyL' para evitar problemas com CapsLock
+                this.debugLight = !this.debugLight;
+                console.log(`Luz de Editor: ${this.debugLight ? 'LIGADA' : 'DESLIGADA'}`);
+            }
+        });
 
         this.setupMatrices();
 
@@ -409,7 +440,8 @@ class Game {
             // Carregar OBJ
             try {
                 // Tenta carregar. Se falhar, usa o cubo de debug.
-                obj.mesh = await loadOBJModel(this, conf.objPath);
+                const shouldNormalize = conf.normalize || false;
+                obj.mesh = await loadOBJModel(this, conf.objPath, shouldNormalize);
             } catch (e) {
                 console.error(`Erro OBJ ${conf.id}:`, e);
                 obj.mesh = this.cubeMesh; // Fallback visual
@@ -459,18 +491,30 @@ class Game {
 
         // 4. Zona da sala de fuga → luz verde alienígena (com transição suave)
         const pos = this.player.position;
-        const inEscape = pos[0] >= ESCAPE_ROOM.minX && pos[0] <= ESCAPE_ROOM.maxX
-                      && pos[2] >= ESCAPE_ROOM.minZ && pos[2] <= ESCAPE_ROOM.maxZ;
-        
+        const inEscape =
+            pos[0] >= ESCAPE_ROOM.minX &&
+            pos[0] <= ESCAPE_ROOM.maxX &&
+            pos[2] >= ESCAPE_ROOM.minZ &&
+            pos[2] <= ESCAPE_ROOM.maxZ;
+
         const targetColor = inEscape ? [0.2, 1.3, 0.35] : [1.0, 0.95, 0.8];
-        const targetPos = inEscape ? [-37.5, 6.0, 230.0] : [pos[0], 10.0, pos[2] + 5.0];
-        
+
+        // Lógica de posição da luz
+        let targetPos;
+        if (this.debugLight) {
+            // MODO EDITOR: A luz segue o jogador (com offset para cima e à frente)
+            targetPos = [pos[0], 10.0, pos[2] + 5.0];
+        } else {
+            // MODO JOGO: Lógica normal (fixa na sala 2 ou no alien)
+            targetPos = inEscape ? [-37.5, 6.0, 230.0] : [0.0, 15.0, 60.0];
+        }
+
         // Lerp suave (5% por frame)
         const lerpFactor = 0.05;
         this.light.color[0] += (targetColor[0] - this.light.color[0]) * lerpFactor;
         this.light.color[1] += (targetColor[1] - this.light.color[1]) * lerpFactor;
         this.light.color[2] += (targetColor[2] - this.light.color[2]) * lerpFactor;
-        
+
         this.light.position[0] += (targetPos[0] - this.light.position[0]) * lerpFactor;
         this.light.position[1] += (targetPos[1] - this.light.position[1]) * lerpFactor;
         this.light.position[2] += (targetPos[2] - this.light.position[2]) * lerpFactor;
@@ -497,10 +541,7 @@ class Game {
 
         // --- 4. Desenha os objetos ---
         drawEnvironment(this);
-        drawUFO(this);
         drawCube(this);
-        drawCrushedCan(this);
-        // --- DESENHAR NOVOS OBJETOS ---
         drawSceneObjects(this);
     }
 

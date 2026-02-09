@@ -201,32 +201,26 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
 
     // Material padrão (fosco para paredes/chão)
     const defaultMat = {
-        ka: 0.5,
-        kd: 0.7,
-        ks: [0.1, 0.1, 0.1],
-        shininess: 10.0,
+        ka: 0.2,
+        kd: 0.6,
+        ks: [0.2, 0.2, 0.2],
+        shininess: 40.0,
     };
     const material = elemMaterial ? { ...defaultMat, ...elemMaterial } : defaultMat;
 
     // Textura: paredes e chão usam wallTexture; tetos usam ceilingTexture
     // Plataforma NÃO usa textura aqui (será aplicada manualmente apenas no topo)
     let texture = null;
-    if (elemType === 'wall' || elemType === 'floor') {
+    if (elemType === 'wall') {
         texture = game.wallTexture;
     } else if (elemType === 'ceiling') {
         texture = game.ceilingTexture;
+    } else if (elemType === 'floor') {
+        texture = game.floorTexture;
     }
     // Para plataforma, não definimos textura aqui (renderiza cor sólida)
 
-    drawGenericMesh(
-        game.gl,
-        game.program,
-        model,
-        game.cubeMesh,
-        color,
-        texture,
-        material,
-    );
+    drawGenericMesh(game.gl, game.program, model, game.cubeMesh, color, texture, material);
 }
 
 export function drawEnvironment(game) {
@@ -236,10 +230,14 @@ export function drawEnvironment(game) {
         if (elem.type === 'platform') {
             // 1. Desenha o cubo completo sem textura (cor sólida)
             drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
-            
+
             // 2. Desenha apenas a face superior com textura (quad fino no topo)
             const topY = elem.position[1] + elem.size[1] / 2 + 0.01; // Ligeiramente acima para evitar z-fighting
-            drawPlatformTop(game, [elem.position[0], topY, elem.position[2]], [elem.size[0], elem.size[2]]);
+            drawPlatformTop(
+                game,
+                [elem.position[0], topY, elem.position[2]],
+                [elem.size[0], elem.size[2]],
+            );
         } else {
             drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
         }
@@ -251,20 +249,20 @@ export function drawEnvironment(game) {
  */
 function drawPlatformTop(game, position, size) {
     if (!game.cubeMesh || !game.platformTexture) return;
-    
+
     let model = mat4.identityMatrix();
     // Posiciona no topo da plataforma
     model = mat4.translate(model, position[0], position[1], position[2]);
     // Escala: largura e profundidade da plataforma, altura mínima para face plana
     model = mat4.scale(model, size[0], 0.001, size[1]);
-    
+
     const material = {
         ka: 0.5,
         kd: 0.8,
         ks: [0.3, 0.3, 0.3],
         shininess: 50.0,
     };
-    
+
     drawGenericMesh(
         game.gl,
         game.program,
@@ -305,7 +303,7 @@ export function drawSceneObjects(game) {
 
         // Material padrão (se não definido no config)
         const material = obj.material || {
-            ka: 0.5,
+            ka: 0.3,
             kd: 0.8,
             ks: [0.3, 0.3, 0.3],
             shininess: 32.0,
