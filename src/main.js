@@ -519,8 +519,8 @@ class Game {
     update(dt) {
         this.checkGameOver();
         // Check for victory condition (on platform + Space key)
+        const pos = this.player.position;
         if (!this.victoryTriggered && this.running) {
-            const pos = this.player.position;
             const platformPos = [-37.5, -2.0 + 1.0, 230.0]; // FLOOR_POS_Y = -2.0
             const platformSize = [6.0, 2.0, 4.0];
             
@@ -556,15 +556,20 @@ class Game {
         this.fpsCamera._updateVectors();
 
         // 4. Zona da sala de fuga → luz verde alienígena (com transição suave)
-        const pos = this.player.position;
         const inEscape =
             pos[0] >= ESCAPE_ROOM.minX &&
             pos[0] <= ESCAPE_ROOM.maxX &&
             pos[2] >= ESCAPE_ROOM.minZ &&
             pos[2] <= ESCAPE_ROOM.maxZ;
 
-        const targetColor = inEscape ? [0.2, 1.3, 0.35] : [1.0, 0.95, 0.8];
-        const targetPos = inEscape ? [-37.5, 6.0, 230.0] : [pos[0], 10.0, pos[2] + 5.0];
+        let targetColor;
+        let targetPos;
+
+        if (inEscape) {
+            targetColor = [0.2, 1.3, 0.35]; // Verde Alien
+        } else {
+            targetColor = [1.0, 0.95, 0.8]; // Luz Quente
+        }
 
         this.camLights.forEach(cam => cam.update(dt));
         
