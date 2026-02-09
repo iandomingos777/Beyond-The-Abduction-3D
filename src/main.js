@@ -49,7 +49,7 @@ const OBJECTS_TO_LOAD = [
         id: 'buddha',
         objPath: '../assets/models/buddha_lowpoly.obj',
         has_colision: true,
-        colliderSize: [18.0, 32.0, 18.0], // Base larga para a escala 45.0
+        colliderSize: [11.0, 22.0, 10.0], // Base larga para a escala 45.0
         texPath: '../assets/textures/buddha_lowpoly.png',
         color: [0.8, 0.7, 0.2],
         position: [15.0, -2.0, 80.0],
@@ -69,7 +69,7 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
         has_colision: true,
-        colliderSize: [12.0, 7.0, 24.0], // Carro longo na escala 24.0
+        colliderSize: [13.0, 7.0, 25.0], // Carro longo na escala 24.0
         position: [-20.0, 4.0, 170.0],
         rotation: [Math.PI, -Math.PI / 6, 0],
         scale: [24.0, 24.0, 24.0],
@@ -103,7 +103,7 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/Couch.obj',
         texPath: '../assets/textures/Couch.png',
         has_colision: true,
-        colliderSize: [12.0, 4.5, 5.0], // Sofá escala 4.0
+        colliderSize: [8.0, 4.5, 17.0], // Sofá escala 4.0
         position: [-25.0, -2.0, 60.0],
         rotation: [0, 0, 0],
         scale: [4.0, 4.0, 4.0],
@@ -137,7 +137,7 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/old_tv.obj',
         texPath: '../assets/textures/old_tv.png',
         has_colision: true,
-        colliderSize: [4.5, 4.5, 4.0], // TV CRT escala 8.0
+        colliderSize: [9.5, 8.0, 9.5], // TV CRT escala 8.0
         position: [-10.0, -2.0, 85.0],
         rotation: [0, 0, 0],
         scale: [8.0, 8.0, 8.0],
@@ -154,7 +154,7 @@ const OBJECTS_TO_LOAD = [
         id: 'wooden_box_stack1',
         objPath: '../assets/models/Wooden_box.obj',
         has_colision: true,
-        colliderSize: [4.0, 4.0, 4.0],
+        colliderSize: [5.0, 5.0, 5.0],
         texPath: '../assets/textures/Wooden_box.png',
         // Sala 3 (Empilhada no canto)
         position: [-57.0, 0.5, 155.0],
@@ -170,7 +170,7 @@ const OBJECTS_TO_LOAD = [
         id: 'wooden_box_stack2',
         objPath: '../assets/models/Wooden_box.obj',
         has_colision: true,
-        colliderSize: [4.0, 4.0, 4.0],
+        colliderSize: [5.0, 5.0, 5.0],
         texPath: '../assets/textures/Wooden_box.png',
         // Sala 3 (Em cima da primeira)
         position: [-57.0, 4.3, 155.0],
@@ -183,7 +183,7 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/Wooden_box.obj',
         texPath: '../assets/textures/Wooden_box.png',
         has_colision: true,
-        colliderSize: [4.0, 4.0, 4.0],
+        colliderSize: [5.0, 5.0, 5.0],
         // Sala 3 (Ao lado da segunda, formando um "L" de caixas)
         position: [-52.0, 0.5, 155.0],
         rotation: [0, Math.PI / 3, 0],
@@ -270,37 +270,44 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/TrashCan.obj',
         texPath: '../assets/textures/TrashCan.png',
         has_colision: true,
-        colliderSize: [4.0, 7.0, 4.0], // Escala 9.0
+        colliderSize: [8.0, 8.0, 8.0], // Escala 9.0
         position: [22.0, -2.0, 60.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [9.0, 9.0, 9.0],
         material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
     },
     {
-        id: 'surgery_lamp',
-        has_colision: true,
-        colliderSize: [4.0, 10.0, 4.0],
-        objPath: '../assets/models/SurgeryLamp.obj',
-        texPath: '../assets/textures/SurgeryLamp.png',
-        position: [-45.0, 0.0, 175.0],
-        rotation: [0, -Math.PI / 4, 0],
-        scale: [2.0, 2.0, 2.0],
-        material: { ka: 0.4, kd: 0.8, ks: [0.9, 0.9, 0.9], shininess: 80.0 },
+        id: 'camera1',
+        objPath: '../assets/models/dome-camera.obj',
+        texPath: null,
+        color: [0.1, 0.8, 0.1],
+        has_colision: false,
+        position: [0.0, 18.0, 60.0],
+        rotation: [0, 0, 0],
+        scale: [0.7, 0.7, 0.7],
+        material: { ka: AMBIENT_LIGHT, kd: 0.7, ks: [2.0, 2.0, 2.0], shininess: 300.0 },
     },
-
-    // --- BOTÕES (COLISÃO NA PAREDE) ---
     {
-        id: 'emergency_button_1',
-        has_colision: true,
-        colliderSize: [1.5, 1.5, 1.5], // Pequeno, mas impossível de atravessar
-        objPath: '../assets/models/emergency_button.obj',
-        has_colision: true,
-        colliderSize: [1.5, 1.5, 1.5],
-        texPath: '../assets/textures/emergency_button.png',
-        position: [-22.0, 2.5, 70.0],
-        rotation: [0, Math.PI / 2, Math.PI / 2],
-        scale: [0.5, 0.5, 0.5],
-        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
+        id: 'camera2',
+        objPath: '../assets/models/dome-camera.obj',
+        texPath: null,
+        color: [0.8, 0.1, 0.1],
+        has_colision: false,
+        position: [-30.0, 18.0, 155.0],
+        rotation: [0, 0, 0], // Virada para a direita (Sala 3)
+        scale: [0.7, 0.7, 0.7],
+        material: { ka: AMBIENT_LIGHT, kd: 0.7, ks: [2.0, 2.0, 2.0], shininess: 300.0 },
+    },
+    {
+        id: 'camera3',
+        objPath: '../assets/models/dome-camera.obj',
+        texPath: null,
+        color: [0.1, 0.8, 0.1],
+        has_colision: false,
+        position: [-40.0, 18.0, 180.0],
+        rotation: [0, 0, 0],
+        scale: [0.7, 0.7, 0.7],
+        material: { ka: AMBIENT_LIGHT, kd: 0.7, ks: [2.0, 2.0, 2.0], shininess: 300.0 },
     },
 ];
 
@@ -586,14 +593,12 @@ class Game {
             // Se o seu "chão" é 2.0, a plataforma de vitória deve estar nesse nível ou o teste deve aceitar 2.0
             const targetY = 2.0;
             const platformPos = [-37.5, targetY, 230.0];
-            const platformSize = [10.0, 5.0, 10.0]; // Aumente um pouco a área para facilitar
-
+            const platformSize = [14.0, 10.0, 14.0];
             const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
             const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
 
-            // Checa se o player está pisando na altura do chão (2.0)
-            const onPlatformY = Math.abs(pos[1] - targetY) < 1.0;
-
+            // Checa se o player está pisando na altura do chão
+            const onPlatformY = Math.abs(pos[1] - targetY) < 5.0;
             if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
                 this.triggerVictory();
                 return;
