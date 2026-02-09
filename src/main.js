@@ -17,6 +17,7 @@ import { setupSceneColliders, ESCAPE_ROOM } from './scenes/environment.js';
 import { MainMenu } from './menu/mainMenu.js';
 import { Player } from './models/player.js';
 import { InputHandler } from './core/input.js';
+import AudioManager from './core/audio.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -311,6 +312,7 @@ class Game {
         this.wallTexture = null;
         this.ceilingTexture = null;
         this.platformTexture = null;
+        this.exitTexture = null;
 
         // Iluminação
         this.light = null;
@@ -327,6 +329,10 @@ class Game {
         this.player = new Player();
 
         this.input = new InputHandler();
+
+        // Victory state
+        this.victoryTriggered = false;
+        this.victoryOverlay = null;
 
         // Matrizes
         this.modelMatrix = mat4.identityMatrix();
@@ -382,6 +388,11 @@ class Game {
         this.ceilingTexture = await loadTexture(this.gl, '../assets/textures/roof.jpeg');
         this.platformTexture = await loadTexture(this.gl, '../assets/textures/platform.jpeg');
         this.floorTexture = await loadTexture(this.gl, '../assets/textures/scifi_floor.png');
+        this.exitTexture = await loadTexture(this.gl, '../assets/textures/exit.jpg');
+
+        // Inicializar AudioManager e pré-carregar trilha
+        this.audioManager = new AudioManager();
+        this.audioManager.load('../assets/soundtrack.ogg').catch((e) => console.warn('Falha ao carregar áudio:', e));
 
         // 2. Carrega a NOVA LISTA de Objetos
         await this.loadSceneObjects();
@@ -425,6 +436,17 @@ class Game {
             this.input.consumeMouseDelta(); // Limpa delta acumulado
         };
         this.menu.show();
+        // Tenta tocar a trilha já no menu; se o navegador bloquear, o clique no overlay fará resume/play
+        try { this.audioManager.play(); } catch (e) { /* ignore */ }
+        menuOverlay.addEventListener('click', async () => {
+            try {
+                await this.audioManager.resumeOnGesture();
+                await this.audioManager.play();
+            } catch (err) { /* ignore */ }
+        });
+        
+        // Referência ao overlay de vitória
+        this.victoryOverlay = document.getElementById('victory-overlay');
     }
 
     async loadSceneObjects() {
@@ -476,6 +498,30 @@ class Game {
     }
 
     update(dt) {
+        // Check for victory condition (on platform + Space key)
+        if (!this.victoryTriggered && this.running) {
+            const pos = this.player.position;
+            const platformPos = [-37.5, -2.0 + 1.0, 230.0]; // FLOOR_POS_Y = -2.0
+            const platformSize = [6.0, 2.0, 4.0];
+            
+            // Check if player is on platform (with some tolerance)
+            const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
+            const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
+            const onPlatformY = pos[1] >= platformPos[1] - 0.5 && pos[1] <= platformPos[1] + platformSize[1] + 1.0;
+            
+            if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
+                this.triggerVictory();
+                return; // Skip rest of update
+            }
+        }
+
+        // Skip normal updates during victory sequence
+        if (this.victoryTriggered) {
+            // Continue falling animation
+            this.player.position[1] -= 15 * dt; // Fast fall
+            return;
+        }
+
         // 1. Captura inputs do mouse
         const mouse = this.input.consumeMouseDelta();
 
@@ -543,6 +589,35 @@ class Game {
         drawEnvironment(this);
         drawCube(this);
         drawSceneObjects(this);
+    }
+
+    triggerVictory() {
+        this.victoryTriggered = true;
+        console.log('🎉 VITÓRIA! Gabrielzito escapou!');
+        
+        // Disable collisions for fall animation
+        this.player.isBuildingMode = true; // Reuse fly mode to disable collisions
+        
+        // Show victory overlay after a brief delay
+        setTimeout(() => {
+            if (this.victoryOverlay) {
+                this.victoryOverlay.classList.add('show');
+            }
+            
+            // Optionally stop audio
+            if (this.audioManager) {
+                this.audioManager.stop();
+            }
+            
+            // Add Enter key listener to return to menu
+            const handleEnter = (e) => {
+                if (e.key === 'Enter') {
+                    window.removeEventListener('keydown', handleEnter);
+                    location.reload();
+                }
+            };
+            window.addEventListener('keydown', handleEnter);
+        }, 1000);
     }
 
     startLoop() {

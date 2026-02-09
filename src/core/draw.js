@@ -225,6 +225,8 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
         texture = game.ceilingTexture;
     } else if (elemType === 'floor') {
         texture = game.floorTexture;
+    } else if (elemType === 'exit') {
+        texture = game.exitTexture;
     }
     // Para plataforma, não definimos textura aqui (renderiza cor sólida)
 

@@ -451,14 +451,14 @@ export const SCENE_GEOMETRY = [
         material: { ka: 0.6, kd: 0.8, ks: [0.8, 1.0, 0.8], shininess: 80.0 },
     },
 
-    // --- Quadro decorativo grande na parede norte (frente da plataforma) ---
+    // --- Sinal de saída na parede norte (frente da plataforma) ---
     {
-        type: 'frame',
-        position: [-37.5, WALL_POS_Y + 4.0, 235.0 - 0.3],
+        type: 'exit',
+        position: [-37.5, WALL_POS_Y - 3.0, 235.0 - 0.3],
         size: [12.0, 8.0, 0.05],
-        color: [0.95, 0.95, 0.95],
+        color: [1.0, 1.0, 1.0],
         isCollider: false,
-        material: { ka: 0.9, kd: 0.95, ks: [0.6, 0.6, 0.6], shininess: 70.0 },
+        material: { ka: 0.6, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 50.0 },
     },
 ];
 
