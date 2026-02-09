@@ -210,9 +210,9 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
     // Material padrão (fosco para paredes/chão)
     const defaultMat = {
         ka: 0.4,
-        kd: 0.8,
-        ks: [0.3, 0.3, 0.3],
-        shininess: 40.0,
+        kd: 0.85,
+        ks: [0.4, 0.4, 0.4],
+        shininess: 10.0,
     };
     const material = elemMaterial ? { ...defaultMat, ...elemMaterial } : defaultMat;
 

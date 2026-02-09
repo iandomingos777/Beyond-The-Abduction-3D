@@ -7,7 +7,7 @@ export class Player {
         this.pitch = 0;
         this.eyeOffset = 1.8; // Aqui você controla a altura da câmera
         this.speed = 16.0;
-        this.sensitivity = 0.9;
+        this.sensitivity = 0.1;
         this.isBuildingMode = false;
         this.flySpeed = 30.0;
 

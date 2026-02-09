@@ -55,9 +55,9 @@ const OBJECTS_TO_LOAD = [
         scale: [50.0, 50.0, 50.0],
         material: {
             ka: AMBIENT_LIGHT,
-            kd: 0.5,
-            ks: [0.9, 0.7, 0.2],
-            shininess: 80.0, // Ouro/Bronze: Brilho forte e amarelado
+            kd: 0.6,
+            ks: [0.95, 0.78, 0.2],
+            shininess: 90.0, // Ouro/Bronze: Brilho forte e amarelado
         },
     },
 
@@ -116,9 +116,9 @@ const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/CouchDiner.obj',
         texPath: '../assets/textures/CouchDiner.png',
         // Sala 2 (De frente pro outro sofá)
-        position: [21.0, 0.0, 44.0],
+        position: [21.0, 0.8, 44.0],
         rotation: [0, -Math.PI / 2, 0],
-        scale: [12, 12, 12],
+        scale: [13, 13, 13],
         normalize: true,
         material: {
             ka: AMBIENT_LIGHT,
@@ -391,8 +391,7 @@ class Game {
         // --- CARREGAMENTO ---
         // 1. Carrega os Assets "Hardcoded" antigos (pode manter ou remover se tudo estiver na lista)
         this.cubeMesh = createCubeMesh(this.gl);
-        this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
-        this.wallTexture = await loadTexture(this.gl, '../assets/textures/metal-wall1.jpg');
+        this.wallTexture = await loadTexture(this.gl, '../assets/textures/space-wall2.png');
         this.ceilingTexture = await loadTexture(this.gl, '../assets/textures/roof.jpeg');
         this.platformTexture = await loadTexture(this.gl, '../assets/textures/platform.jpeg');
         this.floorTexture = await loadTexture(this.gl, '../assets/textures/scifi_floor.png');
