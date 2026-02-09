@@ -45,8 +45,8 @@ void main() {
     // distância e atenuação
     float dist = length(uLightPos - vFragPos);
     float constant = 1.0;
-    float linear = 0.008; 
-    float quadratic = 0.0004;
+    float linear = 0.010; 
+    float quadratic = 0.0005;
     float attenuation = 1.0 / (constant + linear * dist + quadratic * dist * dist);
 
     // Ambiente

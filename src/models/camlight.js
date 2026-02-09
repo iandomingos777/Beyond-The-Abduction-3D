@@ -3,7 +3,7 @@ import { Spotlight } from '../core/light.js';
 export class CamLight {
     constructor(startPos, inner = 30, outer = 40) {
         // Criamos a instância da luz DENTRO da classe
-        this.light = new Spotlight(startPos, [0, -1, 0], [1, 1, 1], inner, outer);
+        this.light = new Spotlight(startPos, [0, -1, 0], [1, 1, 1], inner, outer, 1.5);
 
         this.angle = 0;
         this.speed = 5.0;

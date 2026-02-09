@@ -27,6 +27,7 @@ export class Spotlight {
         color = [1, 1, 1],
         innerDeg = 30,
         outerDeg = 40,
+        intensity = 1.0,
     ) {
         this.position = pos;
         this.direction = dir;
@@ -34,5 +35,6 @@ export class Spotlight {
         // Converte graus para o cosseno do radiano (o que o shader espera)
         this.innerCutoff = Math.cos((innerDeg * Math.PI) / 180);
         this.outerCutoff = Math.cos((outerDeg * Math.PI) / 180);
+        this.intensity = intensity;
     }
 }
