@@ -642,7 +642,7 @@ class Game {
                 const dotProduct = mat4.dot(toPlayerDir, lightDir);
 
                 // Se o cosseno do ângulo for maior que o limite, está dentro do cone
-                const detectionThreshold = Math.cos(0.25);
+                const detectionThreshold = Math.cos(0.5);
 
                 if (dotProduct > detectionThreshold) {
                     console.log('⚠️ JOGADOR DETECTADO!');
