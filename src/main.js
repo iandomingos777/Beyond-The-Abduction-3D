@@ -25,39 +25,32 @@ import * as mat4 from './math/mat4.js';
 // --- CONFIGURAÇÃO DOS OBJETOS ---
 // Sala 2: Aprox. Z entre 30 e 90.
 // Sala 3: Aprox. Z entre 140 e 200, X negativo.
-const OBJECTS_TO_LOAD = [
+
+export const OBJECTS_TO_LOAD = [
     // --- PERSONAGENS / FIGURAS ---
     {
         id: 'alien',
         objPath: '../assets/models/Alien.obj',
         texPath: '../assets/textures/Alien_skin_gray.png',
-        color: [0.0, 0.8, 0.5], // verde escurecido
-        // Sala 3 (Escondido no fundo)
+        has_colision: true,
+        colliderSize: [3.5, 12.0, 3.5], // Ajustado para a escala 8.0
+        color: [0.0, 0.8, 0.5],
         position: [-55.0, -2.0, 180.0],
-        rotation: [0, (3 * Math.PI) / 4, 0], // Virado para o centro
+        rotation: [0, (3 * Math.PI) / 4, 0],
         scale: [8.0, 8.0, 8.0],
-        material: {
-            ka: 0.4,
-            kd: 0.7,
-            ks: [0.2, 0.2, 0.2],
-            shininess: 10.0, // Pele: brilho baixo e espalhado
-        },
+        material: { ka: 0.4, kd: 0.7, ks: [0.2, 0.2, 0.2], shininess: 10.0 },
     },
     {
         id: 'buddha',
         objPath: '../assets/models/buddha_lowpoly.obj',
+        has_colision: true,
+        colliderSize: [18.0, 32.0, 18.0], // Base larga para a escala 45.0
         texPath: '../assets/textures/buddha_lowpoly.png',
-        color: [0.8, 0.7, 0.2], // amarelo dourado
-        // Sala 2
+        color: [0.8, 0.7, 0.2],
         position: [15.0, -2.0, 80.0],
         rotation: [0, Math.PI, 0],
         scale: [45.0, 45.0, 45.0],
-        material: {
-            ka: 0.4,
-            kd: 0.5,
-            ks: [0.8, 0.6, 0.2],
-            shininess: 30.0, // Ouro/Bronze: Brilho forte e amarelado
-        },
+        material: { ka: 0.4, kd: 0.5, ks: [0.8, 0.6, 0.2], shininess: 30.0 },
     },
 
     // --- VEÍCULOS ---
@@ -65,32 +58,24 @@ const OBJECTS_TO_LOAD = [
         id: 'police_car',
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
-        // Sala 2
+        has_colision: true,
+        colliderSize: [12.0, 7.0, 24.0], // Carro longo na escala 24.0
         position: [-20.0, 4.0, 170.0],
         rotation: [Math.PI, -Math.PI / 6, 0],
         scale: [24.0, 24.0, 24.0],
         normalize: true,
-        material: {
-            ka: 0.4,
-            kd: 0.7,
-            ks: [1.0, 1.0, 1.0],
-            shininess: 200.0,
-        },
+        material: { ka: 0.4, kd: 0.7, ks: [1.0, 1.0, 1.0], shininess: 200.0 },
     },
     {
         id: 'ufo',
         objPath: '../assets/models/Low_poly_UFO.obj',
         texPath: '../assets/textures/ufo_diffuse.png',
-        // Sala 3 (Flutuando alto no centro da sala final)
+        has_colision: true,
+        colliderSize: [18.0, 5.0, 18.0], // Disco largo e achatado
         position: [-37.5, 8.0, 170.0],
         scale: [0.08, 0.08, 0.08],
-        rotation: [Math.PI / 6, 0, 0], // Levemente inclinado
-        material: {
-            ka: 0.6,
-            kd: 0.8,
-            ks: [0.5, 1.0, 1.0],
-            shininess: 150.0, // Sci-fi: Brilho ciano/metálico
-        },
+        rotation: [Math.PI / 6, 0, 0],
+        material: { ka: 0.6, kd: 0.8, ks: [0.5, 1.0, 1.0], shininess: 150.0 },
     },
 
     // --- MOBÍLIA ---
@@ -98,193 +83,141 @@ const OBJECTS_TO_LOAD = [
         id: 'couch',
         objPath: '../assets/models/Couch.obj',
         texPath: '../assets/textures/Couch.png',
-        // Sala 2
+        has_colision: true,
+        colliderSize: [12.0, 4.5, 5.0], // Sofá escala 4.0
         position: [-25.0, -2.0, 60.0],
         rotation: [0, 0, 0],
         scale: [4.0, 4.0, 4.0],
-        material: {
-            ka: 0.4,
-            kd: 0.8,
-            ks: [0.0, 0.0, 0.0],
-            shininess: 1.0, // Tecido: Quase sem brilho especular
-        },
+        material: { ka: 0.4, kd: 0.8, ks: [0.0, 0.0, 0.0], shininess: 1.0 },
     },
     {
-        // FIX: Não está renderizando
         id: 'couchDiner',
         objPath: '../assets/models/CouchDiner.obj',
         texPath: '../assets/textures/CouchDiner.png',
-        // Sala 2 (De frente pro outro sofá)
+        has_colision: true,
+        colliderSize: [8.0, 5.0, 12.0], // Escala 12.0 com normalize
         position: [21.0, 0.0, 44.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [12, 12, 12],
         normalize: true,
-        material: {
-            ka: 0.4,
-            kd: 0.8,
-            ks: [0.3, 0.3, 0.3],
-            shininess: 20.0, // Couro/Vinil: Brilho leve
-        },
+        material: { ka: 0.4, kd: 0.8, ks: [0.3, 0.3, 0.3], shininess: 20.0 },
     },
     {
         id: 'old_tv',
         objPath: '../assets/models/old_tv.obj',
         texPath: '../assets/textures/old_tv.png',
-        // Sala 2 (Perto dos sofás, no chão ou flutuando levemente)
+        has_colision: true,
+        colliderSize: [4.5, 4.5, 4.0], // TV CRT escala 8.0
         position: [-10.0, -2.0, 85.0],
         rotation: [0, 0, 0],
         scale: [8.0, 8.0, 8.0],
-        material: {
-            ka: 0.5,
-            kd: 0.7,
-            ks: [0.8, 0.8, 0.8],
-            shininess: 64.0, // Plástico/Vidro: Brilho médio
-        },
+        material: { ka: 0.5, kd: 0.7, ks: [0.8, 0.8, 0.8], shininess: 64.0 },
     },
+
+    // --- CAIXAS DE MADEIRA ---
     {
         id: 'wooden_box_stack1',
         objPath: '../assets/models/Wooden_box.obj',
+        has_colision: true,
+        colliderSize: [4.0, 4.0, 4.0],
         texPath: '../assets/textures/Wooden_box.png',
-        // Sala 3 (Empilhada no canto)
         position: [-55.0, 0.0, 160.0],
         scale: [3.5, 3.5, 3.5],
-        material: {
-            ka: 0.4,
-            kd: 0.8,
-            ks: [0.1, 0.1, 0.1],
-            shininess: 5.0, // Madeira: Fosco
-        },
+        material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
     {
-        id: 'wooden_box_stack2', // Segunda caixa
+        id: 'wooden_box_stack2',
         objPath: '../assets/models/Wooden_box.obj',
         texPath: '../assets/textures/Wooden_box.png',
-        // Sala 3 (Em cima da primeira)
+        has_colision: true,
+        colliderSize: [4.0, 4.0, 4.0],
         position: [-55.0, 4.0, 160.0],
         rotation: [0, Math.PI / 3, 0],
         scale: [3.5, 3.5, 3.5],
         material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
     {
-        id: 'wooden_box_stack3', // Terceira caixa
+        id: 'wooden_box_stack3',
         objPath: '../assets/models/Wooden_box.obj',
         texPath: '../assets/textures/Wooden_box.png',
-        // Sala 3 (Ao lado da segunda, formando um "L" de caixas)
+        has_colision: true,
+        colliderSize: [4.0, 4.0, 4.0],
         position: [-52.0, 0.0, 160.0],
         rotation: [0, Math.PI / 3, 0],
         scale: [3.5, 3.5, 3.5],
         material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
 
-    // --- ITENS PEQUENOS / PROPS ---
+    // --- PROPS ---
     {
         id: 'flashlight',
         objPath: '../assets/models/flashlight_notexture.obj',
         texPath: null,
+        has_colision: true,
+        colliderSize: [1.2, 1.2, 3.0], 
         position: [-25.0, -1.0, 190.0],
         rotation: [0, Math.PI / 2.6, 0],
         scale: [2.5, 2.5, 2.5],
-        color: [0.9, 0.2, 0.2], // vermelho
+        color: [0.9, 0.2, 0.2],
         material: { ka: 0.4, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
     },
     {
         id: 'can',
+        has_colision: true,
+        colliderSize: [0.8, 1.2, 0.8], // Latinhas precisam ser um pouco maiores que o modelo para o player sentir
         objPath: '../assets/models/can_crushed_lowpoly.obj',
         texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
-        // Sala 3 (Lixo no chão)
         position: [-50.0, -2.0, 180.0],
         scale: [0.2, 0.2, 0.2],
-        material: { ka: 0.4, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
-    },
-    {
-        id: 'can2',
-        objPath: '../assets/models/can_crushed_lowpoly.obj',
-        texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
-        // Sala 3 (Lixo no chão)
-        position: [-54.0, -2.0, 180.0],
-        rotation: [0, Math.PI / 4, 0],
-        scale: [0.2, 0.2, 0.2],
-        material: { ka: 0.4, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+        material: { ka: 0.4, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 },
     },
 
-    // --- EQUIPAMENTOS / LUZES ---
+    // --- ILUMINAÇÃO / POSTES ---
     {
         id: 'street_lamp_1',
+        has_colision: true,
+        colliderSize: [2.0, 20.0, 2.0], // Poste fino mas impossível de atravessar
         objPath: '../assets/models/street-lamp.obj',
         texPath: '../assets/textures/street-lamp.png',
-        // Sala 2 (Canto esquerdo)
         position: [-25.0, -2.0, 35.0],
         scale: [1.5, 1.5, 1.5],
         material: { ka: 0.4, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
     },
     {
-        id: 'street_lamp_2',
-        objPath: '../assets/models/street-lamp.obj',
-        texPath: '../assets/textures/street-lamp.png',
-        // Sala 2 (Canto direito oposto)
-        position: [25.0, -2.0, 85.0],
-        rotation: [0, Math.PI, 0],
-        scale: [1.5, 1.5, 1.5],
-        material: { ka: 0.4, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
-    },
-    {
-        id: 'surgery_lamp',
-        objPath: '../assets/models/SurgeryLamp.obj',
-        texPath: '../assets/textures/SurgeryLamp.png',
-        // Sala 3 (Perto do Alien)
-        position: [-45.0, 0.0, 175.0],
-        rotation: [0, -Math.PI / 4, 0],
-        scale: [2.0, 2.0, 2.0],
-        material: {
-            ka: 0.4,
-            kd: 0.8,
-            ks: [0.9, 0.9, 0.9],
-            shininess: 80.0, // Metal hospitalar limpo
-        },
-    },
-    {
-        id: 'emergency_button_sala_2',
-        objPath: '../assets/models/emergency_button.obj',
-        texPath: '../assets/textures/emergency_button.png',
-        // Sala 2
-        // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
-        position: [-22.0, 2.5, 70.0],
-        rotation: [0, Math.PI / 2, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
-        scale: [0.5, 0.5, 0.5],
-        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
-    },
-    {
-        id: 'emergency_button_sala_3_1',
-        objPath: '../assets/models/emergency_button.obj',
-        texPath: '../assets/textures/emergency_button.png',
-        // Sala 3
-        // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
-        position: [-22.0, 2.5, 140.0],
-        rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
-        scale: [0.5, 0.5, 0.5],
-        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
-    },
-    {
-        id: 'emergency_button_sala_3_2',
-        objPath: '../assets/models/emergency_button.obj',
-        texPath: '../assets/textures/emergency_button.png',
-        // Sala 3
-        // Ajuste fino: X=-22.5 é a parede, movi um pouco pra dentro
-        position: [-22.0, 2.5, 150.0],
-        rotation: [0, 0, Math.PI / 2], // Rotacionado pra "colar" na parede vertical
-        scale: [0.5, 0.5, 0.5],
-        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
-    },
-    {
         id: 'trash_can',
         objPath: '../assets/models/TrashCan.obj',
         texPath: '../assets/textures/TrashCan.png',
-        // Sala 2
+        has_colision: true,
+        colliderSize: [4.0, 7.0, 4.0], // Escala 9.0
         position: [22.0, -2.0, 60.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [9.0, 9.0, 9.0],
         material: { ka: 0.5, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
     },
+    {
+        id: 'surgery_lamp',
+        has_colision: true,
+        colliderSize: [4.0, 10.0, 4.0],
+        objPath: '../assets/models/SurgeryLamp.obj',
+        texPath: '../assets/textures/SurgeryLamp.png',
+        position: [-45.0, 0.0, 175.0],
+        rotation: [0, -Math.PI / 4, 0],
+        scale: [2.0, 2.0, 2.0],
+        material: { ka: 0.4, kd: 0.8, ks: [0.9, 0.9, 0.9], shininess: 80.0 },
+    },
+
+    // --- BOTÕES (COLISÃO NA PAREDE) ---
+    {
+        id: 'emergency_button_1',
+        objPath: '../assets/models/emergency_button.obj',
+        has_colision: true,
+        colliderSize: [1.5, 1.5, 1.5],
+        texPath: '../assets/textures/emergency_button.png',
+        position: [-22.0, 2.5, 70.0],
+        rotation: [0, Math.PI / 2, Math.PI / 2],
+        scale: [0.5, 0.5, 0.5],
+        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
+    }
 ];
 
 class Game {
@@ -492,9 +425,36 @@ class Game {
             }
         });
 
+        setupSceneColliders(this.collisionSystem);
+
+        // 2. Configura os modelos 3D que acabamos de carregar
+        this.setupObjectColliders();
+
         // Referência ao overlay de vitória
         this.victoryOverlay = document.getElementById('victory-overlay');
     }
+
+    setupObjectColliders() {
+        this.sceneObjects.forEach(obj => {
+            if (obj.has_colision) { 
+                const size = obj.colliderSize || [obj.scale[0], obj.scale[1], obj.scale[2]];
+                
+                // Calculamos o centro real da caixa
+                // Se o seu modelo cresce para cima a partir do pé (Y), 
+                // o centro Y é a posição + metade da altura.
+                const center = [
+                    obj.position[0], 
+                    obj.position[1] + size[1] / 2, 
+                    obj.position[2]
+                ];
+
+                // Agora passamos exatamente os 2 argumentos que a classe espera
+                this.collisionSystem.addBox(center, size);
+                
+                console.log(`Colisor ativado para: ${obj.id}`, { center, size });
+            }
+        });
+}
 
     async loadSceneObjects() {
         console.log('Carregando objetos da lista...');
