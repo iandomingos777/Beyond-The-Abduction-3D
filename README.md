@@ -197,9 +197,7 @@ http://localhost:8000
 
 ## Vídeo Demonstrativo
 
-Um vídeo demonstrando a execução do projeto será disponibilizado ao final do desenvolvimento:
-
-- **Link:** _(placeholder – a ser adicionado)_
+Um vídeo demonstrando a execução do jogo está disponível na raiz do projeto.
 
 ---
 
