@@ -2,8 +2,8 @@ export class Light {
     constructor(gl) {
         this.position = [2.0, 2.0, 2.0]; // Posição X, Y, Z
         this.color = [0.7, 1.0, 0.7]; // Cor da luz (Branco)
-        this.ambient = [0.2, 0.2, 0.2]; // Luz base (para não ficar tudo preto na sombra)
-        this.shininess = 32.0; // Brilho especular
+        this.ambient = [0.33, 0.33, 0.33]; // Luz base (para não ficar tudo preto na sombra)
+        this.shininess = 35.0; // Brilho especular
     }
 
     // Método para atualizar os uniforms no shader de uma vez só
@@ -21,25 +21,18 @@ export class Light {
 }
 
 export class Spotlight {
-    constructor(startPos = [0.0, 5.0, 0.0]) {
-        this.position = startPos;  
-        this.direction = [0.0, -1.0, 0.0]; 
-        
-        this.innerCutoff = Math.cos(Math.PI / 12); 
-        this.outerCutoff = Math.cos(Math.PI / 9);  
-        
-        this.color = [0.0, 2.0, 2.0]; 
-        // Removi o this.ambient daqui porque o shader já usa o uAmbientColor da luz global
-    }
-
-    updateUniforms(gl, program) {
-        // IMPORTANTE: Mudar para os nomes uSpot... que criamos no Shader
-        gl.uniform3fv(gl.getUniformLocation(program, 'uSpotPos'), this.position);
-        gl.uniform3fv(gl.getUniformLocation(program, 'uSpotDir'), this.direction);
-        gl.uniform3fv(gl.getUniformLocation(program, 'uSpotColor'), this.color);
-        
-        // Cutoffs
-        gl.uniform1f(gl.getUniformLocation(program, 'uInnerCutoff'), this.innerCutoff);
-        gl.uniform1f(gl.getUniformLocation(program, 'uOuterCutoff'), this.outerCutoff);
+    constructor(
+        pos = [0, 0, 0],
+        dir = [0, -1, 0],
+        color = [1, 1, 1],
+        innerDeg = 30,
+        outerDeg = 40,
+    ) {
+        this.position = pos;
+        this.direction = dir;
+        this.color = color;
+        // Converte graus para o cosseno do radiano (o que o shader espera)
+        this.innerCutoff = Math.cos((innerDeg * Math.PI) / 180);
+        this.outerCutoff = Math.cos((outerDeg * Math.PI) / 180);
     }
 }

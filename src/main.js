@@ -10,7 +10,7 @@ import {
     drawSceneObjects,
 } from './core/draw.js';
 import { loadTexture } from './core/textureLoader.js';
-import { Light } from './core/light.js';
+import { Light, Spotlight } from './core/light.js';
 import { Camera } from './core/camera.js';
 import { CollisionSystem } from './systems/collision.js';
 import { setupSceneColliders, ESCAPE_ROOM } from './scenes/environment.js';
@@ -33,12 +33,12 @@ const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/Alien_skin_gray.png',
         color: [0.0, 0.8, 0.5], // verde escurecido
         // Sala 3 (Escondido no fundo)
-        position: [-50.0, -2.0, 180.0],
-        rotation: [0, Math.PI / 4, 0], // Virado para o centro
-        scale: [6.0, 6.0, 6.0],
+        position: [-55.0, -2.0, 180.0],
+        rotation: [0, (3 * Math.PI) / 4, 0], // Virado para o centro
+        scale: [8.0, 8.0, 8.0],
         material: {
-            ka: 0.3,
-            kd: 0.6,
+            ka: 0.4,
+            kd: 0.7,
             ks: [0.2, 0.2, 0.2],
             shininess: 10.0, // Pele: brilho baixo e espalhado
         },
@@ -53,7 +53,7 @@ const OBJECTS_TO_LOAD = [
         rotation: [0, Math.PI, 0],
         scale: [45.0, 45.0, 45.0],
         material: {
-            ka: 0.3,
+            ka: 0.4,
             kd: 0.5,
             ks: [0.8, 0.6, 0.2],
             shininess: 30.0, // Ouro/Bronze: Brilho forte e amarelado
@@ -62,20 +62,19 @@ const OBJECTS_TO_LOAD = [
 
     // --- VEÍCULOS ---
     {
-        // Não está renderizando
         id: 'police_car',
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
-        // Sala 2 (Estacionado no canto)
-        position: [-15.0, 3.0, 170.0],
+        // Sala 2
+        position: [-20.0, 4.0, 170.0],
         rotation: [Math.PI, -Math.PI / 6, 0],
-        scale: [20.0, 20.0, 20.0],
+        scale: [24.0, 24.0, 24.0],
         normalize: true,
         material: {
-            ka: 0.3,
+            ka: 0.4,
             kd: 0.7,
             ks: [1.0, 1.0, 1.0],
-            shininess: 200.0, // Lataria: Muito brilhante e polido
+            shininess: 200.0,
         },
     },
     {
@@ -104,7 +103,7 @@ const OBJECTS_TO_LOAD = [
         rotation: [0, 0, 0],
         scale: [4.0, 4.0, 4.0],
         material: {
-            ka: 0.3,
+            ka: 0.4,
             kd: 0.8,
             ks: [0.0, 0.0, 0.0],
             shininess: 1.0, // Tecido: Quase sem brilho especular
@@ -121,7 +120,7 @@ const OBJECTS_TO_LOAD = [
         scale: [12, 12, 12],
         normalize: true,
         material: {
-            ka: 0.3,
+            ka: 0.4,
             kd: 0.8,
             ks: [0.3, 0.3, 0.3],
             shininess: 20.0, // Couro/Vinil: Brilho leve
@@ -136,7 +135,7 @@ const OBJECTS_TO_LOAD = [
         rotation: [0, 0, 0],
         scale: [8.0, 8.0, 8.0],
         material: {
-            ka: 0.4,
+            ka: 0.5,
             kd: 0.7,
             ks: [0.8, 0.8, 0.8],
             shininess: 64.0, // Plástico/Vidro: Brilho médio
@@ -150,7 +149,7 @@ const OBJECTS_TO_LOAD = [
         position: [-55.0, 0.0, 160.0],
         scale: [3.5, 3.5, 3.5],
         material: {
-            ka: 0.3,
+            ka: 0.4,
             kd: 0.8,
             ks: [0.1, 0.1, 0.1],
             shininess: 5.0, // Madeira: Fosco
@@ -164,7 +163,7 @@ const OBJECTS_TO_LOAD = [
         position: [-55.0, 4.0, 160.0],
         rotation: [0, Math.PI / 3, 0],
         scale: [3.5, 3.5, 3.5],
-        material: { ka: 0.3, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+        material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
     {
         id: 'wooden_box_stack3', // Terceira caixa
@@ -174,7 +173,7 @@ const OBJECTS_TO_LOAD = [
         position: [-52.0, 0.0, 160.0],
         rotation: [0, Math.PI / 3, 0],
         scale: [3.5, 3.5, 3.5],
-        material: { ka: 0.3, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+        material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
 
     // --- ITENS PEQUENOS / PROPS ---
@@ -182,31 +181,30 @@ const OBJECTS_TO_LOAD = [
         id: 'flashlight',
         objPath: '../assets/models/flashlight_notexture.obj',
         texPath: null,
-        // Corredor chegando na Sala 2
-        position: [-15.0, -1.0, 185.0],
-        rotation: [0, Math.PI / 4, 0],
+        position: [-25.0, -1.0, 190.0],
+        rotation: [0, Math.PI / 2.6, 0],
         scale: [2.5, 2.5, 2.5],
         color: [0.9, 0.2, 0.2], // vermelho
-        material: { ka: 0.3, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
+        material: { ka: 0.4, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
     },
     {
         id: 'can',
         objPath: '../assets/models/can_crushed_lowpoly.obj',
         texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
         // Sala 3 (Lixo no chão)
-        position: [-30.0, -2.0, 180.0],
-        scale: [0.3, 0.3, 0.3],
-        material: { ka: 0.3, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+        position: [-50.0, -2.0, 180.0],
+        scale: [0.2, 0.2, 0.2],
+        material: { ka: 0.4, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
     },
     {
         id: 'can2',
         objPath: '../assets/models/can_crushed_lowpoly.obj',
         texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
         // Sala 3 (Lixo no chão)
-        position: [-32.0, -2.0, 180.0],
+        position: [-54.0, -2.0, 180.0],
         rotation: [0, Math.PI / 4, 0],
-        scale: [0.3, 0.3, 0.3],
-        material: { ka: 0.3, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+        scale: [0.2, 0.2, 0.2],
+        material: { ka: 0.4, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
     },
 
     // --- EQUIPAMENTOS / LUZES ---
@@ -217,7 +215,7 @@ const OBJECTS_TO_LOAD = [
         // Sala 2 (Canto esquerdo)
         position: [-25.0, -2.0, 35.0],
         scale: [1.5, 1.5, 1.5],
-        material: { ka: 0.3, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+        material: { ka: 0.4, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
     },
     {
         id: 'street_lamp_2',
@@ -227,7 +225,7 @@ const OBJECTS_TO_LOAD = [
         position: [25.0, -2.0, 85.0],
         rotation: [0, Math.PI, 0],
         scale: [1.5, 1.5, 1.5],
-        material: { ka: 0.3, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+        material: { ka: 0.4, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
     },
     {
         id: 'surgery_lamp',
@@ -238,7 +236,7 @@ const OBJECTS_TO_LOAD = [
         rotation: [0, -Math.PI / 4, 0],
         scale: [2.0, 2.0, 2.0],
         material: {
-            ka: 0.3,
+            ka: 0.4,
             kd: 0.8,
             ks: [0.9, 0.9, 0.9],
             shininess: 80.0, // Metal hospitalar limpo
@@ -285,7 +283,7 @@ const OBJECTS_TO_LOAD = [
         position: [22.0, -2.0, 60.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [9.0, 9.0, 9.0],
-        material: { ka: 0.3, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
+        material: { ka: 0.5, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
     },
 ];
 
@@ -369,19 +367,19 @@ class Game {
         const fShaderSrc = await this.loadShader('./assets/shaders/fragment.glsl');
         const vertexShader = createShader(this.gl, this.gl.VERTEX_SHADER, vShaderSrc);
         const fragmentShader = createShader(this.gl, this.gl.FRAGMENT_SHADER, fShaderSrc);
-        
+
         if (!vertexShader || !fragmentShader) {
             console.error('Failed to compile shaders');
             return;
         }
-        
+
         this.program = createProgram(this.gl, vertexShader, fragmentShader);
-        
+
         if (!this.program) {
             console.error('Failed to create shader program');
             return;
         }
-        
+
         console.log('Shader program created successfully:', this.program);
         this.gl.useProgram(this.program);
 
@@ -399,19 +397,27 @@ class Game {
 
         // Câmera 1 (Sala 2 - Buddha)
         const cam1 = new CamLight([0.0, 12.0, 60.0]);
-        cam1.light.color = [0.0, 1.5, 1.5]; // Ciano
+        cam1.light.color = [0.0, 1.5, 0.0]; // Ciano
+        cam1.speed = 1.5; // Velocidade de oscilação
         this.camLights.push(cam1);
 
-        // Câmera 2 (Corredor)
-        const cam2 = new CamLight([-20.0, 10.0, 100.0]);
+        // Câmera 2 (Sala 3 - Alien)
+        const cam2 = new CamLight([-30.0, 10.0, 155.0], 20, 30);
         cam2.light.color = [1.5, 0.0, 0.0]; // Vermelha
         cam2.speed = 2.0; // Mais lenta
         this.camLights.push(cam2);
 
         // Câmera 3 (Sala 3 - Alien)
-        const cam3 = new CamLight([-40.0, 12.0, 170.0]);
+        const cam3 = new CamLight([-40.0, 12.0, 180.0], 20, 30);
         cam3.light.color = [0.0, 1.5, 0.0]; // Verde
-        this.camLights.push(cam3);         
+        cam3.speed = 1.5; // Velocidade média
+        this.camLights.push(cam3);
+
+        this.spotlights = [
+            new Spotlight([-25.0, 8.0, 35.0], [0.3, -1, 0], [1.0, 0.8, 0.5], 50, 100), // Street Lamp 1
+            new Spotlight([25.0, 8.0, 85.0], [-0.3, -1, 0], [1.0, 0.8, 0.5], 50, 100), // Street Lamp 2
+            new Spotlight([-25.0, -1.0, 192.0], [-1, 0, -0.7], [1.0, 1.0, 1.0], 20, 40), // Flashlight no chão
+        ];
 
         // --- CARREGAMENTO ---
         // 1. Carrega os Assets "Hardcoded" antigos (pode manter ou remover se tudo estiver na lista)
@@ -425,9 +431,11 @@ class Game {
 
         // Inicializar AudioManager e pré-carregar trilha
         this.audioManager = new AudioManager();
-        this.audioManager.load('../assets/soundtrack.ogg').catch((e) => console.warn('Falha ao carregar áudio:', e));
+        this.audioManager
+            .load('../assets/soundtrack.ogg')
+            .catch((e) => console.warn('Falha ao carregar áudio:', e));
 
-        // 2. Carrega a NOVA LISTA de Objetos
+        // Carrega a lista de objetos
         await this.loadSceneObjects();
 
         // Configura colisoes e matrizes
@@ -470,14 +478,20 @@ class Game {
         };
         this.menu.show();
         // Tenta tocar a trilha já no menu; se o navegador bloquear, o clique no overlay fará resume/play
-        try { this.audioManager.play(); } catch (e) { /* ignore */ }
+        try {
+            this.audioManager.play();
+        } catch (e) {
+            /* ignore */
+        }
         menuOverlay.addEventListener('click', async () => {
             try {
                 await this.audioManager.resumeOnGesture();
                 await this.audioManager.play();
-            } catch (err) { /* ignore */ }
+            } catch (err) {
+                /* ignore */
+            }
         });
-        
+
         // Referência ao overlay de vitória
         this.victoryOverlay = document.getElementById('victory-overlay');
     }
@@ -518,16 +532,10 @@ class Game {
     }
 
     setupMatrices() {
-        const fov = 45; // em graus (teu createPerspective espera graus)
+        const fov = 45; // em graus
         const aspect = this.canvas.width / this.canvas.height;
 
         this.projectionMatrix = mat4.createPerspective(fov, aspect, 0.1, 200.0);
-
-        // this.viewMatrix = mat4.createCamera(
-        //     [0, 0, 8], // posição da câmera
-        //     [0, 0, 0], // target
-        //     [0, 1, 0], // up
-        // );
     }
 
     update(dt) {
@@ -537,12 +545,13 @@ class Game {
         if (!this.victoryTriggered && this.running) {
             const platformPos = [-37.5, -2.0 + 1.0, 230.0]; // FLOOR_POS_Y = -2.0
             const platformSize = [6.0, 2.0, 4.0];
-            
+
             // Check if player is on platform (with some tolerance)
             const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
             const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
-            const onPlatformY = pos[1] >= platformPos[1] - 0.5 && pos[1] <= platformPos[1] + platformSize[1] + 1.0;
-            
+            const onPlatformY =
+                pos[1] >= platformPos[1] - 0.5 && pos[1] <= platformPos[1] + platformSize[1] + 1.0;
+
             if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
                 this.triggerVictory();
                 return; // Skip rest of update
@@ -585,15 +594,16 @@ class Game {
             targetColor = [1.0, 0.95, 0.8]; // Luz Quente
         }
 
-        this.camLights.forEach(cam => cam.update(dt));
-        
+        this.camLights.forEach((cam) => cam.update(dt));
 
         if (this.debugLight) {
             // MODO EDITOR: A luz segue o jogador (com offset para cima e à frente)
             targetPos = [pos[0], 10.0, pos[2] + 5.0];
+        } else if (inEscape) {
+            // MODO JOGO: Lógica normal
+            targetPos = [-37.5, 6.0, 230.0];
         } else {
-            // MODO JOGO: Lógica normal (fixa na sala 2 ou no alien)
-            targetPos = inEscape ? [-37.5, 6.0, 230.0] : [0.0, 15.0, 50.0];
+            return;
         }
 
         // Lerp suave (5% por frame)
@@ -610,7 +620,7 @@ class Game {
     checkGameOver() {
         if (this.gameOver) return;
 
-        this.camLights.forEach(cam => {
+        this.camLights.forEach((cam) => {
             const lightPos = cam.light.position;
             const lightDir = mat4.normalize(cam.light.direction); // Usando sua mat4.js
             const playerPos = this.player.position;
@@ -619,23 +629,23 @@ class Game {
             const toPlayerNotNormalized = [
                 playerPos[0] - lightPos[0],
                 playerPos[1] - lightPos[1],
-                playerPos[2] - lightPos[2]
+                playerPos[2] - lightPos[2],
             ];
-            
+
             // Calculamos a distância para o limite de alcance
             const dist = Math.hypot(...toPlayerNotNormalized);
 
-            if (dist < 25.0) { 
+            if (dist < 25.0) {
                 const toPlayerDir = mat4.normalize(toPlayerNotNormalized);
-                
+
                 // Produto escalar usando sua função dot
                 const dotProduct = mat4.dot(toPlayerDir, lightDir);
 
                 // Se o cosseno do ângulo for maior que o limite, está dentro do cone
-                const detectionThreshold = Math.cos(0.25); 
+                const detectionThreshold = Math.cos(0.25);
 
                 if (dotProduct > detectionThreshold) {
-                    console.log("⚠️ JOGADOR DETECTADO!");
+                    console.log('⚠️ JOGADOR DETECTADO!');
                     this.triggerGameOver();
                 }
             }
@@ -645,18 +655,18 @@ class Game {
     triggerGameOver() {
         this.gameOver = true;
         this.stopLoop();
-        
+
         // Feedback visual simples
         const overlay = document.getElementById('menu-overlay');
         overlay.style.display = 'flex';
         overlay.innerHTML = `
             <div style="text-align: center; color: red;">
                 <h1>VOCÊ FOI PEGO!</h1>
-                <p>A segurança te encontrou na luz.</p>
+                <p>A segurança da nave te lozalizou.</p>
                 <button onclick="location.reload()" style="padding: 10px 20px; cursor: pointer;">Tentar Novamente</button>
             </div>
         `;
-        
+
         if (document.pointerLockElement) {
             document.exitPointerLock();
         }
@@ -664,12 +674,12 @@ class Game {
 
     draw() {
         const gl = this.gl;
-        
+
         if (!this.program) {
             console.error('Cannot draw: shader program not initialized');
             return;
         }
-        
+
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         // --- 1. Atualiza Câmera ---
@@ -686,8 +696,7 @@ class Game {
 
         gl.uniformMatrix4fv(uView, false, this.viewMatrix);
         gl.uniformMatrix4fv(uProj, false, this.projectionMatrix);
-        
-        this.drawCamLights();
+        this.updateSpotlights();
 
         // --- 4. Desenha os objetos ---
         drawEnvironment(this);
@@ -695,51 +704,80 @@ class Game {
         drawSceneObjects(this);
     }
 
-    drawCamLights() {
+    updateSpotlights() {
         const gl = this.gl;
-        // Preparar arrays para enviar para a GPU
+
+        // Arrays para enviar ao Shader
         const allPos = [];
         const allDir = [];
         const allCol = [];
+        const allInner = [];
+        const allOuter = [];
 
-        this.camLights.forEach(cam => {
-            allPos.push(...cam.light.position);
-            allDir.push(...cam.light.direction);
-            allCol.push(...cam.light.color);
+        // Lista temporária unificando tudo que brilha como spotlight
+        const allSources = [];
+
+        // Adiciona os Spotlights normais (Flashlight, Street Lamps)
+        this.spotlights.forEach((s) => allSources.push(s));
+
+        // Adiciona as CamLights (Câmeras de Segurança)
+        // Adaptamos os dados, pois CamLight pode não ter cutoffs definidos
+        this.camLights.forEach((cam) => {
+            // Usa os valores da câmera ou define padrão (30° ~ 40°) se não existirem
+            const inner = cam.light.innerCutoff || Math.cos((30 * Math.PI) / 180);
+            const outer = cam.light.outerCutoff || Math.cos((40 * Math.PI) / 180);
+
+            allSources.push({
+                position: cam.light.position,
+                direction: cam.light.direction,
+                color: cam.light.color,
+                innerCutoff: inner,
+                outerCutoff: outer,
+            });
         });
 
-        // Enviar os arrays para o Shader
-        const uSpotPosLoc = gl.getUniformLocation(this.program, "uSpotPos");
-        const uSpotDirLoc = gl.getUniformLocation(this.program, "uSpotDir");
-        const uSpotColLoc = gl.getUniformLocation(this.program, "uSpotColor");
+        // Preenche os arrays lineares para o WebGL
+        const limit = Math.min(allSources.length, 8);
 
-        gl.uniform3fv(uSpotPosLoc, new Float32Array(allPos));
-        gl.uniform3fv(uSpotDirLoc, new Float32Array(allDir));
-        gl.uniform3fv(uSpotColLoc, new Float32Array(allCol));
-
-        // Enviar os Cutoffs (que são iguais para todas)
-        gl.uniform1f(gl.getUniformLocation(this.program, "uInnerCutoff"), Math.cos(0.15));
-        gl.uniform1f(gl.getUniformLocation(this.program, "uOuterCutoff"), Math.cos(0.25));
+        for (let i = 0; i < limit; i++) {
+            const s = allSources[i];
+            allPos.push(...s.position);
+            allDir.push(...s.direction);
+            allCol.push(...s.color);
+            allInner.push(s.innerCutoff);
+            allOuter.push(s.outerCutoff);
+        }
+        gl.uniform3fv(gl.getUniformLocation(this.program, 'uSpotPos'), new Float32Array(allPos));
+        gl.uniform3fv(gl.getUniformLocation(this.program, 'uSpotDir'), new Float32Array(allDir));
+        gl.uniform3fv(gl.getUniformLocation(this.program, 'uSpotColor'), new Float32Array(allCol));
+        gl.uniform1fv(
+            gl.getUniformLocation(this.program, 'uInnerCutoff'),
+            new Float32Array(allInner),
+        );
+        gl.uniform1fv(
+            gl.getUniformLocation(this.program, 'uOuterCutoff'),
+            new Float32Array(allOuter),
+        );
     }
-    
+
     triggerVictory() {
         this.victoryTriggered = true;
-        console.log('🎉 VITÓRIA! Gabrielzito escapou!');
-        
+        console.log('VITÓRIA! Gabrielzito escapou!');
+
         // Disable collisions for fall animation
         this.player.isBuildingMode = true; // Reuse fly mode to disable collisions
-        
+
         // Show victory overlay after a brief delay
         setTimeout(() => {
             if (this.victoryOverlay) {
                 this.victoryOverlay.classList.add('show');
             }
-            
+
             // Optionally stop audio
             if (this.audioManager) {
                 this.audioManager.stop();
             }
-            
+
             // Add Enter key listener to return to menu
             const handleEnter = (e) => {
                 if (e.key === 'Enter') {

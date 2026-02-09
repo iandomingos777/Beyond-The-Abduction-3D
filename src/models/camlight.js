@@ -1,10 +1,10 @@
 import { Spotlight } from '../core/light.js';
 
 export class CamLight {
-    constructor(startPos) {
+    constructor(startPos, inner = 30, outer = 40) {
         // Criamos a instância da luz DENTRO da classe
-        this.light = new Spotlight(startPos);
-        
+        this.light = new Spotlight(startPos, [0, -1, 0], [1, 1, 1], inner, outer);
+
         this.angle = 0;
         this.speed = 5.0;
         this.range = 0.6;
@@ -15,11 +15,11 @@ export class CamLight {
 
         // Alteramos diretamente as propriedades da instância interna
         this.light.direction[0] = Math.sin(this.angle) * this.range;
-        this.light.direction[1] = -1.0; 
-        
+        this.light.direction[1] = -1.0;
+
         // Normalização (essencial para o cálculo do cone no shader)
         const len = Math.hypot(...this.light.direction);
-        this.light.direction = this.light.direction.map(v => v / len);
+        this.light.direction = this.light.direction.map((v) => v / len);
     }
 
     // Apenas repassa a ordem de atualização para a instância interna

@@ -1,7 +1,7 @@
 // fragment.glsl
 precision highp float;
 
-#define MAX_SPOTLIGHTS 3
+#define MAX_SPOTLIGHTS 8
 
 uniform vec3 uColor;
 uniform sampler2D uSampler;
@@ -28,8 +28,8 @@ varying vec3 vFragPos;
 uniform vec3 uSpotPos[MAX_SPOTLIGHTS];
 uniform vec3 uSpotDir[MAX_SPOTLIGHTS];
 uniform vec3 uSpotColor[MAX_SPOTLIGHTS];
-uniform float uInnerCutoff;
-uniform float uOuterCutoff;
+uniform float uInnerCutoff[MAX_SPOTLIGHTS];
+uniform float uOuterCutoff[MAX_SPOTLIGHTS];
 
 void main() {
     // Pega a cor base da textura (ou Branco se não tiver textura)
@@ -45,8 +45,8 @@ void main() {
     // distância e atenuação
     float dist = length(uLightPos - vFragPos);
     float constant = 1.0;
-    float linear = 0.010; 
-    float quadratic = 0.0005;
+    float linear = 0.008; 
+    float quadratic = 0.0004;
     float attenuation = 1.0 / (constant + linear * dist + quadratic * dist * dist);
 
     // Ambiente
@@ -67,26 +67,6 @@ void main() {
 
     vec3 color = ambient + diffuse + specular;
 
-    // // Debug outputs
-    // if (uDebugMode == 1) {
-    //     // mapa de distância — normalizado arbitrariamente (ajuste divisor)
-    //     float d = clamp(dist / 50.0, 0.0, 1.0);
-    //     gl_FragColor = vec4(vec3(d), 1.0);
-    //     return;
-    // } else if (uDebugMode == 2) {
-    //     // normal visualizada (0..1)
-    //     gl_FragColor = vec4(N * 0.5 + 0.5, 1.0);
-    //     return;
-    // } else if (uDebugMode == 3) {
-    //     float nDotL = clamp(dot(N, L), 0.0, 1.0);
-    //     gl_FragColor = vec4(vec3(nDotL), 1.0);
-    //     return;
-    // } else if (uDebugMode == 4) {
-    //     float a = clamp(attenuation, 0.0, 1.0);
-    //     gl_FragColor = vec4(vec3(a), 1.0);
-    //     return;
-    // }
-
     // --- LUZ 2: LANTERNAS (LOOP) ---
     vec3 totalSpotlight = vec3(0.0);
 
@@ -98,8 +78,8 @@ void main() {
         float theta = dot(sLightDir, normalize(-uSpotDir[i]));
         
         // Intensidade do cone (Suavização da borda)
-        float epsilon = uInnerCutoff - uOuterCutoff;
-        float intensity = clamp((theta - uOuterCutoff) / epsilon, 0.0, 1.0);
+        float epsilon = uInnerCutoff[i] - uOuterCutoff[i];
+        float intensity = clamp((theta - uOuterCutoff[i]) / epsilon, 0.0, 1.0);
         
         // Atenuação por distância (evita que a luz brilhe no infinito)
         float dist = length(uSpotPos[i] - vFragPos);
