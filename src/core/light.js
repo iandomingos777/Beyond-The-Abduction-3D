@@ -19,3 +19,27 @@ export class Light {
         // gl.uniform1f(uShininess, this.shininess);
     }
 }
+
+export class Spotlight {
+    constructor(startPos = [0.0, 5.0, 0.0]) {
+        this.position = startPos;  
+        this.direction = [0.0, -1.0, 0.0]; 
+        
+        this.innerCutoff = Math.cos(Math.PI / 12); 
+        this.outerCutoff = Math.cos(Math.PI / 9);  
+        
+        this.color = [0.0, 2.0, 2.0]; 
+        // Removi o this.ambient daqui porque o shader já usa o uAmbientColor da luz global
+    }
+
+    updateUniforms(gl, program) {
+        // IMPORTANTE: Mudar para os nomes uSpot... que criamos no Shader
+        gl.uniform3fv(gl.getUniformLocation(program, 'uSpotPos'), this.position);
+        gl.uniform3fv(gl.getUniformLocation(program, 'uSpotDir'), this.direction);
+        gl.uniform3fv(gl.getUniformLocation(program, 'uSpotColor'), this.color);
+        
+        // Cutoffs
+        gl.uniform1f(gl.getUniformLocation(program, 'uInnerCutoff'), this.innerCutoff);
+        gl.uniform1f(gl.getUniformLocation(program, 'uOuterCutoff'), this.outerCutoff);
+    }
+}

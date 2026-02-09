@@ -37,11 +37,11 @@ function cross(a, b) {
     ];
 }
 
-function dot(a, b) {
+export function dot(a, b) {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
 
-function normalize(v) {
+export function normalize(v) {
     const len = Math.hypot(v[0], v[1], v[2]);
     return [v[0]/len, v[1]/len, v[2]/len];
 }

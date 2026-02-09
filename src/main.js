@@ -17,6 +17,7 @@ import { setupSceneColliders, ESCAPE_ROOM } from './scenes/environment.js';
 import { MainMenu } from './menu/mainMenu.js';
 import { Player } from './models/player.js';
 import { InputHandler } from './core/input.js';
+import { CamLight } from './models/camlight.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -343,6 +344,24 @@ class Game {
         this.light.color = [1.0, 0.95, 0.8];
         this.light.position = [5.0, 5.0, 5.0];
 
+        this.camLights = []; // Note o plural
+
+        // Câmera 1 (Sala 2 - Buddha)
+        const cam1 = new CamLight([0.0, 12.0, 60.0]);
+        cam1.light.color = [0.0, 1.5, 1.5]; // Ciano
+        this.camLights.push(cam1);
+
+        // Câmera 2 (Corredor)
+        const cam2 = new CamLight([-20.0, 10.0, 100.0]);
+        cam2.light.color = [1.5, 0.0, 0.0]; // Vermelha
+        cam2.speed = 2.0; // Mais lenta
+        this.camLights.push(cam2);
+
+        // Câmera 3 (Sala 3 - Alien)
+        const cam3 = new CamLight([-40.0, 12.0, 170.0]);
+        cam3.light.color = [0.0, 1.5, 0.0]; // Verde
+        this.camLights.push(cam3);         
+
         // --- CARREGAMENTO ---
         // 1. Carrega os Assets "Hardcoded" antigos (pode manter ou remover se tudo estiver na lista)
         this.cubeMesh = createCubeMesh(this.gl);
@@ -444,6 +463,8 @@ class Game {
     }
 
     update(dt) {
+        this.checkGameOver();
+
         // 1. Captura inputs do mouse
         const mouse = this.input.consumeMouseDelta();
 
@@ -464,6 +485,8 @@ class Game {
         
         const targetColor = inEscape ? [0.2, 1.3, 0.35] : [1.0, 0.95, 0.8];
         const targetPos = inEscape ? [-37.5, 6.0, 230.0] : [pos[0], 10.0, pos[2] + 5.0];
+
+        this.camLights.forEach(cam => cam.update(dt));
         
         // Lerp suave (5% por frame)
         const lerpFactor = 0.05;
@@ -474,6 +497,61 @@ class Game {
         this.light.position[0] += (targetPos[0] - this.light.position[0]) * lerpFactor;
         this.light.position[1] += (targetPos[1] - this.light.position[1]) * lerpFactor;
         this.light.position[2] += (targetPos[2] - this.light.position[2]) * lerpFactor;
+    }
+
+    checkGameOver() {
+        if (this.gameOver) return;
+
+        this.camLights.forEach(cam => {
+            const lightPos = cam.light.position;
+            const lightDir = mat4.normalize(cam.light.direction); // Usando sua mat4.js
+            const playerPos = this.player.position;
+
+            // Vetor da luz até o jogador usando sua função subtract
+            const toPlayerNotNormalized = [
+                playerPos[0] - lightPos[0],
+                playerPos[1] - lightPos[1],
+                playerPos[2] - lightPos[2]
+            ];
+            
+            // Calculamos a distância para o limite de alcance
+            const dist = Math.hypot(...toPlayerNotNormalized);
+
+            if (dist < 25.0) { 
+                const toPlayerDir = mat4.normalize(toPlayerNotNormalized);
+                
+                // Produto escalar usando sua função dot
+                const dotProduct = mat4.dot(toPlayerDir, lightDir);
+
+                // Se o cosseno do ângulo for maior que o limite, está dentro do cone
+                const detectionThreshold = Math.cos(0.25); 
+
+                if (dotProduct > detectionThreshold) {
+                    console.log("⚠️ JOGADOR DETECTADO!");
+                    this.triggerGameOver();
+                }
+            }
+        });
+    }
+
+    triggerGameOver() {
+        this.gameOver = true;
+        this.stopLoop();
+        
+        // Feedback visual simples
+        const overlay = document.getElementById('menu-overlay');
+        overlay.style.display = 'flex';
+        overlay.innerHTML = `
+            <div style="text-align: center; color: red;">
+                <h1>VOCÊ FOI PEGO!</h1>
+                <p>A segurança te encontrou na luz.</p>
+                <button onclick="location.reload()" style="padding: 10px 20px; cursor: pointer;">Tentar Novamente</button>
+            </div>
+        `;
+        
+        if (document.pointerLockElement) {
+            document.exitPointerLock();
+        }
     }
 
     draw() {
@@ -494,6 +572,8 @@ class Game {
 
         gl.uniformMatrix4fv(uView, false, this.viewMatrix);
         gl.uniformMatrix4fv(uProj, false, this.projectionMatrix);
+        
+        this.drawCamLights();
 
         // --- 4. Desenha os objetos ---
         drawEnvironment(this);
@@ -502,6 +582,33 @@ class Game {
         drawCrushedCan(this);
         // --- DESENHAR NOVOS OBJETOS ---
         drawSceneObjects(this);
+    }
+
+    drawCamLights() {
+        const gl = this.gl;
+        // Preparar arrays para enviar para a GPU
+        const allPos = [];
+        const allDir = [];
+        const allCol = [];
+
+        this.camLights.forEach(cam => {
+            allPos.push(...cam.light.position);
+            allDir.push(...cam.light.direction);
+            allCol.push(...cam.light.color);
+        });
+
+        // Enviar os arrays para o Shader
+        const uSpotPosLoc = gl.getUniformLocation(this.program, "uSpotPos");
+        const uSpotDirLoc = gl.getUniformLocation(this.program, "uSpotDir");
+        const uSpotColLoc = gl.getUniformLocation(this.program, "uSpotColor");
+
+        gl.uniform3fv(uSpotPosLoc, new Float32Array(allPos));
+        gl.uniform3fv(uSpotDirLoc, new Float32Array(allDir));
+        gl.uniform3fv(uSpotColLoc, new Float32Array(allCol));
+
+        // Enviar os Cutoffs (que são iguais para todas)
+        gl.uniform1f(gl.getUniformLocation(this.program, "uInnerCutoff"), Math.cos(0.15));
+        gl.uniform1f(gl.getUniformLocation(this.program, "uOuterCutoff"), Math.cos(0.25));
     }
 
     startLoop() {
