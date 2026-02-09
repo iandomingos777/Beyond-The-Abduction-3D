@@ -32,8 +32,9 @@ const OBJECTS_TO_LOAD = [
         id: 'alien',
         objPath: '../assets/models/Alien.obj',
         texPath: '../assets/textures/Alien_skin_gray.png',
-        color: [0.0, 0.8, 0.5], // verde escurecido
-        // Sala 3 (Escondido no fundo)
+        has_colision: true,
+        colliderSize: [3.5, 12.0, 3.5], // Ajustado para a escala 8.0
+        color: [0.0, 0.8, 0.5],
         position: [-55.0, -2.0, 180.0],
         rotation: [0, (3 * Math.PI) / 4, 0], // Virado para o centro
         scale: [9.0, 9.0, 9.0],
@@ -47,9 +48,10 @@ const OBJECTS_TO_LOAD = [
     {
         id: 'buddha',
         objPath: '../assets/models/buddha_lowpoly.obj',
+        has_colision: true,
+        colliderSize: [18.0, 32.0, 18.0], // Base larga para a escala 45.0
         texPath: '../assets/textures/buddha_lowpoly.png',
-        color: [0.8, 0.7, 0.2], // amarelo dourado
-        // Sala 2
+        color: [0.8, 0.7, 0.2],
         position: [15.0, -2.0, 80.0],
         rotation: [0, Math.PI, 0],
         scale: [50.0, 50.0, 50.0],
@@ -66,7 +68,8 @@ const OBJECTS_TO_LOAD = [
         id: 'police_car',
         objPath: '../assets/models/carPolice.obj',
         texPath: '../assets/textures/carPolice.png',
-        // Sala 2
+        has_colision: true,
+        colliderSize: [12.0, 7.0, 24.0], // Carro longo na escala 24.0
         position: [-20.0, 4.0, 170.0],
         rotation: [Math.PI, -Math.PI / 6, 0],
         scale: [24.0, 24.0, 24.0],
@@ -99,7 +102,8 @@ const OBJECTS_TO_LOAD = [
         id: 'couch',
         objPath: '../assets/models/Couch.obj',
         texPath: '../assets/textures/Couch.png',
-        // Sala 2
+        has_colision: true,
+        colliderSize: [12.0, 4.5, 5.0], // Sofá escala 4.0
         position: [-25.0, -2.0, 60.0],
         rotation: [0, 0, 0],
         scale: [4.0, 4.0, 4.0],
@@ -111,11 +115,12 @@ const OBJECTS_TO_LOAD = [
         },
     },
     {
-        // FIX: Não está renderizando
         id: 'couchDiner',
         objPath: '../assets/models/CouchDiner.obj',
         texPath: '../assets/textures/CouchDiner.png',
         // Sala 2 (De frente pro outro sofá)
+        has_colision: true,
+        colliderSize: [8.0, 5.0, 12.0], // Escala 12.0 com normalize
         position: [21.0, 0.8, 44.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [13, 13, 13],
@@ -131,7 +136,8 @@ const OBJECTS_TO_LOAD = [
         id: 'old_tv',
         objPath: '../assets/models/old_tv.obj',
         texPath: '../assets/textures/old_tv.png',
-        // Sala 2 (Perto dos sofás, no chão ou flutuando levemente)
+        has_colision: true,
+        colliderSize: [4.5, 4.5, 4.0], // TV CRT escala 8.0
         position: [-10.0, -2.0, 85.0],
         rotation: [0, 0, 0],
         scale: [8.0, 8.0, 8.0],
@@ -142,9 +148,13 @@ const OBJECTS_TO_LOAD = [
             shininess: 64.0, // Plástico/Vidro: Brilho médio
         },
     },
+
+    // --- CAIXAS DE MADEIRA ---
     {
         id: 'wooden_box_stack1',
         objPath: '../assets/models/Wooden_box.obj',
+        has_colision: true,
+        colliderSize: [4.0, 4.0, 4.0],
         texPath: '../assets/textures/Wooden_box.png',
         // Sala 3 (Empilhada no canto)
         position: [-57.0, 0.5, 155.0],
@@ -157,8 +167,10 @@ const OBJECTS_TO_LOAD = [
         },
     },
     {
-        id: 'wooden_box_stack2', // Segunda caixa
+        id: 'wooden_box_stack2',
         objPath: '../assets/models/Wooden_box.obj',
+        has_colision: true,
+        colliderSize: [4.0, 4.0, 4.0],
         texPath: '../assets/textures/Wooden_box.png',
         // Sala 3 (Em cima da primeira)
         position: [-57.0, 4.3, 155.0],
@@ -167,9 +179,11 @@ const OBJECTS_TO_LOAD = [
         material: { ka: AMBIENT_LIGHT, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
     {
-        id: 'wooden_box_stack3', // Terceira caixa
+        id: 'wooden_box_stack3',
         objPath: '../assets/models/Wooden_box.obj',
         texPath: '../assets/textures/Wooden_box.png',
+        has_colision: true,
+        colliderSize: [4.0, 4.0, 4.0],
         // Sala 3 (Ao lado da segunda, formando um "L" de caixas)
         position: [-52.0, 0.5, 155.0],
         rotation: [0, Math.PI / 3, 0],
@@ -177,11 +191,13 @@ const OBJECTS_TO_LOAD = [
         material: { ka: AMBIENT_LIGHT, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
 
-    // --- ITENS PEQUENOS / PROPS ---
+    // --- PROPS ---
     {
         id: 'flashlight',
         objPath: '../assets/models/flashlight_notexture.obj',
         texPath: null,
+        has_colision: true,
+        colliderSize: [1.2, 1.2, 3.0],
         position: [-25.0, -1.0, 190.0],
         rotation: [0, Math.PI / 2.6, 0],
         scale: [2.5, 2.5, 2.5],
@@ -190,9 +206,10 @@ const OBJECTS_TO_LOAD = [
     },
     {
         id: 'can',
+        has_colision: true,
+        colliderSize: [0.8, 1.2, 0.8], // Latinhas precisam ser um pouco maiores que o modelo para o player sentir
         objPath: '../assets/models/can_crushed_lowpoly.obj',
         texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
-        // Sala 3 (Lixo no chão)
         position: [-50.0, -2.0, 180.0],
         scale: [0.17, 0.17, 0.17],
         material: { ka: AMBIENT_LIGHT, kd: 0.9, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
@@ -208,18 +225,21 @@ const OBJECTS_TO_LOAD = [
         material: { ka: AMBIENT_LIGHT, kd: 0.9, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
     },
 
-    // --- EQUIPAMENTOS / LUZES ---
+    // --- ILUMINAÇÃO / POSTES ---
     {
         id: 'street_lamp_1',
+        has_colision: true,
+        colliderSize: [2.0, 20.0, 2.0], // Poste fino mas impossível de atravessar
         objPath: '../assets/models/street-lamp.obj',
         texPath: '../assets/textures/street-lamp.png',
-        // Sala 2 (Canto esquerdo)
         position: [-25.0, -2.0, 35.0],
         scale: [1.5, 1.5, 1.5],
         material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
     },
     {
         id: 'street_lamp_2',
+        has_colision: true,
+        colliderSize: [2.0, 20.0, 2.0], // Mesmo do outro poste
         objPath: '../assets/models/street-lamp.obj',
         texPath: '../assets/textures/street-lamp.png',
         // Sala 2 (Canto direito oposto)
@@ -230,6 +250,8 @@ const OBJECTS_TO_LOAD = [
     },
     {
         id: 'surgery_lamp',
+        has_colision: true,
+        colliderSize: [4.0, 10.0, 4.0], // Lâmpada cirúrgica grande e impossível de atravessar
         objPath: '../assets/models/SurgeryLamp.obj',
         texPath: '../assets/textures/SurgeryLamp.png',
         // Sala 3 (Perto do Alien)
@@ -247,11 +269,38 @@ const OBJECTS_TO_LOAD = [
         id: 'trash_can',
         objPath: '../assets/models/TrashCan.obj',
         texPath: '../assets/textures/TrashCan.png',
-        // Sala 2
+        has_colision: true,
+        colliderSize: [4.0, 7.0, 4.0], // Escala 9.0
         position: [22.0, -2.0, 60.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [9.0, 9.0, 9.0],
         material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
+    },
+    {
+        id: 'surgery_lamp',
+        has_colision: true,
+        colliderSize: [4.0, 10.0, 4.0],
+        objPath: '../assets/models/SurgeryLamp.obj',
+        texPath: '../assets/textures/SurgeryLamp.png',
+        position: [-45.0, 0.0, 175.0],
+        rotation: [0, -Math.PI / 4, 0],
+        scale: [2.0, 2.0, 2.0],
+        material: { ka: 0.4, kd: 0.8, ks: [0.9, 0.9, 0.9], shininess: 80.0 },
+    },
+
+    // --- BOTÕES (COLISÃO NA PAREDE) ---
+    {
+        id: 'emergency_button_1',
+        has_colision: true,
+        colliderSize: [1.5, 1.5, 1.5], // Pequeno, mas impossível de atravessar
+        objPath: '../assets/models/emergency_button.obj',
+        has_colision: true,
+        colliderSize: [1.5, 1.5, 1.5],
+        texPath: '../assets/textures/emergency_button.png',
+        position: [-22.0, 2.5, 70.0],
+        rotation: [0, Math.PI / 2, Math.PI / 2],
+        scale: [0.5, 0.5, 0.5],
+        material: { ka: 0.3, kd: 0.8, ks: [0.5, 0.5, 0.5], shininess: 30.0 },
     },
 ];
 
@@ -460,8 +509,31 @@ class Game {
             }
         });
 
+        setupSceneColliders(this.collisionSystem);
+
+        // 2. Configura os modelos 3D que acabamos de carregar
+        this.setupObjectColliders();
+
         // Referência ao overlay de vitória
         this.victoryOverlay = document.getElementById('victory-overlay');
+    }
+
+    setupObjectColliders() {
+        this.sceneObjects.forEach((obj) => {
+            if (obj.has_colision) {
+                const size = obj.colliderSize || [obj.scale[0], obj.scale[1], obj.scale[2]];
+
+                // Calculamos o centro real da caixa
+                // Se o seu modelo cresce para cima a partir do pé (Y),
+                // o centro Y é a posição + metade da altura.
+                const center = [obj.position[0], obj.position[1] + size[1] / 2, obj.position[2]];
+
+                // Agora passamos exatamente os 2 argumentos que a classe espera
+                this.collisionSystem.addBox(center, size);
+
+                console.log(`Colisor ativado para: ${obj.id}`, { center, size });
+            }
+        });
     }
 
     async loadSceneObjects() {
@@ -511,18 +583,20 @@ class Game {
         // Check for victory condition (on platform + Space key)
         const pos = this.player.position;
         if (!this.victoryTriggered && this.running) {
-            const platformPos = [-37.5, -2.0 + 1.0, 230.0]; // FLOOR_POS_Y = -2.0
-            const platformSize = [6.0, 2.0, 4.0];
+            // Se o seu "chão" é 2.0, a plataforma de vitória deve estar nesse nível ou o teste deve aceitar 2.0
+            const targetY = 2.0;
+            const platformPos = [-37.5, targetY, 230.0];
+            const platformSize = [10.0, 5.0, 10.0]; // Aumente um pouco a área para facilitar
 
-            // Check if player is on platform (with some tolerance)
             const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
             const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
-            const onPlatformY =
-                pos[1] >= platformPos[1] - 0.5 && pos[1] <= platformPos[1] + platformSize[1] + 1.0;
+
+            // Checa se o player está pisando na altura do chão (2.0)
+            const onPlatformY = Math.abs(pos[1] - targetY) < 1.0;
 
             if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
                 this.triggerVictory();
-                return; // Skip rest of update
+                return;
             }
         }
 
