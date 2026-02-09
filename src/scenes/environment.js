@@ -28,9 +28,7 @@ const STEP_COLOR = [0.45, 0.45, 0.5];
  */
 
 export const SCENE_GEOMETRY = [
-    // ═══════════════════════════════════════════════════
-    // SALA 1 — PRINCIPAL (20×20, centro em 0,0)
-    // ═══════════════════════════════════════════════════
+    // --- Sala 1 - Principal ---
     // Piso
     {
         type: 'floor',
@@ -47,7 +45,7 @@ export const SCENE_GEOMETRY = [
         color: CEILING_COLOR,
         isCollider: false,
     },
-    // PAREDE SUL (z = -10) — Parede de fundo da Sala 1
+    // Parede Sul (z = -10)
     {
         type: 'wall',
         position: [0, WALL_POS_Y, -10.0],
@@ -55,7 +53,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE OESTE (x = -10) — Parede esquerda da Sala 1
+    // Parede Oeste (x = -10)
     {
         type: 'wall',
         position: [-10.0, WALL_POS_Y, 0],
@@ -63,7 +61,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE LESTE (x = +10) — Parede direita da Sala 1
+    // Parede Leste (x = +10)
     {
         type: 'wall',
         position: [10.0, WALL_POS_Y, 0],
@@ -71,7 +69,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE NORTE ESQUERDA (z = +10) — Lado esquerdo da saída para o corredor
+    // Parede Norte Esquerda (z = +10)
     {
         type: 'wall',
         position: [-7.0, WALL_POS_Y, 10.0],
@@ -79,7 +77,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE NORTE DIREITA (z = +10) — Lado direito da saída para o corredor
+    // Parede Norte Direita (z = +10)
     {
         type: 'wall',
         position: [7.0, WALL_POS_Y, 10.0],
@@ -88,9 +86,7 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
 
-    // ═══════════════════════════════════════════════════
-    // CORREDOR 1 — Sala 1 → Sala 2 (8 de largura, z 10→30)
-    // ═══════════════════════════════════════════════════
+    // --- Corredor 1 (Sala 1 -> Sala 2) ---
     {
         type: 'floor',
         position: [0, FLOOR_POS_Y, 20.0],
@@ -105,7 +101,7 @@ export const SCENE_GEOMETRY = [
         color: CEILING_COLOR,
         isCollider: false,
     },
-    // PAREDE OESTE DO CORREDOR (x = -4)
+    // Parede Oeste do Corredor (x = -4)
     {
         type: 'wall',
         position: [-4.0, WALL_POS_Y, 20.0],
@@ -113,7 +109,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE LESTE DO CORREDOR (x = +4)
+    // Parede Leste do Corredor (x = +4)
     {
         type: 'wall',
         position: [4.0, WALL_POS_Y, 20.0],
@@ -122,9 +118,7 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
 
-    // ═══════════════════════════════════════════════════
-    // SALA 2 (60×60, centro em 0,60)
-    // ═══════════════════════════════════════════════════
+    // --- Sala 2 ---
     {
         type: 'floor',
         position: [0, FLOOR_POS_Y, 60.0],
@@ -139,7 +133,7 @@ export const SCENE_GEOMETRY = [
         color: CEILING_COLOR,
         isCollider: false,
     },
-    // PAREDE OESTE DA SALA 2 (x = -30)
+    // Parede Oeste (x = -30)
     {
         type: 'wall',
         position: [-30.0, WALL_POS_Y, 60.0],
@@ -147,7 +141,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE LESTE DA SALA 2 (x = +30)
+    // Parede Leste (x = +30)
     {
         type: 'wall',
         position: [30.0, WALL_POS_Y, 60.0],
@@ -155,7 +149,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE SUL DIREITA (z=30) — Lado direito da entrada do Corredor 1
+    // Parede Sul Direita (z=30)
     {
         type: 'wall',
         position: [17.0, WALL_POS_Y, 30.0],
@@ -163,7 +157,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE SUL ESQUERDA (z=30) — Lado esquerdo da entrada do Corredor 1
+    // Parede Sul Esquerda (z=30)
     {
         type: 'wall',
         position: [-17.0, WALL_POS_Y, 30.0],
@@ -171,7 +165,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE NORTE DIREITA (z=90) — Lado direito da saída para Corredor 2
+    // Parede Norte Direita (z=90)
     {
         type: 'wall',
         position: [17.25, WALL_POS_Y, 90.0],
@@ -179,7 +173,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE NORTE ESQUERDA (z=90) — Lado esquerdo da saída para Corredor 2
+    // Parede Norte Esquerda (z=90)
     {
         type: 'wall',
         position: [-17.25, WALL_POS_Y, 90.0],
@@ -188,10 +182,7 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
 
-    // ═══════════════════════════════════════════════════
-    // CORREDOR 2 — Em L (Sala 2 → Sala 3)
-    // Parte reta: x=-5..+5, z=90..130
-    // ═══════════════════════════════════════════════════
+    // --- Corredor 2 (Sala 2 -> Sala 3) ---
     {
         type: 'floor',
         position: [0, FLOOR_POS_Y, 110.0],
@@ -206,7 +197,7 @@ export const SCENE_GEOMETRY = [
         color: CEILING_COLOR,
         isCollider: false,
     },
-    // PAREDE OESTE DO CORREDOR 2 (x = -5)
+    // Parede Oeste (x = -5)
     {
         type: 'wall',
         position: [-5.0, WALL_POS_Y, 110.0],
@@ -214,7 +205,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE LESTE DO CORREDOR 2 (x = +5)
+    // Parede Leste (x = +5)
     {
         type: 'wall',
         position: [5.0, WALL_POS_Y, 115.0],
@@ -222,7 +213,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // Curva do L
+    // Curva L
     {
         type: 'floor',
         position: [-17.5, FLOOR_POS_Y, 135.0],
@@ -237,7 +228,7 @@ export const SCENE_GEOMETRY = [
         color: CEILING_COLOR,
         isCollider: false,
     },
-    // PAREDE SUL DA CURVA L (z=130)
+    // Parede Sul (z=130)
     {
         type: 'wall',
         position: [-22.5, WALL_POS_Y, 130.0],
@@ -245,7 +236,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE NORTE DA CURVA L (z=140)
+    // Parede Norte (z=140)
     {
         type: 'wall',
         position: [-12.5, WALL_POS_Y, 140.0],
@@ -253,7 +244,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE OESTE DA CURVA L (x=-40)
+    // Parede Oeste (x=-40)
     {
         type: 'wall',
         position: [-40.0, WALL_POS_Y, 135.0],
@@ -262,9 +253,7 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
 
-    // ═══════════════════════════════════════════════════
-    // SALA 3 (60×60, centro em -37.5, 170)
-    // ═══════════════════════════════════════════════════
+    // --- Sala 3 ---
     {
         type: 'floor',
         position: [-37.5, FLOOR_POS_Y, 170.0],
@@ -279,7 +268,7 @@ export const SCENE_GEOMETRY = [
         color: CEILING_COLOR,
         isCollider: false,
     },
-    // PAREDE OESTE DA SALA 3 (x = -67.5)
+    // Parede Oeste (x = -67.5)
     {
         type: 'wall',
         position: [-67.5, WALL_POS_Y, 170.0],
@@ -287,7 +276,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE LESTE DA SALA 3 (x = -7.5)
+    // Parede Leste (x = -7.5)
     {
         type: 'wall',
         position: [-7.5, WALL_POS_Y, 170.0],
@@ -295,7 +284,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-    // PAREDE SUL DA SALA 3 (z=140) — Lado da entrada do Corredor 2 (curva L)
+    // Parede Sul (z=140)
     {
         type: 'wall',
         position: [-53.75, WALL_POS_Y, 139.75],
@@ -319,10 +308,7 @@ export const SCENE_GEOMETRY = [
         color: WALL_COLOR,
         isCollider: true,
     },
-
-    // ═══════════════════════════════════════════════════
     // CORREDOR 3 — Sala 3 → Sala de Fuga (z 200→215)
-    // ═══════════════════════════════════════════════════
     {
         type: 'floor',
         position: [-37.5, FLOOR_POS_Y, 207.5],
@@ -354,11 +340,9 @@ export const SCENE_GEOMETRY = [
         isCollider: true,
     },
 
-    // ═══════════════════════════════════════════════════
     // SALA DE FUGA — Room 4 (20×20, centro em -37.5, 225)
-    // Aqui Gabrielzito escapa!
-    // ═══════════════════════════════════════════════════
-    // Piso (com um buraco no centro? Simulamos com 4 tiras de piso ao redor)
+
+    // Piso
     // Piso esquerdo
     {
         type: 'floor',
@@ -441,7 +425,7 @@ export const SCENE_GEOMETRY = [
     },
     // ENTRADA SUL ABERTA - SEM PAREDES (z=215) para acesso livre do Corredor 3
 
-    // --- Plataforma elevada (no centro-fundo, ao lado do buraco) ---
+    // --- Plataforma elevada ---
     {
         type: 'platform',
         position: [-37.5, FLOOR_POS_Y + 1.0, 230.0],
@@ -451,7 +435,7 @@ export const SCENE_GEOMETRY = [
         material: { ka: 0.6, kd: 0.8, ks: [0.8, 1.0, 0.8], shininess: 80.0 },
     },
 
-    // --- Sinal de saída na parede norte (frente da plataforma) ---
+    // --- Sinal de saída na frente da plataforma ---
     {
         type: 'exit',
         position: [-37.5, WALL_POS_Y - 3.0, 235.0 - 0.3],

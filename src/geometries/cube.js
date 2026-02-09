@@ -1,7 +1,5 @@
 export function createCubeMesh(gl) {
-    // 1. Posições (8 vértices de um cubo simples, ou 24 se quisermos texturas separadas depois)
-    // Para simplificar e garantir compatibilidade futura (texturas/normais flat),
-    // vamos usar 24 vértices (4 por face).
+    // Posições (24 vértices, 4 por face para texturas/normais independentes)
     const vertices = new Float32Array([
         // Frente (Z+)
         -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
@@ -34,7 +32,7 @@ export function createCubeMesh(gl) {
         0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
     ]);
 
-    // Índices (Como conectar os pontos para formar triângulos)
+    // Índices
     const indices = new Uint16Array([
         // Frente
         0, 1, 2, 0, 2, 3,

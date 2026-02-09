@@ -1,6 +1,6 @@
 /**
  * Sistema de Colisão 3D usando AABB (Axis-Aligned Bounding Boxes)
- * 
+ *
  * Permite registrar colisores estáticos (paredes, obstáculos) e testar
  * colisões com o jogador, retornando posições corrigidas.
  */
@@ -41,40 +41,27 @@ export class CollisionSystem {
      */
     checkAABB(posA, sizeA, posB, sizeB) {
         // Calcula os limites (min/max) de cada AABB
-        const aMin = [
-            posA[0] - sizeA[0] / 2,
-            posA[1] - sizeA[1] / 2,
-            posA[2] - sizeA[2] / 2,
-        ];
-        const aMax = [
-            posA[0] + sizeA[0] / 2,
-            posA[1] + sizeA[1] / 2,
-            posA[2] + sizeA[2] / 2,
-        ];
+        const aMin = [posA[0] - sizeA[0] / 2, posA[1] - sizeA[1] / 2, posA[2] - sizeA[2] / 2];
+        const aMax = [posA[0] + sizeA[0] / 2, posA[1] + sizeA[1] / 2, posA[2] + sizeA[2] / 2];
 
-        const bMin = [
-            posB[0] - sizeB[0] / 2,
-            posB[1] - sizeB[1] / 2,
-            posB[2] - sizeB[2] / 2,
-        ];
-        const bMax = [
-            posB[0] + sizeB[0] / 2,
-            posB[1] + sizeB[1] / 2,
-            posB[2] + sizeB[2] / 2,
-        ];
+        const bMin = [posB[0] - sizeB[0] / 2, posB[1] - sizeB[1] / 2, posB[2] - sizeB[2] / 2];
+        const bMax = [posB[0] + sizeB[0] / 2, posB[1] + sizeB[1] / 2, posB[2] + sizeB[2] / 2];
 
         // Teste de separação nos 3 eixos
         return (
-            aMin[0] <= bMax[0] && aMax[0] >= bMin[0] &&
-            aMin[1] <= bMax[1] && aMax[1] >= bMin[1] &&
-            aMin[2] <= bMax[2] && aMax[2] >= bMin[2]
+            aMin[0] <= bMax[0] &&
+            aMax[0] >= bMin[0] &&
+            aMin[1] <= bMax[1] &&
+            aMax[1] >= bMin[1] &&
+            aMin[2] <= bMax[2] &&
+            aMax[2] >= bMin[2]
         );
     }
 
     /**
-     * Resolve colisão com sliding
-     * Testa movimento por eixo individual, permitindo deslizar ao longo das paredes
-     * 
+     * Resolve colisão com deslizamento.
+     * Testa movimento por eixo individual, permitindo deslizar ao longo das paredes.
+     *
      * @param {Array} oldPos - Posição anterior [x, y, z]
      * @param {Array} newPos - Posição desejada [x, y, z]
      * @param {Array} playerSize - Tamanho do jogador [w, h, d]

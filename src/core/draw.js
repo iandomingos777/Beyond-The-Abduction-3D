@@ -23,17 +23,17 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
 
     // Valores padrão
     const matDefaults = {
-        ka: 1.0, // Responde 100% à luz ambiente
-        kd: 1.0, // Responde 100% à luz difusa
-        ks: [1.0, 1.0, 1.0], // Brilho especular branco
-        shininess: 32.0, // Brilho padrão
+        ka: 1.0,
+        kd: 1.0,
+        ks: [1.0, 1.0, 1.0],
+        shininess: 32.0,
     };
     const finalMat = { ...matDefaults, ...material };
 
     gl.uniformMatrix4fv(uModel, false, modelMatrix);
-    gl.uniform3fv(uColorLoc, color); // Cor RGB [r, g, b]
+    gl.uniform3fv(uColorLoc, color);
 
-    // --- NORMAL MATRIX (inverse-transpose do modelMatrix) ---
+    // --- NORMAL MATRIX ---
     const uNormalMatrixLoc = gl.getUniformLocation(program, 'uNormalMatrix');
     if (uNormalMatrixLoc) {
         const normalMatrix = computeNormalMatrixFromMat4(modelMatrix);
@@ -51,27 +51,26 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
     gl.uniform3fv(uKs, finalMat.ks);
     gl.uniform1f(uShininess, finalMat.shininess);
 
-    // Lógica da normal
-    // Se o mesh tem normais, mandamos. Se não (ex: debug lines), desativamos.
+    // Configuração de normais
     const normLoc = gl.getAttribLocation(program, 'normal');
     if (normLoc !== -1 && meshData.normalBuffer) {
         gl.bindBuffer(gl.ARRAY_BUFFER, meshData.normalBuffer);
         gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(normLoc);
     } else if (normLoc !== -1) {
-        // Se não tiver buffer de normal, desabilita ou alimenta um valor padrão
+        // Desabilita buffer de normal se não disponível ou define valor padrão.
         gl.disableVertexAttribArray(normLoc);
-        gl.vertexAttrib3f(normLoc, 0.0, 1.0, 0.0); // Normal genérica para cima
+        gl.vertexAttrib3f(normLoc, 0.0, 1.0, 0.0);
     }
 
-    // Lógica da textura
+    // Configuração de textura
     if (texture && meshData.texCoordBuffer) {
-        gl.uniform1i(uUseTexture, true); // Ativa modo textura no shader
+        gl.uniform1i(uUseTexture, true);
 
         // Bind Texture
-        gl.activeTexture(gl.TEXTURE0); // Ativa unidade 0
+        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.uniform1i(uSampler, 0); // Diz ao shader que a textura está na unidade 0
+        gl.uniform1i(uSampler, 0);
 
         // Bind Atributo de Coordenada UV
         const texLoc = gl.getAttribLocation(program, 'texCoord');
@@ -81,9 +80,8 @@ function drawGenericMesh(gl, program, modelMatrix, meshData, color, texture = nu
             gl.enableVertexAttribArray(texLoc);
         }
     } else {
-        gl.uniform1i(uUseTexture, false); // Desativa modo textura (apenas cor)
+        gl.uniform1i(uUseTexture, false);
 
-        // É bom desabilitar o array se não for usar, para evitar warnings
         const texLoc = gl.getAttribLocation(program, 'texCoord');
         if (texLoc !== -1) gl.disableVertexAttribArray(texLoc);
     }
@@ -107,20 +105,20 @@ export function drawCube(game) {
     if (!game.cubeMesh) return;
     let model = mat4.identityMatrix();
 
-    // POSIÇÃO: Move para onde o objeto deve estar no mundo
+    // Posição
     model = mat4.translate(model, -3.5, 2.0, 0.0);
-    // ROTAÇÃO: Gira no próprio eixo (sem cx, cy, cz!)
+    // Rotação local
     model = mat4.rotateX(model, game.cubeRotation);
     model = mat4.rotateY(model, game.cubeRotation);
-    // TAMANHO: Escala por último
+    // Escala
     model = mat4.scale(model, 0.5, 0.5, 0.5);
 
     // Definição do Material
     const material = {
-        ka: 0.5, // Ambiente médio
-        kd: 0.8, // Difusa alta
-        ks: [0.3, 0.3, 0.3], // Especular cinza escuro (pouco brilho)
-        shininess: 30.0, // Brilho espalhado (plástico)
+        ka: 0.5,
+        kd: 0.8,
+        ks: [0.3, 0.3, 0.3],
+        shininess: 30.0,
     };
 
     drawGenericMesh(game.gl, game.program, model, game.cubeMesh, [1.0, 1.0, 1.0], null, material);
@@ -175,10 +173,10 @@ export function drawCrushedCan(game) {
 
     // Material Metálico
     const material = {
-        ka: 0.2, // Metal reflete pouco ambiente difuso
-        kd: 0.5, // Difusa média
-        ks: [1.0, 1.0, 1.0], // Especular muito forte e branco
-        shininess: 128.0, // Brilho muito concentrado (polido)
+        ka: 0.2,
+        kd: 0.5,
+        ks: [1.0, 1.0, 1.0],
+        shininess: 128.0,
     };
 
     drawGenericMesh(
@@ -207,7 +205,7 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
     // 2. Escala (largura, altura, profundidade)
     model = mat4.scale(model, scale[0], scale[1], scale[2]);
 
-    // Material padrão (fosco para paredes/chão)
+    // Material padrão
     const defaultMat = {
         ka: 0.4,
         kd: 0.85,
@@ -216,8 +214,7 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
     };
     const material = elemMaterial ? { ...defaultMat, ...elemMaterial } : defaultMat;
 
-    // Textura: paredes e chão usam wallTexture; tetos usam ceilingTexture
-    // Plataforma NÃO usa textura aqui (será aplicada manualmente apenas no topo)
+    // Seleção de textura
     let texture = null;
     if (elemType === 'wall') {
         texture = game.wallTexture;
@@ -228,21 +225,21 @@ function drawBox(game, position, scale, color, elemType, elemMaterial) {
     } else if (elemType === 'exit') {
         texture = game.exitTexture;
     }
-    // Para plataforma, não definimos textura aqui (renderiza cor sólida)
+    // Plataformas renderizam cor sólida aqui
 
     drawGenericMesh(game.gl, game.program, model, game.cubeMesh, color, texture, material);
 }
 
 export function drawEnvironment(game) {
-    // Desenha todos os elementos definidos em SCENE_GEOMETRY
+    // Desenha elementos da cena
     SCENE_GEOMETRY.forEach((elem) => {
         // Para plataformas, desenha o corpo sem textura e depois a face superior com textura
         if (elem.type === 'platform') {
-            // 1. Desenha o cubo completo sem textura (cor sólida)
+            // Desenha o cubo completo sem textura
             drawBox(game, elem.position, elem.size, elem.color, elem.type, elem.material);
 
-            // 2. Desenha apenas a face superior com textura (quad fino no topo)
-            const topY = elem.position[1] + elem.size[1] / 2 + 0.01; // Ligeiramente acima para evitar z-fighting
+            // Desenha face superior com textura
+            const topY = elem.position[1] + elem.size[1] / 2 + 0.01;
             drawPlatformTop(
                 game,
                 [elem.position[0], topY, elem.position[2]],

@@ -10,19 +10,15 @@ export class InputHandler {
     }
 
     _initListeners() {
-        // Teclado
+        // Eventos de teclado
         window.addEventListener('keydown', (e) => {
             this.keys[e.code] = true;
-            
-            // Toggle building mode com tecla 'B' (funciona sempre, mesmo sem pointer lock)
+
+            // Alterna modo de construção (Building Mode)
             if (e.code === 'KeyB') {
-                console.log('Tecla B pressionada!');
                 e.preventDefault();
                 if (this.onBuildingModeToggle) {
-                    console.log('Chamando onBuildingModeToggle...');
                     this.onBuildingModeToggle();
-                } else {
-                    console.warn('onBuildingModeToggle não foi configurado!');
                 }
             }
         });
@@ -31,7 +27,7 @@ export class InputHandler {
             this.keys[e.code] = false;
         });
 
-        // Mouse
+        // Eventos de mouse
         document.addEventListener('mousemove', (e) => {
             if (document.pointerLockElement) {
                 this.mouseDeltaX = e.movementX;
@@ -39,14 +35,14 @@ export class InputHandler {
             }
         });
 
-        // Estado do Pointer Lock
+        // Monitora estado do Pointer Lock
         document.addEventListener('pointerlockchange', () => {
-            this.isPointerLocked = (document.pointerLockElement !== null);
+            this.isPointerLocked = document.pointerLockElement !== null;
         });
     }
 
     /**
-     * Verifica se uma tecla está pressionada
+     * Verifica se uma tecla está pressionada.
      * @param {string} keyCode - Ex: 'KeyW', 'Space'
      */
     isPressed(keyCode) {
@@ -54,7 +50,7 @@ export class InputHandler {
     }
 
     /**
-     * Retorna os movimentos do mouse e os zera para o próximo frame
+     * Retorna o movimento do mouse e reinicia para o próximo quadro.
      */
     consumeMouseDelta() {
         const delta = { x: this.mouseDeltaX, y: this.mouseDeltaY };

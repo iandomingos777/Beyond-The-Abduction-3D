@@ -5,7 +5,7 @@ export class Player {
         // Atributos de Visão e Física
         this.yaw = -90;
         this.pitch = 0;
-        this.eyeOffset = 1.8; // Aqui você controla a altura da câmera
+        this.eyeOffset = 1.8; // Altura da câmera
         this.speed = 16.0;
         this.sensitivity = 0.1;
         this.isBuildingMode = false;
@@ -22,16 +22,16 @@ export class Player {
     }
 
     /**
-     * Toggle building mode (fly mode sem colisão)
+     * Alterna modo de construção (voo sem colisão)
      */
     toggleBuildingMode() {
         const wasFlying = this.isBuildingMode;
         this.isBuildingMode = !this.isBuildingMode;
 
-        // Se estava voando e agora voltou para walk mode, reposiciona no chão
+        // Reposiciona no chão ao sair do modo de voo
         if (wasFlying && !this.isBuildingMode) {
             // Altura do chão padrão + altura do personagem
-            this.position[1] = 0.0; // Ajuste conforme a altura do chão do seu mapa
+            this.position[1] = 0.0;
             console.log('Building Mode: OFF (Walk Mode) - Retornado ao chão');
         } else {
             console.log(
@@ -75,12 +75,12 @@ export class Player {
         let moveX = 0;
         let moveZ = 0;
 
-        // Direção baseada no Yaw (usamos apenas o plano horizontal XZ)
+        // Direção baseada no Yaw (usando apenas o plano horizontal XZ)
         const radYaw = (this.yaw * Math.PI) / 180;
         const forward = [Math.cos(radYaw), Math.sin(radYaw)];
         const right = [-forward[1], forward[0]];
 
-        // Movimento horizontal (funciona no ar e no chão)
+        // Movimento horizontal
         if (input.isPressed('KeyW')) {
             moveX += forward[0];
             moveZ += forward[1];
@@ -145,7 +145,7 @@ export class Player {
         const radYaw = (this.yaw * Math.PI) / 180;
         const radPitch = (this.pitch * Math.PI) / 180;
 
-        // Vetores de direção 3D reais para voar para onde olha
+        // Vetores de direção 3D para voar na direção do olhar
         const forward = [
             Math.cos(radYaw) * Math.cos(radPitch),
             Math.sin(radPitch),

@@ -23,7 +23,7 @@ export class OBJLoader {
         const text = await response.text();
         const data = this.parse(text);
 
-        // Aplica a normalização apenas se solicitado (para o sofá)
+        // Aplica a normalização se solicitado
         if (normalize) {
             this.normalizeMesh(data);
         }
@@ -61,7 +61,7 @@ export class OBJLoader {
                     faceVerts.push(this.processVertex(parts[i]));
                 }
 
-                // Triangulação Fan (padrão do seu código original)
+                // Triangulação Fan
                 const v0 = faceVerts[0];
                 for (let i = 1; i < faceVerts.length - 1; i++) {
                     this.finalIndices.push(v0);
@@ -86,13 +86,13 @@ export class OBJLoader {
 
         const indices = vertexData.split('/');
 
-        // Posição: Volta para a lógica simples (Base-1 para Base-0)
+        // Posição: Converte índice de Base-1 para Base-0
         const vIdx = parseInt(indices[0]) - 1;
-        // Proteção contra índice inválido (evita crash "partial render")
+        // Proteção contra índice inválido
         const pos = this.rawPositions[vIdx] || [0, 0, 0];
         this.finalVertices.push(...pos);
 
-        // Textura: Volta para a lógica original (sem inverter Y)
+        // Textura
         if (indices[1] && indices[1] !== '') {
             const tIdx = parseInt(indices[1]) - 1;
             const tex = this.rawTexCoords[tIdx] || [0, 0];

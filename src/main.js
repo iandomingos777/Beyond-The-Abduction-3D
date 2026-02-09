@@ -324,11 +324,10 @@ class Game {
         this.running = false;
         this.rafId = null;
 
-        // Objetos
-        this.sceneObjects = []; // Array para guardar os objetos carregados
+        // Objetos da cena
+        this.sceneObjects = [];
 
-        // Dados Geométricos (Meshes)
-        // Padronizamos os nomes: ufoMesh, canMesh, cubeMesh
+        // Geometrias
         this.cubeMesh = null;
 
         // Texturas
@@ -341,19 +340,19 @@ class Game {
         this.light = null;
         this.debugLight = false;
 
-        // Câmera (movido para o constructor para poder acessar no draw)
+        // Câmera
         this.cameraPos = [0, 0, 8];
         this.fpsCamera = null;
 
         // Sistema de Colisão
         this.collisionSystem = null;
 
-        // Player (representa o estado do jogador, como posição, rotação, etc.)
+        // Estado do Jogador
         this.player = new Player();
 
         this.input = new InputHandler();
 
-        // Victory state
+        // Estado de Vitória
         this.victoryTriggered = false;
         this.victoryOverlay = null;
 
@@ -363,7 +362,6 @@ class Game {
         this.projectionMatrix = mat4.identityMatrix();
     }
 
-    // ... (Mantenha initGL e loadShader iguais) ...
     initGL() {
         this.gl = getGL(this.canvas);
         if (!this.gl) return false;
@@ -470,7 +468,7 @@ class Game {
 
         window.addEventListener('keydown', (e) => {
             if (e.code === 'KeyL') {
-                // Usa 'KeyL' para evitar problemas com CapsLock
+                // Alterna luz de debug
                 this.debugLight = !this.debugLight;
                 console.log(`Luz de Editor: ${this.debugLight ? 'LIGADA' : 'DESLIGADA'}`);
             }
@@ -593,12 +591,12 @@ class Game {
             // Se o seu "chão" é 2.0, a plataforma de vitória deve estar nesse nível ou o teste deve aceitar 2.0
             const targetY = 2.0;
             const platformPos = [-37.5, targetY, 230.0];
-            const platformSize = [14.0, 10.0, 14.0];
+            const platformSize = [9.0, 7.5, 6.6];
             const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
             const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
 
             // Checa se o player está pisando na altura do chão
-            const onPlatformY = Math.abs(pos[1] - targetY) < 5.0;
+            const onPlatformY = Math.abs(pos[1] - targetY) < 3.0;
             if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
                 this.triggerVictory();
                 return;
@@ -644,16 +642,16 @@ class Game {
         this.camLights.forEach((cam) => cam.update(dt));
 
         if (this.debugLight) {
-            // MODO EDITOR: A luz segue o jogador (com offset para cima e à frente)
+            // Modo Editor: Luz segue o jogador
             targetPos = [pos[0], 10.0, pos[2] + 5.0];
         } else if (inEscape) {
-            // MODO JOGO: Lógica normal
+            // Modo Jogo: Lógica normal
             targetPos = [-37.5, 6.0, 230.0];
         } else {
             return;
         }
 
-        // Lerp suave (5% por frame)
+        // Interpolação Linear
         const lerpFactor = 0.05;
         this.light.color[0] += (targetColor[0] - this.light.color[0]) * lerpFactor;
         this.light.color[1] += (targetColor[1] - this.light.color[1]) * lerpFactor;
@@ -669,26 +667,26 @@ class Game {
 
         this.camLights.forEach((cam) => {
             const lightPos = cam.light.position;
-            const lightDir = mat4.normalize(cam.light.direction); // Usando sua mat4.js
+            const lightDir = mat4.normalize(cam.light.direction);
             const playerPos = this.player.position;
 
-            // Vetor da luz até o jogador usando sua função subtract
+            // Vetor da luz até o jogador
             const toPlayerNotNormalized = [
                 playerPos[0] - lightPos[0],
                 playerPos[1] - lightPos[1],
                 playerPos[2] - lightPos[2],
             ];
 
-            // Calculamos a distância para o limite de alcance
+            // Distância para o range
             const dist = Math.hypot(...toPlayerNotNormalized);
 
             if (dist < 25.0) {
                 const toPlayerDir = mat4.normalize(toPlayerNotNormalized);
 
-                // Produto escalar usando sua função dot
+                // Produto escalar
                 const dotProduct = mat4.dot(toPlayerDir, lightDir);
 
-                // Se o cosseno do ângulo for maior que o limite, está dentro do cone
+                // Cone de detecção
                 const detectionThreshold = Math.cos(0.5);
 
                 if (dotProduct > detectionThreshold) {
@@ -700,7 +698,7 @@ class Game {
     }
 
     triggerGameOver() {
-        if (this.gameOver) return; // Evita disparar múltiplas vezes
+        if (this.gameOver) return;
         this.gameOver = true;
         this.stopLoop();
 
@@ -716,12 +714,12 @@ class Game {
             </div>
         `;
 
-        // 2. Solta o mouse
+        // Libera mouse
         if (document.pointerLockElement) {
             document.exitPointerLock();
         }
 
-        // 3. Escuta a tecla ENTER para reiniciar
+        // Reinício
         const handleRestart = (event) => {
             if (event.key === 'Enter') {
                 document.removeEventListener('keydown', handleRestart); // Limpa o evento
@@ -742,15 +740,15 @@ class Game {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        // --- 1. Atualiza Câmera ---
-        // Pega a matriz de visão baseada no mouse/teclado
+        // Atualiza Câmera
         this.viewMatrix = this.fpsCamera.getViewMatrix();
-        // Envia a posição da câmera para o shader (brilho especular)
         const uViewPos = gl.getUniformLocation(this.program, 'uViewPos');
         gl.uniform3fv(uViewPos, this.fpsCamera.position);
-        // --- 2. Atualiza Luzes ---
+
+        // Atualiza Luzes
         this.light.updateUniforms(gl, this.program);
-        // --- 3. Envia Matrizes para a GPU ---
+
+        // Envia Matrizes
         const uView = gl.getUniformLocation(this.program, 'uViewMatrix');
         const uProj = gl.getUniformLocation(this.program, 'uProjectionMatrix');
 
@@ -758,7 +756,7 @@ class Game {
         gl.uniformMatrix4fv(uProj, false, this.projectionMatrix);
         this.updateSpotlights();
 
-        // --- 4. Desenha os objetos ---
+        // Desenho
         drawEnvironment(this);
         drawCube(this);
         drawSceneObjects(this);
@@ -774,16 +772,15 @@ class Game {
         const allInner = [];
         const allOuter = [];
 
-        // Lista temporária unificando tudo que brilha como spotlight
+        // Lista unificada de spotlights
         const allSources = [];
 
-        // Adiciona os Spotlights normais (Flashlight, Street Lamps)
+        // Adiciona spotlights padrão
         this.spotlights.forEach((s) => allSources.push(s));
 
-        // Adiciona as CamLights (Câmeras de Segurança)
-        // Adaptamos os dados, pois CamLight pode não ter cutoffs definidos
+        // Adiciona CamLights
         this.camLights.forEach((cam) => {
-            // Usa os valores da câmera ou define padrão (30° ~ 40°) se não existirem
+            // Valores padrão se não definidos
             const inner = cam.light.innerCutoff || Math.cos((30 * Math.PI) / 180);
             const outer = cam.light.outerCutoff || Math.cos((40 * Math.PI) / 180);
 
@@ -796,7 +793,7 @@ class Game {
             });
         });
 
-        // Preenche os arrays lineares para o WebGL
+        // Popula arrays a serem enviados para o WebGL
         const limit = Math.min(allSources.length, 8);
 
         for (let i = 0; i < limit; i++) {
@@ -826,7 +823,8 @@ class Game {
         console.log('VITÓRIA! Gabrielzito escapou!');
 
         // Disable collisions for fall animation
-        this.player.isBuildingMode = true; // Reuse fly mode to disable collisions
+        // Desabilita colisões para animação de queda
+        this.player.isBuildingMode = true;
 
         // Show victory overlay after a brief delay
         setTimeout(() => {
@@ -834,12 +832,12 @@ class Game {
                 this.victoryOverlay.classList.add('show');
             }
 
-            // Optionally stop audio
+            // Opcionalmente para o áudio
             if (this.audioManager) {
                 this.audioManager.stop();
             }
 
-            // Add Enter key listener to return to menu
+            // Listener de Enter para reiniciar
             const handleEnter = (e) => {
                 if (e.key === 'Enter') {
                     window.removeEventListener('keydown', handleEnter);

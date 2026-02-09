@@ -14,8 +14,8 @@ const LORE_HTML = `
             <p><strong>Gabrielzito</strong> vivia sua vida tranquila na Bahia até que os
             homenzinhos verdes o capturaram.</p>
             <p>Preso a bordo de uma nave alienígena, ele agora tenta encontrar uma forma
-            de escapar dos corredores frios e das salas de controle antes que seja tarde.</p>
-            <p>Você deve ajudá-lo a explorar, encontrar pistas e abrir uma rota de fuga.</p>
+            de escapar dos corredores frios das salas de controle antes que seja tarde.</p>
+            <p>Você deve ajudá-lo a explorar e encontrar uma rota de fuga sem que sua localização seja revelada para os alienígenas.</p>
         </div>
         <div class="menu-textbox-back">Pressione <span>ESC</span> ou <span>ENTER</span> para voltar</div>
     </div>
@@ -55,8 +55,8 @@ const TUTORIAL_HTML = `
 // ─── Opções do menu ────────────────────────────────────────
 
 const OPTIONS = [
-    { label: 'Jogar',     action: 'play'     },
-    { label: 'Lore',      action: 'lore'     },
+    { label: 'Jogar', action: 'play' },
+    { label: 'Lore', action: 'lore' },
     { label: 'Controles', action: 'tutorial' },
 ];
 
@@ -71,11 +71,11 @@ export class MainMenu {
         this.container = container;
         this.onPlay = callbacks.onPlay || (() => {});
 
-        this.activeIndex = 0;          // Opção selecionada
-        this.state = 'main';           // 'main' | 'lore' | 'tutorial'
-        this.isPlaying = false;        // true quando gameplay está ativa
+        this.activeIndex = 0; // Opção selecionada
+        this.state = 'main'; // 'main' | 'lore' | 'tutorial'
+        this.isPlaying = false; // true quando gameplay está ativa
 
-        // Bound handlers (para poder remover depois)
+        // Handlers vinculados
         this._onKeyDown = this._handleKeyDown.bind(this);
         this._onEscDuringGame = this._handleEscDuringGame.bind(this);
     }

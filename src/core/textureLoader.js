@@ -21,18 +21,18 @@ export function loadTexture(gl, url) {
         image.onload = () => {
             gl.bindTexture(gl.TEXTURE_2D, texture);
 
-            // Inverte Y se não tiver colocado no main.js (redundância segura)
+            // Inversão do eixo Y
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
-            // Verifica se é potência de 2 (2048x2048 é POT)
+            // Verifica se é potência de 2
             if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
                 gl.generateMipmap(gl.TEXTURE_2D);
-                // Filtro trilinear (melhor qualidade)
+                // Filtro trilinear
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
             } else {
-                // Configuração fallback para imagens que não são quadrado perfeito
+                // Configuração fallback para imagens non-power-of-two
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);

@@ -24,7 +24,7 @@ varying vec2 vTexCoord;
 varying vec3 vWorldNormal;
 varying vec3 vFragPos;
 
-// --- CORREÇÃO: Spotlight como ARRAYS ---
+// --- Spotlight Array ---
 uniform vec3 uSpotPos[MAX_SPOTLIGHTS];
 uniform vec3 uSpotDir[MAX_SPOTLIGHTS];
 uniform vec3 uSpotColor[MAX_SPOTLIGHTS];
@@ -32,17 +32,17 @@ uniform float uInnerCutoff[MAX_SPOTLIGHTS];
 uniform float uOuterCutoff[MAX_SPOTLIGHTS];
 
 void main() {
-    // Pega a cor base da textura (ou Branco se não tiver textura)
+    // Cor base da textura (ou Branco se não tiver textura)
     vec4 texColor = uUseTexture ? texture2D(uSampler, vTexCoord) : vec4(1.0, 1.0, 1.0, 1.0);
 
-    // Multiplica pela cor do objeto (Tinting / Blend)
+    // Multiplica pela cor do objeto.
     vec4 objectColor = texColor * vec4(uColor, 1.0);
 
     vec3 N = normalize(vWorldNormal);
     vec3 L = normalize(uLightPos - vFragPos);
     vec3 V = normalize(uViewPos - vFragPos);
 
-    // distância e atenuação
+    // Distância e atenuação.
     float dist = length(uLightPos - vFragPos);
     float constant = 1.0;
     float linear = 0.010; 
@@ -67,11 +67,11 @@ void main() {
 
     vec3 color = ambient + diffuse + specular;
 
-    // --- LUZ 2: LANTERNAS (LOOP) ---
+    // --- Lanternas ---
     vec3 totalSpotlight = vec3(0.0);
 
     for(int i = 0; i < MAX_SPOTLIGHTS; i++) {
-        // Direção do fragmento até a lanterna 'i'
+        // Direção do fragmento até a lanterna
         vec3 sLightDir = normalize(uSpotPos[i] - vFragPos);
         
         // Cosseno do ângulo entre a luz e a direção da lanterna
@@ -81,7 +81,7 @@ void main() {
         float epsilon = uInnerCutoff[i] - uOuterCutoff[i];
         float intensity = clamp((theta - uOuterCutoff[i]) / epsilon, 0.0, 1.0);
         
-        // Atenuação por distância (evita que a luz brilhe no infinito)
+        // Atenuação por distância
         float dist = length(uSpotPos[i] - vFragPos);
         float attenuation = 1.0 / (1.0 + 0.045 * dist + 0.0075 * (dist * dist));
         

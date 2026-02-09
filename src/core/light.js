@@ -1,12 +1,12 @@
 export class Light {
     constructor(gl) {
-        this.position = [2.0, 2.0, 2.0]; // Posição X, Y, Z
-        this.color = [0.7, 1.0, 0.7]; // Cor da luz (Branco)
-        this.ambient = [0.33, 0.33, 0.33]; // Luz base (para não ficar tudo preto na sombra)
-        this.shininess = 35.0; // Brilho especular
+        this.position = [2.0, 2.0, 2.0];
+        this.color = [0.7, 1.0, 0.7];
+        this.ambient = [0.33, 0.33, 0.33];
+        this.shininess = 35.0;
     }
 
-    // Método para atualizar os uniforms no shader de uma vez só
+    // Atualiza os uniforms no shader
     updateUniforms(gl, program) {
         const uLightPos = gl.getUniformLocation(program, 'uLightPos');
         const uLightColor = gl.getUniformLocation(program, 'uLightColor');
@@ -32,7 +32,7 @@ export class Spotlight {
         this.position = pos;
         this.direction = dir;
         this.color = color;
-        // Converte graus para o cosseno do radiano (o que o shader espera)
+        // Cosseno do ângulo de corte para o shader
         this.innerCutoff = Math.cos((innerDeg * Math.PI) / 180);
         this.outerCutoff = Math.cos((outerDeg * Math.PI) / 180);
         this.intensity = intensity;
