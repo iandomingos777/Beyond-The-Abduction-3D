@@ -587,19 +587,21 @@ class Game {
         // Check for victory condition (on platform + Space key)
         const pos = this.player.position;
         if (!this.victoryTriggered && this.running) {
-            const platformPos = [-37.5, -2.0 + 1.0, 230.0]; // FLOOR_POS_Y = -2.0
-            const platformSize = [6.0, 2.0, 4.0];
+        // Se o seu "chão" é 2.0, a plataforma de vitória deve estar nesse nível ou o teste deve aceitar 2.0
+        const targetY = 2.0; 
+        const platformPos = [-37.5, targetY, 230.0]; 
+        const platformSize = [10.0, 5.0, 10.0]; // Aumente um pouco a área para facilitar
 
-            // Check if player is on platform (with some tolerance)
-            const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
-            const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
-            const onPlatformY =
-                pos[1] >= platformPos[1] - 0.5 && pos[1] <= platformPos[1] + platformSize[1] + 1.0;
+        const onPlatformX = Math.abs(pos[0] - platformPos[0]) < platformSize[0] / 2;
+        const onPlatformZ = Math.abs(pos[2] - platformPos[2]) < platformSize[2] / 2;
+        
+        // Checa se o player está pisando na altura do chão (2.0)
+        const onPlatformY = Math.abs(pos[1] - targetY) < 1.0; 
 
-            if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
-                this.triggerVictory();
-                return; // Skip rest of update
-            }
+        if (onPlatformX && onPlatformZ && onPlatformY && this.input.isPressed('Space')) {
+            this.triggerVictory();
+            return;
+        }
         }
 
         // Skip normal updates during victory sequence
