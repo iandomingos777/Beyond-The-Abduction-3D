@@ -1,24 +1,24 @@
 export class Player {
-    constructor(startPos = [0, 0, 8]) {
+    constructor(startPos = [0, 2, 8]) {
         this.position = new Float32Array(startPos);
 
         // Atributos de Visão e Física
         this.yaw = -90;
         this.pitch = 0;
         this.eyeOffset = 1.8; // Aqui você controla a altura da câmera
-        this.speed = 20.0;
+        this.speed = 16.0;
         this.sensitivity = 0.9;
         this.isBuildingMode = false;
         this.flySpeed = 30.0;
 
         // Sistema de pulo
         this.velocityY = 0;
-        this.jumpForce = 7.5;
+        this.jumpForce = 10;
         this.gravity = -22.0;
         this.isGrounded = true;
 
         // Tamanho para o sistema de colisão [largura, altura, profundidade]
-        this.size = [0.6, 2.0, 0.6];
+        this.size = [0.6, 7.0, 0.6];
     }
 
     /**
@@ -130,8 +130,8 @@ export class Player {
         }
 
         // Checar se está no chão
-        if (this.position[1] <= 0.0) {
-            this.position[1] = 0.0;
+        if (this.position[1] <= 2.0) {
+            this.position[1] = 2.0;
             this.velocityY = 0;
             this.isGrounded = true;
         }

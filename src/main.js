@@ -25,8 +25,8 @@ import * as mat4 from './math/mat4.js';
 // --- CONFIGURAÇÃO DOS OBJETOS ---
 // Sala 2: Aprox. Z entre 30 e 90.
 // Sala 3: Aprox. Z entre 140 e 200, X negativo.
-
-export const OBJECTS_TO_LOAD = [
+const AMBIENT_LIGHT = 0.33;
+const OBJECTS_TO_LOAD = [
     // --- PERSONAGENS / FIGURAS ---
     {
         id: 'alien',
@@ -36,9 +36,14 @@ export const OBJECTS_TO_LOAD = [
         colliderSize: [3.5, 12.0, 3.5], // Ajustado para a escala 8.0
         color: [0.0, 0.8, 0.5],
         position: [-55.0, -2.0, 180.0],
-        rotation: [0, (3 * Math.PI) / 4, 0],
-        scale: [8.0, 8.0, 8.0],
-        material: { ka: 0.4, kd: 0.7, ks: [0.2, 0.2, 0.2], shininess: 10.0 },
+        rotation: [0, (3 * Math.PI) / 4, 0], // Virado para o centro
+        scale: [9.0, 9.0, 9.0],
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.7,
+            ks: [0.2, 0.2, 0.2],
+            shininess: 10.0, // Pele: brilho baixo e espalhado
+        },
     },
     {
         id: 'buddha',
@@ -49,8 +54,13 @@ export const OBJECTS_TO_LOAD = [
         color: [0.8, 0.7, 0.2],
         position: [15.0, -2.0, 80.0],
         rotation: [0, Math.PI, 0],
-        scale: [45.0, 45.0, 45.0],
-        material: { ka: 0.4, kd: 0.5, ks: [0.8, 0.6, 0.2], shininess: 30.0 },
+        scale: [50.0, 50.0, 50.0],
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.5,
+            ks: [0.9, 0.7, 0.2],
+            shininess: 80.0, // Ouro/Bronze: Brilho forte e amarelado
+        },
     },
 
     // --- VEÍCULOS ---
@@ -64,18 +74,27 @@ export const OBJECTS_TO_LOAD = [
         rotation: [Math.PI, -Math.PI / 6, 0],
         scale: [24.0, 24.0, 24.0],
         normalize: true,
-        material: { ka: 0.4, kd: 0.7, ks: [1.0, 1.0, 1.0], shininess: 200.0 },
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.7,
+            ks: [1.0, 1.0, 1.0],
+            shininess: 200.0,
+        },
     },
     {
         id: 'ufo',
         objPath: '../assets/models/Low_poly_UFO.obj',
         texPath: '../assets/textures/ufo_diffuse.png',
-        has_colision: true,
-        colliderSize: [18.0, 5.0, 18.0], // Disco largo e achatado
-        position: [-37.5, 8.0, 170.0],
+        // Sala 3 (Flutuando alto no centro da sala final)
+        position: [-37.5, 4.0, 175.0],
         scale: [0.08, 0.08, 0.08],
-        rotation: [Math.PI / 6, 0, 0],
-        material: { ka: 0.6, kd: 0.8, ks: [0.5, 1.0, 1.0], shininess: 150.0 },
+        rotation: [Math.PI / 6, Math.PI / 2, 0], // Levemente inclinado
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.8,
+            ks: [0.5, 1.0, 1.0],
+            shininess: 150.0, // Sci-fi: Brilho ciano/metálico
+        },
     },
 
     // --- MOBÍLIA ---
@@ -88,7 +107,12 @@ export const OBJECTS_TO_LOAD = [
         position: [-25.0, -2.0, 60.0],
         rotation: [0, 0, 0],
         scale: [4.0, 4.0, 4.0],
-        material: { ka: 0.4, kd: 0.8, ks: [0.0, 0.0, 0.0], shininess: 1.0 },
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.8,
+            ks: [0.0, 0.0, 0.0],
+            shininess: 1.0, // Tecido: Quase sem brilho especular
+        },
     },
     {
         id: 'couchDiner',
@@ -100,7 +124,12 @@ export const OBJECTS_TO_LOAD = [
         rotation: [0, -Math.PI / 2, 0],
         scale: [12, 12, 12],
         normalize: true,
-        material: { ka: 0.4, kd: 0.8, ks: [0.3, 0.3, 0.3], shininess: 20.0 },
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.8,
+            ks: [0.3, 0.3, 0.3],
+            shininess: 20.0, // Couro/Vinil: Brilho leve
+        },
     },
     {
         id: 'old_tv',
@@ -111,7 +140,12 @@ export const OBJECTS_TO_LOAD = [
         position: [-10.0, -2.0, 85.0],
         rotation: [0, 0, 0],
         scale: [8.0, 8.0, 8.0],
-        material: { ka: 0.5, kd: 0.7, ks: [0.8, 0.8, 0.8], shininess: 64.0 },
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.7,
+            ks: [0.8, 0.8, 0.8],
+            shininess: 64.0, // Plástico/Vidro: Brilho médio
+        },
     },
 
     // --- CAIXAS DE MADEIRA ---
@@ -121,20 +155,27 @@ export const OBJECTS_TO_LOAD = [
         has_colision: true,
         colliderSize: [4.0, 4.0, 4.0],
         texPath: '../assets/textures/Wooden_box.png',
-        position: [-55.0, 0.0, 160.0],
-        scale: [3.5, 3.5, 3.5],
-        material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+        // Sala 3 (Empilhada no canto)
+        position: [-57.0, 0.5, 155.0],
+        scale: [4.0, 4.0, 4.0],
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.8,
+            ks: [0.1, 0.1, 0.1],
+            shininess: 5.0, // Madeira: Fosco
+        },
     },
     {
         id: 'wooden_box_stack2',
         objPath: '../assets/models/Wooden_box.obj',
-        texPath: '../assets/textures/Wooden_box.png',
         has_colision: true,
         colliderSize: [4.0, 4.0, 4.0],
-        position: [-55.0, 4.0, 160.0],
+        texPath: '../assets/textures/Wooden_box.png',
+        // Sala 3 (Em cima da primeira)
+        position: [-57.0, 4.3, 155.0],
         rotation: [0, Math.PI / 3, 0],
         scale: [3.5, 3.5, 3.5],
-        material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+        material: { ka: AMBIENT_LIGHT, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
     {
         id: 'wooden_box_stack3',
@@ -142,10 +183,11 @@ export const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/Wooden_box.png',
         has_colision: true,
         colliderSize: [4.0, 4.0, 4.0],
-        position: [-52.0, 0.0, 160.0],
+        // Sala 3 (Ao lado da segunda, formando um "L" de caixas)
+        position: [-52.0, 0.5, 155.0],
         rotation: [0, Math.PI / 3, 0],
         scale: [3.5, 3.5, 3.5],
-        material: { ka: 0.4, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
+        material: { ka: AMBIENT_LIGHT, kd: 0.8, ks: [0.1, 0.1, 0.1], shininess: 5.0 },
     },
 
     // --- PROPS ---
@@ -158,8 +200,8 @@ export const OBJECTS_TO_LOAD = [
         position: [-25.0, -1.0, 190.0],
         rotation: [0, Math.PI / 2.6, 0],
         scale: [2.5, 2.5, 2.5],
-        color: [0.9, 0.2, 0.2],
-        material: { ka: 0.4, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
+        color: [0.9, 0.2, 0.2], // vermelho
+        material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [1.0, 1.0, 1.0], shininess: 50.0 },
     },
     {
         id: 'can',
@@ -168,8 +210,18 @@ export const OBJECTS_TO_LOAD = [
         objPath: '../assets/models/can_crushed_lowpoly.obj',
         texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
         position: [-50.0, -2.0, 180.0],
-        scale: [0.2, 0.2, 0.2],
-        material: { ka: 0.4, kd: 0.8, ks: [1.0, 1.0, 1.0], shininess: 128.0 },
+        scale: [0.17, 0.17, 0.17],
+        material: { ka: AMBIENT_LIGHT, kd: 0.9, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
+    },
+    {
+        id: 'can2',
+        objPath: '../assets/models/can_crushed_lowpoly.obj',
+        texPath: '../assets/textures/can_crushed_lowpoly_BaseColor_Opacity_2k.png',
+        // Sala 3 (Lixo no chão)
+        position: [-54.0, -2.0, 177.0],
+        rotation: [0, Math.PI / 4, 0],
+        scale: [0.17, 0.17, 0.17],
+        material: { ka: AMBIENT_LIGHT, kd: 0.9, ks: [1.0, 1.0, 1.0], shininess: 128.0 }, // Metal
     },
 
     // --- ILUMINAÇÃO / POSTES ---
@@ -181,7 +233,36 @@ export const OBJECTS_TO_LOAD = [
         texPath: '../assets/textures/street-lamp.png',
         position: [-25.0, -2.0, 35.0],
         scale: [1.5, 1.5, 1.5],
-        material: { ka: 0.4, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+        material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+    },
+    {
+        id: 'street_lamp_2',
+        has_colision: true, 
+        colliderSize: [2.0, 20.0, 2.0], // Mesmo do outro poste
+        objPath: '../assets/models/street-lamp.obj',
+        texPath: '../assets/textures/street-lamp.png',
+        // Sala 2 (Canto direito oposto)
+        position: [25.0, -2.0, 78.0],
+        rotation: [0, Math.PI, 0],
+        scale: [1.5, 1.5, 1.5],
+        material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [0.5, 0.5, 0.5], shininess: 32.0 },
+    },
+    {
+        id: 'surgery_lamp',
+        has_colision: true,
+        colliderSize: [4.0, 10.0, 4.0], // Lâmpada cirúrgica grande e impossível de atravessar
+        objPath: '../assets/models/SurgeryLamp.obj',
+        texPath: '../assets/textures/SurgeryLamp.png',
+        // Sala 3 (Perto do Alien)
+        position: [-55.0, 6.0, 160.0],
+        rotation: [0, Math.PI / 4, 0],
+        scale: [3.0, 3.0, 3.0],
+        material: {
+            ka: AMBIENT_LIGHT,
+            kd: 0.8,
+            ks: [0.9, 0.9, 0.9],
+            shininess: 80.0, // Metal hospitalar limpo
+        },
     },
     {
         id: 'trash_can',
@@ -192,7 +273,7 @@ export const OBJECTS_TO_LOAD = [
         position: [22.0, -2.0, 60.0],
         rotation: [0, -Math.PI / 2, 0],
         scale: [9.0, 9.0, 9.0],
-        material: { ka: 0.5, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
+        material: { ka: AMBIENT_LIGHT, kd: 0.5, ks: [0.2, 0.2, 0.2], shininess: 40.0 },
     },
     {
         id: 'surgery_lamp',
@@ -209,6 +290,8 @@ export const OBJECTS_TO_LOAD = [
     // --- BOTÕES (COLISÃO NA PAREDE) ---
     {
         id: 'emergency_button_1',
+        has_colision: true,
+        colliderSize: [1.5, 1.5, 1.5], // Pequeno, mas impossível de atravessar
         objPath: '../assets/models/emergency_button.obj',
         has_colision: true,
         colliderSize: [1.5, 1.5, 1.5],
@@ -347,9 +430,10 @@ class Game {
         this.camLights.push(cam3);
 
         this.spotlights = [
-            new Spotlight([-25.0, 8.0, 35.0], [0.3, -1, 0], [1.0, 0.8, 0.5], 50, 100), // Street Lamp 1
-            new Spotlight([25.0, 8.0, 85.0], [-0.3, -1, 0], [1.0, 0.8, 0.5], 50, 100), // Street Lamp 2
-            new Spotlight([-25.0, -1.0, 192.0], [-1, 0, -0.7], [1.0, 1.0, 1.0], 20, 40), // Flashlight no chão
+            new Spotlight([-25.0, 8.0, 35.0], [0.3, -1, 0], [1.0, 0.8, 0.5], 50, 100, 2.5), // Street Lamp 1
+            new Spotlight([25.0, 8.0, 78.0], [0, -1, 0], [1.0, 0.8, 0.5], 50, 100, 2.5), // Street Lamp 2
+            new Spotlight([-25.2, -1.0, 190.1], [-1, 0, -0.7], [1.0, 1.0, 1.0], 20, 40, 5.0), // Flashlight no chão
+            new Spotlight([-55.0, 8.0, 160.0], [0.5, -1, 0], [1.0, 1.0, 1.0], 30, 60, 1.0), // Surgery Lamp
         ];
 
         // --- CARREGAMENTO ---
@@ -714,9 +798,10 @@ class Game {
 
         for (let i = 0; i < limit; i++) {
             const s = allSources[i];
+            const intensity = s.intensity !== undefined ? s.intensity : 1.0;
             allPos.push(...s.position);
             allDir.push(...s.direction);
-            allCol.push(...s.color);
+            allCol.push(s.color[0] * intensity, s.color[1] * intensity, s.color[2] * intensity);
             allInner.push(s.innerCutoff);
             allOuter.push(s.outerCutoff);
         }
