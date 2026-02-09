@@ -454,7 +454,7 @@ export const SCENE_GEOMETRY = [
     // --- Sinal de saída na parede norte (frente da plataforma) ---
     {
         type: 'exit',
-        position: [-37.5, WALL_POS_Y + 1.0, 235.0 - 0.3],
+        position: [-37.5, WALL_POS_Y - 3.0, 235.0 - 0.3],
         size: [12.0, 8.0, 0.05],
         color: [1.0, 1.0, 1.0],
         isCollider: false,
