@@ -10,47 +10,39 @@ O projeto é uma **continuação narrativa direta** do jogo desenvolvido no Trab
 
 **Gabrielzito: Beyond the Abduction** é um jogo 3D de stealth e exploração onde:
 
-- 🚀 **Cenário:** Gabrielzito está preso no espaço dos aliens, dentro de uma nave ou base espacial
-- 🎯 **Objetivo:** Procurar e coletar itens espalhados pelo ambiente 3D (em diferentes coordenadas x, y, z) para tentar escapar
-- 👁️ **Desafio:** Aliens vigiam o ambiente com câmeras de segurança - Gabrielzito não pode ser visto!
+- 🚀 **Cenário:** Gabrielzito está preso dentro de uma nave alienígena com múltiplas salas e corredores
+- 🎯 **Objetivo:** Atravessar as salas e alcançar a Escape Room sem ser detectado pelas câmeras
+- 👁️ **Desafio:** Câmeras de vigilância aliens patrulham o ambiente - se Gabrielzito for detectado pela luz das câmeras, é GAME OVER!
 
 ### Controles
 
-- `W` - Avançar
-- `A` - Mover para esquerda
-- `S` - Recuar
-- `D` - Mover para direita
-- `Mouse` - Controlar direção do olhar (opcional)
-- `SPACE` - Interagir/Coletar item
+- `W` `A` `S` `D` - Movimentação (frente, esquerda, trás, direita)
+- `Mouse` - Controlar direção do olhar
+- `SPACE` - Pular / Pressionar botão na Escape Room
+- `B` - Modo Building (voar/atravessar paredes para debug)
+- `ESC` - Abrir menu de pausa
 
 ### Core Loop
 
-1. **Explorar** o ambiente 3D da nave alienígena
-2. **Localizar** itens espalhados em diferentes posições (x, y, z)
-3. **Aproximar-se** dos itens sem ser detectado pelas câmeras
-4. **Coletar** pressionando SPACE quando próximo
-5. **Escapar** após reunir todos os itens necessários
+1. **Explorar** as salas e corredores da nave alienígena
+2. **Evitar** ser detectado pelas câmeras de vigilância
+3. **Alcançar** a Escape Room (sala de fuga)
+4. **Escapar** pressionando SPACE na plataforma de saída
 
 ### Mecânicas Principais
 
-**Sistema de Coleta:**
-- Objetos especiais espalhados pelo cenário da nave
-- Jogador precisa estar próximo do item (raio de ~2 unidades)
-- Pressionar SPACE para coletar
-- Feedback visual: item desaparece com animação
-- HUD atualiza contador de itens (ex: "3/5 itens coletados")
-
 **Sistema de Câmeras (Stealth):**
-- Câmeras posicionadas estrategicamente pelo ambiente
-- Animação de rotação/varredura com cone de visão
-- Sistema de line-of-sight para detecção
-- Tempo de detecção: ~2 segundos olhando diretamente
-- Consequência: teleporte ao início, sistema de strikes, ou game over
-- Estratégia: observar padrões, aguardar momento certo, explorar pontos cegos
+- Câmeras de vigilância com spotlight rotativo em diferentes salas
+- Cone de luz visível indica área de detecção
+- Detecção instantânea se o jogador for iluminado
+- Consequência: GAME OVER - jogador foi capturado
+- Estratégia: observar padrões de rotação, aguardar momento certo, usar pontos cegos
+- Câmeras possuem cores diferentes para identificação visual (ciano, vermelho, verde)
 
 **Condição de Vitória:**
-- Coletar todos os itens necessários
-- Chegar à zona de escape (porta/saída)
+- Atravessar todas as salas sem ser detectado
+- Alcançar a Escape Room (sala final)
+- Pressionar SPACE na plataforma de fuga para escapar
 
 ---
 
@@ -58,33 +50,35 @@ O projeto é uma **continuação narrativa direta** do jogo desenvolvido no Trab
 
 **Ambiente:**
 - Tema: Interior de nave alienígena / base espacial
-- Estética: Sci-fi, metálico, iluminação neon
-- Estrutura: Corredores, salas interconectadas, áreas abertas
+- Estética: Sci-fi, metálico, iluminação dinâmica
+- Estrutura: Múltiplas salas interconectadas por corredores
 
 **Iluminação (Phong):**
-- Luz ambiente baixa, criando atmosfera sombria
-- Luzes pontuais: painéis iluminados, computadores alien
-- Luz móvel: hologram rotativo, laser varredura (requisito obrigatório)
+- Sistema de iluminação dinâmica baseado no modelo de Phong
+- Luz principal que transição entre cores conforme o jogador avança
+- Spotlights das câmeras de segurança (ciano, vermelho, verde)
+- Materiais realistas: metal, tecido, plástico, madeira com propriedades físicas corretas
 
 **Objetos:**
-- Paredes e estrutura da nave
-- Painéis de controle alien
-- Caixas/containers
-- Câmeras de vigilância
-- Itens coletáveis
-- Porta de escape
-
+- Paredes e estrutura da nave com texturas metálicas
+- Objetos decorativos: sofás, TV antiga, Buddha, alien
+- Veículos: UFO, carro de polícia
+- Caixas de madeira empilhadas
+- Câmeras de vigilância com spotlight rotativo
+- Lâmpadas de rua e cirúrgicas
+- Plataforma de fuga na Escape Room
 ---
 
 ## Objetivos
 
-- Desenvolver um jogo 3D de stealth e exploração com mecânicas de coleta de itens
+- Desenvolver um jogo 3D de stealth onde o jogador deve escapar de uma nave alienígena
 - Aplicar conceitos fundamentais de **Computação Gráfica 3D**
 - Implementar manualmente partes essenciais do **pipeline gráfico**
-- Desenvolver uma cena 3D interativa com câmera em perspectiva
-- Implementar **iluminação realista** utilizando o modelo de Phong
-- Criar sistema de detecção de visibilidade (câmeras alienígenas)
-- Implementar mecânicas de coleta de objetos e interação com o ambiente
+- Desenvolver uma cena 3D interativa com câmera em primeira pessoa
+- Implementar **iluminação realista** utilizando o modelo de Phong com múltiplas fontes de luz
+- Criar sistema de detecção baseado em spotlight das câmeras alienígenas
+- Implementar mecânicas de movimento, colisão e interação com o ambiente
+- Sistema de Game Over por detecção e Victory Screen ao escapar
 - Manter uma arquitetura de código **modular, organizada e documentada**
 
 ---
@@ -92,16 +86,18 @@ O projeto é uma **continuação narrativa direta** do jogo desenvolvido no Trab
 ## Requisitos do Projeto (Resumo)
 
 Os requisitos acadêmicos completos estão descritos em `docs/professor_requirements.md`.
-
-De forma geral, o projeto contempla os **Requisitos Específicos para Jogo 3D**:
-
-- Câmera com **projeção perspectiva** (primeira ou terceira pessoa)
-- Movimentação do jogador pelo ambiente 3D
-- Iluminação baseada no **modelo de reflexão de Phong**
+em primeira pessoa
+- Movimentação do jogador pelo ambiente 3D com sistema de colisão
+- Iluminação baseada no **modelo de reflexão de Phong** com múltiplas fontes de luz
 - Objetos 3D carregados de arquivos **OBJ**
 - **Leitor próprio de arquivos OBJ** (implementação obrigatória)
-- Objetos 3D animados por transformações geométricas
+- Objetos 3D animados por transformações geométricas (câmeras rotativas)
 - Uso de **texturas** e **cores sólidas**
+- Renderização feita exclusivamente com **WebGL puro**
+- Interação via teclado e mouse (WASD + Mouse + SPACE + ESC)
+- Sistema de gameplay: stealth, detecção por câmeras, mecânica de fuga
+- Menu principal e sistema de pausa
+- Condições de vitória e derrota
 - Renderização feita exclusivamente com **WebGL puro**
 - Interação via teclado (WASD + SPACE)
 - Sistema de gameplay: coleta de itens, detecção por câmeras, mecânica de stealth
@@ -127,39 +123,52 @@ De forma geral, o projeto contempla os **Requisitos Específicos para Jogo 3D**:
 
 ```
 .
-├── index.html                 # Inicialização do canvas e carregamento do app
-├── README.md
-│
-├── docs/
-│   ├── professor_requirements.md   # Checklist acadêmico
-│   ├── technical_draft.md          # Planejamento técnico WebGL
-│   ├── game_design.md              # Game Design Document detalhado
-│   ├── trabalho2-CG.txt            # Requisitos originais do professor
-│   └── presentation.md             # Slides da apresentação (futuro)
+├── index.html                 # Página principal com canvas WebGL
+├── README.md                  # Este arquivo
 │
 ├── assets/
-│   ├── shaders/              # Shaders GLSL
-│   │   ├── vertex.glsl
-│   │   └── fragment.glsl
-│   ├── textures/             # Texturas
-│   ├── models/               # Modelos 3D (OBJ, se aplicável)
-│   └── sounds/               # Áudios (opcional)
+│   ├── shaders/              # Shaders GLSL (vertex e fragment)
+│   ├── textures/             # Texturas PNG/JPG
+│   │   ├── metal-wall1.jpg
+│   │   ├── scifi_floor.png
+│   │   ├── exit.jpg
+│   │   └── ... (texturas dos modelos)
+│   ├── models/               # Modelos 3D OBJ
+│   │   ├── chess/           # Peças de xadrez
+│   │   ├── Alien.obj
+│   │   ├── buddha_lowpoly.obj
+│   │   ├── carPolice.obj
+│   │   ├── Low_poly_UFO.obj
+│   │   └── ... (outros modelos)
+│   └── soundtrack.ogg        # Música de fundo
 │
 ├── src/
-│   ├── main.js               # Ponto de entrada e loop principal
-│   ├── core/                 # Infraestrutura WebGL
-    │   ├── draw.js
-│   │   ├── glContext.js
-│   │   ├── shaderUtils.js
-│   │   ├── shaderProgram.js
-│   │   └── objLoader.js      # Leitor próprio de OBJ (quando aplicável)
-│   ├── systems/              # Sistemas independentes
-│   │   ├── camera.js
-│   │   ├── lighting.js
-│   │   └── input.js
+│   ├── main.js               # Classe Game principal e loop de renderização
+│   ├── core/                 # Sistema central WebGL
+│   │   ├── glContext.js      # Inicialização do contexto WebGL
+│   │   ├── shaderUtils.js    # Compilação de shaders
+│   │   ├── shaderProgram.js  # Gerenciamento de programas
+│   │   ├── objLoader.js      # Leitor próprio de arquivos OBJ
+│   │   ├── textureLoader.js  # Carregamento de texturas
+│   │   ├── draw.js           # Funções de renderização
+│   │   ├── camera.js         # Câmera FPS
+│   │   ├── light.js          # Sistema de iluminação
+│   │   ├── input.js          # Captura de entrada (teclado/mouse)
+│   │   └── audio.js          # Gerenciamento de áudio
+│   ├── systems/              # Sistemas de jogo
+│   │   └── collision.js      # Sistema de colisão AABB
+│   ├── scenes/               # Configuração de cenas
+│   │   └── environment.js    # Setup de colisores do ambiente
+│   ├── models/               # Entidades do jogo
+│   │   ├── player.js         # Lógica do jogador
+│   │   └── camlight.js       # Câmeras de vigilância com spotlight
 │   ├── geometries/           # Geometrias procedurais
-│   │   └── cube.js
-│   └── entities/             # Entidades da cena
+│   │   └── cube.js           # Geração de cubo
+│   ├── math/                 # Biblioteca matemática
+│   │   └── mat4.js           # Operações com matrizes 4x4
+│   └── menu/                 # Interface do usuário
+│       ├── mainMenu.js       # Menu principal e pausa
+│       └── menuStyles.css    # Estilos do menu
 │
 └── video_demo.mp4            # Vídeo demonstrativo (entrega final)
 ```
@@ -183,69 +192,6 @@ Em seguida, acesse no navegador:
 ```
 http://localhost:8000
 ```
-
----
-
-## Documentação Complementar
-
-O projeto possui documentação detalhada em `docs/`:
-
-- **[professor_requirements.md](docs/professor_requirements.md)** - Checklist completo dos requisitos acadêmicos com status de implementação
-- **[game_design.md](docs/game_design.md)** - Game Design Document com mecânicas detalhadas, gameplay loop e milestones
-- **[technical_draft.md](docs/technical_draft.md)** - Documentação técnica da estrutura WebGL e próximos passos de implementação
-- **trabalho2-CG.txt** - Requisitos originais fornecidos pelo professor
-
----
-
-## Metodologia de Desenvolvimento
-
-- Desenvolvimento incremental baseado em gameplay
-- Implementação progressiva dos requisitos técnicos
-- Foco em mecânicas de jogo (coleta de itens, sistema de detecção)
-- Organização modular do código
-- Uso de documentação complementar em `docs/`
-
----
-
-## Milestones de Desenvolvimento
-
-### Fase 1: Core Graphics ✅
-- ✅ Setup WebGL
-- ✅ Shaders básicos
-- ✅ Carregamento de OBJ
-- ✅ Renderização de objetos
-
-### Fase 2: Iluminação 🚧
-- 🚧 Implementar Phong nos shaders
-- 🚧 Adicionar fonte de luz móvel
-- ⏳ Ajustar materiais dos objetos
-
-### Fase 3: Gameplay Core 🎯
-- ⏳ Input e movimentação
-- ⏳ Sistema de coleta
-- ⏳ Posicionar itens no cenário
-- ⏳ HUD básico
-
-### Fase 4: Stealth Mechanics 👁️
-- ⏳ Criar câmeras de vigilância
-- ⏳ Implementar detecção
-- ⏳ Lógica de alerta/game over
-
-### Fase 5: Polish & Content 🎨
-- ⏳ Criar cenário completo da nave
-- ⏳ Adicionar mais modelos
-- ⏳ Menu e UI
-- ⏳ Sons e efeitos (opcional)
-- ⏳ Balanceamento
-
-### Fase 6: Entrega Final 📦
-- ⏳ Testes completos
-- ⏳ Gravar vídeo demonstrativo
-- ⏳ Preparar slides de apresentação
-- ⏳ Documentação final
-- ⏳ Deploy e entrega
-
-Decisões técnicas e evoluções de implementação são documentadas na pasta `docs/`.
 
 ---
 

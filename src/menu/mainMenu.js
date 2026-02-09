@@ -23,7 +23,7 @@ const LORE_HTML = `
 
 const TUTORIAL_HTML = `
     <div class="menu-textbox">
-        <div class="menu-textbox-title">⌁ Protocolos de Controle ⌁</div>
+        <div class="menu-textbox-title">⌁ Controles ⌁</div>
         <div class="menu-textbox-body">
             <table>
                 <tr>
@@ -32,19 +32,19 @@ const TUTORIAL_HTML = `
                 </tr>
                 <tr>
                     <td><span class="key">Mouse</span></td>
-                    <td>Olhar ao redor (rotação da câmera)</td>
+                    <td>Controlar direção do olhar</td>
                 </tr>
                 <tr>
-                    <td><span class="key">Q</span> / <span class="key">E</span></td>
-                    <td>Descer / Subir</td>
+                    <td><span class="key">SPACE</span></td>
+                    <td>Pular / Pressionar botão na Escape Room</td>
                 </tr>
                 <tr>
-                    <td><span class="key">Clique</span></td>
-                    <td>Capturar o cursor (ativa controle de câmera)</td>
+                    <td><span class="key">B</span></td>
+                    <td>Modo Building (voar/atravessar paredes para debug)</td>
                 </tr>
                 <tr>
                     <td><span class="key">ESC</span></td>
-                    <td>Voltar ao menu principal</td>
+                    <td>Abrir menu de pausa</td>
                 </tr>
             </table>
         </div>
@@ -55,9 +55,9 @@ const TUTORIAL_HTML = `
 // ─── Opções do menu ────────────────────────────────────────
 
 const OPTIONS = [
-    { label: 'Jogar',    action: 'play'     },
-    { label: 'Lore',     action: 'lore'     },
-    { label: 'Tutorial', action: 'tutorial' },
+    { label: 'Jogar',     action: 'play'     },
+    { label: 'Lore',      action: 'lore'     },
+    { label: 'Controles', action: 'tutorial' },
 ];
 
 // ─── Classe MainMenu ───────────────────────────────────────
