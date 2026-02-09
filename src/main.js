@@ -17,6 +17,7 @@ import { setupSceneColliders, ESCAPE_ROOM } from './scenes/environment.js';
 import { MainMenu } from './menu/mainMenu.js';
 import { Player } from './models/player.js';
 import { InputHandler } from './core/input.js';
+import AudioManager from './core/audio.js';
 
 import * as mat4 from './math/mat4.js';
 
@@ -383,6 +384,10 @@ class Game {
         this.platformTexture = await loadTexture(this.gl, '../assets/textures/platform.jpeg');
         this.floorTexture = await loadTexture(this.gl, '../assets/textures/scifi_floor.png');
 
+        // Inicializar AudioManager e pré-carregar trilha
+        this.audioManager = new AudioManager();
+        this.audioManager.load('../assets/soundtrack.ogg').catch((e) => console.warn('Falha ao carregar áudio:', e));
+
         // 2. Carrega a NOVA LISTA de Objetos
         await this.loadSceneObjects();
 
@@ -425,6 +430,14 @@ class Game {
             this.input.consumeMouseDelta(); // Limpa delta acumulado
         };
         this.menu.show();
+        // Tenta tocar a trilha já no menu; se o navegador bloquear, o clique no overlay fará resume/play
+        try { this.audioManager.play(); } catch (e) { /* ignore */ }
+        menuOverlay.addEventListener('click', async () => {
+            try {
+                await this.audioManager.resumeOnGesture();
+                await this.audioManager.play();
+            } catch (err) { /* ignore */ }
+        });
     }
 
     async loadSceneObjects() {
