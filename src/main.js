@@ -354,7 +354,10 @@ class Game {
     }
 
     async loadShader(url) {
-        const response = await fetch(url);
+        const response = await fetch(url + '?t=' + Date.now()); // cache bust
+        if (!response.ok) {
+            throw new Error(`Failed to load shader: ${url} (${response.status})`);
+        }
         return await response.text();
     }
 
@@ -364,11 +367,22 @@ class Game {
         // Shaders
         const vShaderSrc = await this.loadShader('./assets/shaders/vertex.glsl');
         const fShaderSrc = await this.loadShader('./assets/shaders/fragment.glsl');
-        this.program = createProgram(
-            this.gl,
-            createShader(this.gl, this.gl.VERTEX_SHADER, vShaderSrc),
-            createShader(this.gl, this.gl.FRAGMENT_SHADER, fShaderSrc),
-        );
+        const vertexShader = createShader(this.gl, this.gl.VERTEX_SHADER, vShaderSrc);
+        const fragmentShader = createShader(this.gl, this.gl.FRAGMENT_SHADER, fShaderSrc);
+        
+        if (!vertexShader || !fragmentShader) {
+            console.error('Failed to compile shaders');
+            return;
+        }
+        
+        this.program = createProgram(this.gl, vertexShader, fragmentShader);
+        
+        if (!this.program) {
+            console.error('Failed to create shader program');
+            return;
+        }
+        
+        console.log('Shader program created successfully:', this.program);
         this.gl.useProgram(this.program);
 
         this.fpsCamera = new Camera(this.canvas, [0, 2, 8]);
@@ -650,6 +664,12 @@ class Game {
 
     draw() {
         const gl = this.gl;
+        
+        if (!this.program) {
+            console.error('Cannot draw: shader program not initialized');
+            return;
+        }
+        
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         // --- 1. Atualiza Câmera ---
