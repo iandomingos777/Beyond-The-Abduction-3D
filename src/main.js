@@ -643,24 +643,37 @@ class Game {
     }
 
     triggerGameOver() {
+        if (this.gameOver) return; // Evita disparar múltiplas vezes
         this.gameOver = true;
         this.stopLoop();
         
-        // Feedback visual simples
+        // 1. Feedback visual
         const overlay = document.getElementById('menu-overlay');
         overlay.style.display = 'flex';
         overlay.innerHTML = `
             <div style="text-align: center; color: red;">
                 <h1>VOCÊ FOI PEGO!</h1>
                 <p>A segurança te encontrou na luz.</p>
-                <button onclick="location.reload()" style="padding: 10px 20px; cursor: pointer;">Tentar Novamente</button>
+                <p style="color: white; font-size: 0.8em;">Pressione <strong>ENTER</strong> para reiniciar</p>
+                <button onclick="location.reload()" style="padding: 10px 20px; cursor: pointer; margin-top: 10px;">Tentar Novamente</button>
             </div>
         `;
         
+        // 2. Solta o mouse
         if (document.pointerLockElement) {
             document.exitPointerLock();
         }
-    }
+
+        // 3. Escuta a tecla ENTER para reiniciar
+        const handleRestart = (event) => {
+            if (event.key === 'Enter') {
+                document.removeEventListener('keydown', handleRestart); // Limpa o evento
+                location.reload(); // Recarrega o jogo
+            }
+        };
+
+        document.addEventListener('keydown', handleRestart);
+}
 
     draw() {
         const gl = this.gl;
